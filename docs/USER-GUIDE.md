@@ -29,9 +29,9 @@ This is where RANT shines. You do not need to navigate to a complex "Cable Manag
 1. In your rack diagram, find an **empty port** on your device and **click it**.
 2. A banner will appear at the top of the screen: *"Patching from..."*
 3. Simply **click the destination port** on any other device in the rack.
-4. A small popup will appear asking for the cable color and type. Hit **Save**.
+4. A small popup will appear asking for the cable colour and type. Hit **Save**.
 
-Your ports will immediately light up with the chosen cable color!
+Your ports will immediately light up with the chosen cable colour!
 
 ### 4. Import Device Templates (JSON)
 Creating complex device layouts (like a 48-port switch with stacked rows and dedicated uplink ports) can take time. Instead of building them from scratch, you can import them instantly!
@@ -52,7 +52,7 @@ Once you master basic patching, you can start using RANT to map complex, multi-s
 ### Editing and Removing Cables
 If you patch a cable to the wrong port, don't try to edit the endpoints—just like in the real world, you should unplug it and run a new one.
 * **To unplug:** Click any connected port and hit the **Disconnect** button.
-* **To change labels/colors:** Click a connected port and hit the **Edit (pencil)** icon to update the cable's metadata.
+* **To change labels/colours:** Click a connected port and hit the **Edit (pencil)** icon to update the cable's metadata.
 
 ### 🌎 Cross-Site Patching
 You can patch a cable from a switch in London directly to a router in Paris.
@@ -76,7 +76,7 @@ If you want to pivot your view (for example, you are comparing Rack A to Rack B,
 ### 🕸️ Interactive Topology Filtering
 RANT automatically generates beautiful, static topology maps of your network.
 * **Site Topology:** Expand a Site in the sidebar and click **🕸️ Topology** to see how all the racks in that building are physically chained together.
-* **Global Topology:** Click **🕸️ Global Topology** in the sidebar to see a master table of every cross-site (WAN) link in your entire organization, topped with a macro Site-to-Site diagram.
+* **Global Topology:** Click **🕸️ Global Topology** in the sidebar to see a master table of every cross-site (WAN) link in your entire organisation, topped with a macro Site-to-Site diagram.
 
 > [!TIP]
 > **Click the nodes!** When viewing a topology diagram, click any Rack or Site box. The data table underneath will instantly filter to show *only* the cables connected to that specific node. Click the row in the table to jump straight into a Split View of those two racks!
