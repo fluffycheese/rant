@@ -125,20 +125,31 @@ Zero-ops deployment with automatic HTTPS, global CDN, and managed SQLite.
    ```bash
    wrangler d1 create rant-db
    ```
-   Copy the `wrangler.example.toml` file to `wrangler.toml`, then copy the `database_id` from the terminal output and paste it into `wrangler.toml`.
+   Copy the `wrangler.example.toml` file to `wrangler.toml`
+   ```bash
+   cp wrangler.example.toml wrangler.toml
+   ```
+  Then copy the `database_id` from the terminal output and paste it into `wrangler.toml`.
 
 2. **Apply database migrations:**
    ```bash
    wrangler d1 migrations apply rant-db --remote
    ```
 
-3. **Build and deploy:**
+3. **Install dependencies and build:**
    ```bash
+   npm install
+   cd client && npm install
+   cd ..
    npm run build:cf
+   ```
+
+4. **Deploy to Cloudflare Pages:**
+   ```bash
    wrangler pages deploy dist/public
    ```
 
-4. **Set environment variables** (optional):
+5. **Set environment variables** (optional):
    ```bash
    wrangler pages secret put PROXY_AUTH  # Enter 'true' when prompted
    ```
