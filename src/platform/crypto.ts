@@ -3,10 +3,10 @@
  * Works identically on Node.js and Cloudflare Workers.
  *
  * Format: `<hex-salt>:<hex-derived-key>`
- * Parameters: PBKDF2, SHA-256, 600 000 iterations, 32-byte key
+ * Parameters: PBKDF2, SHA-256, 100 000 iterations, 32-byte key
  */
 
-const ITERATIONS = 600_000
+const ITERATIONS = 100_000
 const KEY_LENGTH = 32 // bytes
 const SALT_LENGTH = 16 // bytes
 
