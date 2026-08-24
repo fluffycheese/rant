@@ -62,6 +62,31 @@ export default function TemplatesPage() {
     load()
   }
 
+  const handleImport = async () => {
+    const json = prompt('Paste template JSON:')
+    if (!json) return
+    try {
+      const parsed = JSON.parse(json)
+      const payload = {
+        ...parsed,
+        portCount: parsed.portLayout?.length || parsed.portCount || 0,
+      }
+      await api.templates.create(payload)
+      load()
+    } catch (e: any) {
+      alert('Import failed: ' + e.message)
+    }
+  }
+
+  const handleExport = (t: DeviceTemplate) => {
+    const clean = {
+      name: t.name, category: t.category, manufacturer: t.manufacturer, model: t.model,
+      uHeight: t.uHeight, color: t.color, portLayout: t.portLayout
+    }
+    navigator.clipboard.writeText(JSON.stringify(clean, null, 2))
+    alert('JSON copied to clipboard!')
+  }
+
   const s: Record<string, React.CSSProperties> = {
     page:   { padding: 32, maxWidth: 900, margin: '0 auto' },
     header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
@@ -76,7 +101,10 @@ export default function TemplatesPage() {
     <div style={s.page}>
       <div style={s.header}>
         <div style={s.title}>Device Templates</div>
-        <button style={s.addBtn} onClick={handleNew}>+ New template</button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button style={{ ...s.addBtn, background: '#21262d', border: '1px solid #30363d' }} onClick={handleImport}>📥 Import JSON</button>
+          <button style={s.addBtn} onClick={handleNew}>+ New template</button>
+        </div>
       </div>
 
       {templates.length === 0 && (
@@ -98,6 +126,7 @@ export default function TemplatesPage() {
           <span style={s.badge}>{t.portCount} ports</span>
           <span style={s.badge}>{t.uHeight}U</span>
           <span style={s.badge}>{t.category}</span>
+          <button style={s.iconBtn} onClick={() => handleExport(t)} title="Export JSON">📋</button>
           <button style={s.iconBtn} onClick={() => handleEdit(t)} title="Edit">✏️</button>
           <button style={s.iconBtn} onClick={() => handleDelete(t.id)} title="Delete">🗑</button>
         </div>

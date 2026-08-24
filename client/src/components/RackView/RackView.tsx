@@ -5,6 +5,7 @@ import RackGrid from './RackGrid.tsx'
 import ConnectionsTable from './ConnectionsTable.tsx'
 import type { SelectedPortInfo } from './DeviceCard.tsx'
 import RackFormModal from '../RackFormModal.tsx'
+import DeviceEditorModal from './DeviceEditorModal.tsx'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 type Props = {
@@ -24,6 +25,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
   const [showEditRack, setShowEditRack] = useState(false)
   const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>('both')
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
+  const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
 
   // Connection dialog state
   const [linkForm, setLinkForm] = useState<{
@@ -472,6 +474,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 onSelectPort={handleSelectPort}
                 onDeleteDevice={handleDeleteDevice}
                 onUpdateDevicePosition={handleUpdateDevicePosition}
+                onEditDevice={setEditingDeviceId}
                 onAddDevice={(u) => {
                   setTargetUPosition(u)
                   setShowAddDevice(true)
@@ -522,6 +525,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             onSelectPort={handleSelectPort}
             onDeleteDevice={handleDeleteDevice}
             onUpdateDevicePosition={handleUpdateDevicePosition}
+            onEditDevice={setEditingDeviceId}
             onAddDevice={(u) => {
               setTargetUPosition(u)
               setShowAddDevice(true)
@@ -564,6 +568,17 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
           </div>
         )}
       </div>
+
+      {/* Edit Device Dialog */}
+      {editingDeviceId && (
+        <DeviceEditorModal
+          deviceId={editingDeviceId}
+          devices={devices}
+          rack={rack}
+          onClose={() => setEditingDeviceId(null)}
+          onReload={onReload}
+        />
+      )}
 
       {/* Add Device Dialog */}
       {showAddDevice && (

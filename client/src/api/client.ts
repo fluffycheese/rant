@@ -89,6 +89,10 @@ export const api = {
       request<{ ok: boolean }>('/auth/logout', { method: 'POST' }),
     me:     () =>
       request<{ authenticated: boolean; user?: User; proxyAuth?: boolean }>('/auth/me'),
+    setupStatus: () =>
+      request<{ needsSetup: boolean }>('/auth/setup/status'),
+    setup:  (username: string, password: string) =>
+      request<{ ok: boolean; user: User }>('/auth/setup', { method: 'POST', body: JSON.stringify({ username, password }) }),
   },
   profiles: {
     list:   ()             => request<Profile[]>('/profiles'),

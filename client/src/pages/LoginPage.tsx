@@ -1,18 +1,26 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.tsx'
+import { api } from '../api/client.ts'
 
 export default function LoginPage() {
   const { login, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
+  const [needsSetup, setNeedsSetup] = useState<boolean | null>(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/'
+
+  useEffect(() => {
+    api.auth.setupStatus()
+      .then(res => setNeedsSetup(res.needsSetup))
+      .catch(() => setNeedsSetup(false))
+  }, [])
 
   if (!isLoading && isAuthenticated) {
     return <Navigate to={from} replace />
@@ -26,10 +34,13 @@ export default function LoginPage() {
     setError(null)
 
     try {
+      if (needsSetup) {
+        await api.auth.setup(username.trim(), password)
+      }
       await login(username.trim(), password)
       navigate(from, { replace: true })
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.')
+      setError(err.message || (needsSetup ? 'Setup failed.' : 'Login failed. Please check your credentials.'))
     } finally {
       setSubmitting(false)
     }
@@ -116,12 +127,16 @@ export default function LoginPage() {
     },
   }
 
+  if (needsSetup === null) return null
+
   return (
     <div style={s.container}>
       <div style={s.card}>
         <div style={s.header}>
-          <div style={s.logo}>NCM</div>
-          <div style={s.subtitle}>Network Connection Manager</div>
+          <div style={s.logo}>RANT</div>
+          <div style={s.subtitle}>
+            {needsSetup ? 'Create first admin user' : 'Rack And Networking Tool'}
+          </div>
         </div>
 
         {error && <div style={s.errorAlert}>{error}</div>}
@@ -143,16 +158,17 @@ export default function LoginPage() {
           </div>
 
           <div style={s.field}>
-            <label style={s.label} htmlFor="password">Password</label>
+            <label style={s.label} htmlFor="password">Password {needsSetup && '(min 6 chars)'}</label>
             <input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete={needsSetup ? 'new-password' : 'current-password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               style={s.input}
               required
+              minLength={needsSetup ? 6 : undefined}
             />
           </div>
 
@@ -161,7 +177,9 @@ export default function LoginPage() {
             disabled={submitting || !username.trim() || !password}
             style={s.button}
           >
-            {submitting ? 'Signing in…' : 'Sign in'}
+            {submitting 
+              ? (needsSetup ? 'Creating…' : 'Signing in…') 
+              : (needsSetup ? 'Create Admin' : 'Sign in')}
           </button>
         </form>
       </div>

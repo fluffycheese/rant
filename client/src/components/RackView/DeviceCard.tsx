@@ -23,6 +23,7 @@ type Props = {
   selectedPort?: SelectedPortInfo | null
   onSelectPort?: (info: SelectedPortInfo) => void
   onDeleteDevice?: (deviceId: string) => void
+  onEditDevice?: (deviceId: string) => void
   onUpdateDevicePosition?: (deviceId: string, u: number | null) => Promise<void> | void
   compact?: boolean
 }
@@ -34,6 +35,7 @@ export default function DeviceCard({
   selectedPort,
   onSelectPort,
   onDeleteDevice,
+  onEditDevice,
   onUpdateDevicePosition,
   compact = false,
 }: Props) {
@@ -388,6 +390,17 @@ export default function DeviceCard({
                 }} title="Move Down">▼</button>
               </div>
             </div>
+          )}
+
+          {onEditDevice && (
+            <button
+              type="button"
+              style={s.deleteBtn}
+              onClick={() => onEditDevice(device.id)}
+              title="Edit device"
+            >
+              ✏️
+            </button>
           )}
 
           {onDeleteDevice && (

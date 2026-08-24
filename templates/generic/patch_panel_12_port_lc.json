@@ -1,0 +1,21 @@
+{
+  "name": "12-Port Fibre Panel (LC)",
+  "category": "patch_panel",
+  "manufacturer": "Generic",
+  "uHeight": 1,
+  "color": "#ff9e4a",
+  "portLayout": [
+    {"label": "1", "connectorType": "lc", "position": 0, "groupLayout": "single_row"},
+    {"label": "2", "connectorType": "lc", "position": 1, "groupLayout": "single_row"},
+    {"label": "3", "connectorType": "lc", "position": 2, "groupLayout": "single_row"},
+    {"label": "4", "connectorType": "lc", "position": 3, "groupLayout": "single_row"},
+    {"label": "5", "connectorType": "lc", "position": 4, "groupLayout": "single_row"},
+    {"label": "6", "connectorType": "lc", "position": 5, "groupLayout": "single_row"},
+    {"label": "7", "connectorType": "lc", "position": 6, "groupLayout": "single_row"},
+    {"label": "8", "connectorType": "lc", "position": 7, "groupLayout": "single_row"},
+    {"label": "9", "connectorType": "lc", "position": 8, "groupLayout": "single_row"},
+    {"label": "10", "connectorType": "lc", "position": 9, "groupLayout": "single_row"},
+    {"label": "11", "connectorType": "lc", "position": 10, "groupLayout": "single_row"},
+    {"label": "12", "connectorType": "lc", "position": 11, "groupLayout": "single_row"}
+  ]
+}

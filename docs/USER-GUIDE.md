@@ -33,6 +33,16 @@ This is where RANT shines. You do not need to navigate to a complex "Cable Manag
 
 Your ports will immediately light up with the chosen cable color!
 
+### 4. Import Device Templates (JSON)
+Creating complex device layouts (like a 48-port switch with stacked rows and dedicated uplink ports) can take time. Instead of building them from scratch, you can import them instantly!
+
+1. Go to the **Templates** page from the main navigation.
+2. Click the **📥 Import JSON** button.
+3. Paste a template JSON snippet to instantly create the device profile.
+
+> [!TIP]
+> **Where to find templates?** We maintain a community library of templates right inside the RANT repository! Check the `templates/` folder on GitHub (e.g., `templates/dell`, `templates/cisco`) to find the exact hardware you own, then copy and paste the JSON into your app. If you've created a custom template for a device we don't have, use the **Export (📋)** button to grab the JSON and submit a Pull Request to share it!
+
 ---
 
 ## ⚡ Power-User Workflows

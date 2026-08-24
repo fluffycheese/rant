@@ -22,9 +22,13 @@ const app = createApp((app) => {
   })
 })
 
+import fs from 'node:fs'
+
 // ── Serve React SPA in production ─────────────────────────────────────────────
-app.use('/*', serveStatic({ root: './dist/public' }))
-app.get('/*', serveStatic({ path: './dist/public/index.html' }))
+if (fs.existsSync('./dist/public')) {
+  app.use('/*', serveStatic({ root: './dist/public' }))
+  app.get('/*', serveStatic({ path: './dist/public/index.html' }))
+}
 
 // ── Listen ────────────────────────────────────────────────────────────────────
 const port = Number(process.env.PORT ?? 3001)

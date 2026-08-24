@@ -11,6 +11,7 @@ type Props = {
   onDeleteDevice?: (deviceId: string) => void
   onAddDevice?: (uPosition?: number) => void
   onUpdateDevicePosition?: (deviceId: string, u: number | null) => void
+  onEditDevice?: (deviceId: string) => void
 }
 
 export default function RackGrid({
@@ -22,6 +23,7 @@ export default function RackGrid({
   onDeleteDevice,
   onAddDevice,
   onUpdateDevicePosition,
+  onEditDevice,
 }: Props) {
   const totalU = rack.uHeight || 42
 
@@ -179,6 +181,7 @@ export default function RackGrid({
           rows.push(
             <div key={`u-${u}`} style={{ position: 'relative' }}>
               <DeviceCard
+  onEditDevice={onEditDevice}
                 device={slot.device}
                 links={links}
                 allDevices={devices}
@@ -278,6 +281,7 @@ export default function RackGrid({
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {unplacedDevices.map(dev => (
                         <DeviceCard
+  onEditDevice={onEditDevice}
                           key={dev.id}
                           device={dev}
                           links={links}
@@ -301,6 +305,7 @@ export default function RackGrid({
                     <span>{device.template?.uHeight || 1}U</span>
                   </div>
                   <DeviceCard
+  onEditDevice={onEditDevice}
                     device={device}
                     links={links}
                     allDevices={devices}

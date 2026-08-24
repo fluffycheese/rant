@@ -86,7 +86,7 @@ export default function Sidebar() {
   return (
     <aside style={s.sidebar}>
       <div style={s.header}>
-        <span>NCM</span>
+        <span>RANT</span>
       </div>
 
       <div style={{ padding: '10px 16px' }}>

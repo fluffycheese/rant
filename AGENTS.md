@@ -26,6 +26,7 @@ RANT is a self-hosted tool for mapping network racks and connections. It is heav
 2. **No Complex Auth Frameworks:** Authentication is deliberately simple. It uses a built-in session cookie (SQLite backed) OR relies on a reverse-proxy (e.g., Traefik/Keycloak) via the `PROXY_AUTH=true` environment variable. Do not add heavy auth libraries (e.g., Passport, NextAuth) or external OAuth providers.
 4. **No `process.env` in shared code:** All configuration is injected via Hono context (`c.var.config`). Only entry point files may read `process.env` or CF bindings.
 3. **No Heavy Abstractions:** Keep the backend API routes flat and readable. Avoid unnecessary service layers or complex dependency injection.
+5. **No Database Bloat for Templates:** Do not attempt to pre-populate the database migrations or application payload with hundreds of default switch templates. RANT relies on a community `templates/` directory in the repo containing JSON snippets that users can opt-in to import via the UI.
 
 ## 🛠️ Key Implementation Patterns
 - **Device Placement & Collision:** We use a simple `positionU` coordinate for each device. Devices occupy `[positionU, positionU + uHeight - 1]`. Rather than complex drag-and-drop, we use simple numeric inputs and Up/Down nudge buttons. Collision checking strictly prevents overlapping devices at the API boundaries and UI event handlers.
@@ -41,7 +42,7 @@ Before making logical changes or adding features, you **MUST** read `CONTEXT.md`
 ## 🧪 Development Workflow & Subagents
 - Backend dev server: `npm run dev:server` (Port 3001) — runs `entry.node.ts`
 - Frontend dev server: `npm run dev:client` (Port 5173, proxies `/api` to 3001)
-- First-run setup: navigate to the app; if no users exist, the setup screen appears automatically
+- First-run setup: navigate to the app; if no users exist, `LoginPage.tsx` automatically morphs into a setup screen to create the first admin.
 - Database migrations: Run `npm run db:generate` after changing schema. Migrations automatically apply when the backend server starts.
 - **Subagents:** To conserve tokens and context during large features, aggressively define and invoke cheap/flash subagents to handle isolated tasks (e.g. "update the CSS grid for the device card" or "write the database migration"). Review their work before concluding your turn.
 

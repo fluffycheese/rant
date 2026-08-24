@@ -1,0 +1,33 @@
+{
+  "name": "24-Port Patch Panel",
+  "category": "patch_panel",
+  "manufacturer": "Generic",
+  "uHeight": 1,
+  "color": "#4a9eff",
+  "portLayout": [
+    {"label": "1", "connectorType": "rj45", "position": 0, "groupLayout": "single_row"},
+    {"label": "2", "connectorType": "rj45", "position": 1, "groupLayout": "single_row"},
+    {"label": "3", "connectorType": "rj45", "position": 2, "groupLayout": "single_row"},
+    {"label": "4", "connectorType": "rj45", "position": 3, "groupLayout": "single_row"},
+    {"label": "5", "connectorType": "rj45", "position": 4, "groupLayout": "single_row"},
+    {"label": "6", "connectorType": "rj45", "position": 5, "groupLayout": "single_row"},
+    {"label": "7", "connectorType": "rj45", "position": 6, "groupLayout": "single_row"},
+    {"label": "8", "connectorType": "rj45", "position": 7, "groupLayout": "single_row"},
+    {"label": "9", "connectorType": "rj45", "position": 8, "groupLayout": "single_row"},
+    {"label": "10", "connectorType": "rj45", "position": 9, "groupLayout": "single_row"},
+    {"label": "11", "connectorType": "rj45", "position": 10, "groupLayout": "single_row"},
+    {"label": "12", "connectorType": "rj45", "position": 11, "groupLayout": "single_row"},
+    {"label": "13", "connectorType": "rj45", "position": 12, "groupLayout": "single_row"},
+    {"label": "14", "connectorType": "rj45", "position": 13, "groupLayout": "single_row"},
+    {"label": "15", "connectorType": "rj45", "position": 14, "groupLayout": "single_row"},
+    {"label": "16", "connectorType": "rj45", "position": 15, "groupLayout": "single_row"},
+    {"label": "17", "connectorType": "rj45", "position": 16, "groupLayout": "single_row"},
+    {"label": "18", "connectorType": "rj45", "position": 17, "groupLayout": "single_row"},
+    {"label": "19", "connectorType": "rj45", "position": 18, "groupLayout": "single_row"},
+    {"label": "20", "connectorType": "rj45", "position": 19, "groupLayout": "single_row"},
+    {"label": "21", "connectorType": "rj45", "position": 20, "groupLayout": "single_row"},
+    {"label": "22", "connectorType": "rj45", "position": 21, "groupLayout": "single_row"},
+    {"label": "23", "connectorType": "rj45", "position": 22, "groupLayout": "single_row"},
+    {"label": "24", "connectorType": "rj45", "position": 23, "groupLayout": "single_row"}
+  ]
+}
