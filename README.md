@@ -125,7 +125,7 @@ Zero-ops deployment with automatic HTTPS, global CDN, and managed SQLite.
    ```bash
    wrangler d1 create rant-db
    ```
-   Copy the `database_id` from the output and paste it into `wrangler.toml`.
+   Copy the `wrangler.example.toml` file to `wrangler.toml`, then copy the `database_id` from the terminal output and paste it into `wrangler.toml`.
 
 2. **Apply database migrations:**
    ```bash
