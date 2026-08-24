@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Build output
+dist/
+
+# Database
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cloudflare Wrangler
+.wrangler/
+
+# Nix
+result
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

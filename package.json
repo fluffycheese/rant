@@ -1,0 +1,34 @@
+{
+  "name": "rant",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev:server": "tsx watch src/entry.node.ts",
+    "dev:client": "npm --prefix client run dev",
+    "build:server": "tsc -p tsconfig.json",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:server && npm run build:client",
+    "build:cf": "npm run build:client && cp public/_routes.json dist/public/_routes.json",
+    "deploy:cf": "npm run build:cf && wrangler d1 migrations apply rant-db --local && wrangler pages deploy dist/public",
+    "start": "node dist/entry.node.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.13.3",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260823.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.0.0",
+    "drizzle-kit": "^0.30.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "wrangler": "^4.125.0"
+  }
+}

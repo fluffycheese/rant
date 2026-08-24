@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1787142740394,
+      "tag": "0000_wise_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787223938184,
+      "tag": "0001_swift_captain_britain",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787229058201,
+      "tag": "0002_short_shard",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787484656868,
+      "tag": "0003_broad_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787488933086,
+      "tag": "0004_fearless_peter_parker",
+      "breakpoints": true
+    }
+  ]
+}

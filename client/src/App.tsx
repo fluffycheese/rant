@@ -1,0 +1,40 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthContext.tsx'
+import { PatchingProvider } from './contexts/PatchingContext.tsx'
+import ProtectedRoute from './auth/ProtectedRoute.tsx'
+import Layout from './components/Layout.tsx'
+import LoginPage from './pages/LoginPage.tsx'
+import RackViewPage from './pages/RackViewPage.tsx'
+import TemplatesPage from './pages/TemplatesPage.tsx'
+import AdminPage from './pages/AdminPage.tsx'
+import ProfileViewPage from './pages/ProfileViewPage.tsx'
+import SiteViewPage from './pages/SiteViewPage.tsx'
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <PatchingProvider>
+        <BrowserRouter>
+        <Routes>
+          {/* Public Authentication Route */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route index element={<Navigate to="/templates" replace />} />
+              <Route path="/racks/:rackId" element={<RackViewPage />} />
+              <Route path="/sites/:siteId" element={<SiteViewPage />} />
+              <Route path="/templates" element={<TemplatesPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/profiles/:id" element={<ProfileViewPage />} />
+              <Route path="/topology" element={<ProfileViewPage />} />
+              <Route path="*" element={<Navigate to="/templates" replace />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+      </PatchingProvider>
+    </AuthProvider>
+  )
+}

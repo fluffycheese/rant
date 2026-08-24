@@ -1,0 +1,13 @@
+node_modules
+client/node_modules
+dist
+data
+.git
+*.db
+*.db-shm
+*.db-wal
+.wrangler
+result
+default.nix
+wrangler.toml
+public/_routes.json
