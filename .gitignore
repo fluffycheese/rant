@@ -25,6 +25,9 @@ Thumbs.db
 
 # Cloudflare Wrangler
 .wrangler/
+wrangler.toml
+wrangler.json
+wrangler.jsonc
 
 # Nix
 result
