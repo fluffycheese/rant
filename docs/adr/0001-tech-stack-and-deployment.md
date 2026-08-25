@@ -1,7 +1,12 @@
 # ADR-0001: Technology Stack and Deployment Architecture
 
-**Status:** Accepted  
+**Status:** Partially superseded  
 **Date:** 2026-08-19
+
+> [!WARNING]
+> **Two decisions in this ADR have been reversed:**
+> - **React Flow** was removed in favour of HTML/CSS Grid rendering (see [AGENTS.md](../../AGENTS.md) — "No Canvas/Graph Libraries").
+> - **No in-app authentication** was reversed — RANT now includes built-in session auth with a first-run setup route (see [CONTEXT.md](../../CONTEXT.md) — Setup Route). Proxy auth remains supported as an alternative.
 
 ## Context
 
