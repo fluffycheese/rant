@@ -84,19 +84,12 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       return
     }
 
-    // First click: check if port slot is empty
-    const linkForSlot = internalLinks.find(l => 
-      (l.portAId === info.port.id && l.portASlot === info.slot) ||
-      (l.portBId === info.port.id && l.portBSlot === info.slot)
-    )
-
-    if (!linkForSlot) {
+    // First click: check if port is empty
+    const portLinks = internalLinks.filter(l => l.portAId === info.port.id || l.portBId === info.port.id)
+    if (portLinks.length === 0) {
       setSelectedPort(info)
     } else {
-      setHighlightedLinkId(linkForSlot.id)
-      if (activeTab === 'grid' || activeTab === 'split') {
-        setActiveTab('both')
-      }
+      setDetailsPortInfo(info)
     }
   }
 
@@ -520,17 +513,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                   setShowLinkDialog(true)
                 }}
                 onEditLink={(link) => {
-                  setEditingLinkId(link.id)
-                  setLinkForm({
-                    portAId: link.portAId,
-                    portASlot: link.portASlot,
-                    portBId: link.portBId,
-                    portBSlot: link.portBSlot,
-                    cableType: link.cableType,
-                    color: link.color || '#4a9eff',
-                    label: link.label || '',
-                  })
-                  setShowLinkDialog(true)
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
                 }}
               />
             </div>
@@ -571,17 +558,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 setShowLinkDialog(true)
               }}
               onEditLink={(link) => {
-                setEditingLinkId(link.id)
-                setLinkForm({
-                  portAId: link.portAId,
-                  portASlot: link.portASlot,
-                  portBId: link.portBId,
-                  portBSlot: link.portBSlot,
-                  cableType: link.cableType,
-                  color: link.color || '#4a9eff',
-                  label: link.label || '',
-                })
-                setShowLinkDialog(true)
+                const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                const port = device?.ports.find(p => p.id === link.portAId)
+                if (device && port) {
+                  setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                }
               }}
             />
           </div>
@@ -881,10 +862,9 @@ function LinkModal({
           <label style={labelStyle}>
             Slot
             <select
-              style={{ ...inputStyle, opacity: isEditing ? 0.7 : 1 }}
+              style={inputStyle}
               value={form.portASlot}
-              onChange={e => onChange({ ...form, portASlot: e.target.value })}
-              disabled={isEditing}
+              onChange={e => onChange({ ...form, portASlot: e.target.value as 'front'|'back' })}
             >
               <option value="front">Front</option>
               <option value="back">Back</option>
@@ -912,10 +892,9 @@ function LinkModal({
           <label style={labelStyle}>
             Slot
             <select
-              style={{ ...inputStyle, opacity: isEditing ? 0.7 : 1 }}
+              style={inputStyle}
               value={form.portBSlot}
-              onChange={e => onChange({ ...form, portBSlot: e.target.value })}
-              disabled={isEditing}
+              onChange={e => onChange({ ...form, portBSlot: e.target.value as 'front'|'back' })}
             >
               <option value="front">Front</option>
               <option value="back">Back</option>
