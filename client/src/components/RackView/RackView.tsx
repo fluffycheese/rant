@@ -20,7 +20,7 @@ type Props = {
 
 export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
-  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, setPinnedLinkId } = usePatching()
+  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
@@ -94,8 +94,8 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     if (!linkForSlot) {
       setSelectedPort(info)
     } else {
-      setPinnedLinkId(linkForSlot.id)
-      setDetailsPortInfo(info)
+      setPinnedLinkId(pinnedLinkId === linkForSlot.id ? null : linkForSlot.id)
+      setHighlightedLinkId(null)
     }
   }
 

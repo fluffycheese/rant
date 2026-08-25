@@ -42,9 +42,23 @@ export default function RackGrid({
 
       if (dev.positionU != null && dev.positionU > 0) {
         const uH = dev.template?.uHeight || 1
+        
+        // Check if any required slot is already occupied or out of bounds
+        let hasConflict = false
         for (let i = 0; i < uH; i++) {
           const u = dev.positionU + i
-          if (u <= totalU) {
+          if (u > totalU || map.has(u)) {
+            hasConflict = true
+            break
+          }
+        }
+
+        if (hasConflict) {
+          // Instead of letting it vanish or overwrite another device, show it as unplaced
+          unplaced.push(dev)
+        } else {
+          for (let i = 0; i < uH; i++) {
+            const u = dev.positionU + i
             map.set(u, { device: dev, isStart: i === 0 })
           }
         }
