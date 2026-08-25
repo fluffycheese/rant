@@ -25,7 +25,18 @@ export default function RackGrid({
   onUpdateDevicePosition,
   onEditDevice,
 }: Props) {
-  const totalU = rack.uHeight || 42
+  // Dynamically calculate totalU to prevent devices from overflowing bounds and vanishing
+  const totalU = useMemo(() => {
+    let max = rack.uHeight || 42
+    for (const d of devices) {
+      if (d.rackId === rack.id && d.positionU != null) {
+        const uH = d.template?.uHeight || 1
+        const topU = d.positionU + uH - 1
+        if (topU > max) max = topU
+      }
+    }
+    return max
+  }, [devices, rack.uHeight])
 
   // Check if devices use explicit positionU
   const hasExplicitPositions = useMemo(() => {
@@ -105,6 +116,9 @@ export default function RackGrid({
       alignItems: 'center',
       userSelect: 'none',
       flexShrink: 0,
+      gap: 8,
+      paddingTop: 12,
+      paddingBottom: 12,
     },
     sideRailRight: {
       width: 38,
@@ -115,6 +129,9 @@ export default function RackGrid({
       alignItems: 'center',
       userSelect: 'none',
       flexShrink: 0,
+      gap: 8,
+      paddingTop: 12,
+      paddingBottom: 12,
     },
     equipmentBay: {
       flex: 1,
@@ -148,7 +165,8 @@ export default function RackGrid({
       fontSize: 9,
       color: '#6e7681',
       fontFamily: 'monospace',
-      height: 48,
+      height: 36,
+      flexShrink: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -178,8 +196,10 @@ export default function RackGrid({
       if (slot) {
         if (slot.isStart && !renderedDeviceIds.has(slot.device.id)) {
           renderedDeviceIds.add(slot.device.id)
+          const uH = slot.device.template?.uHeight || 1
+          const pixelHeight = (36 * uH) + (8 * (uH - 1)) // 36px per U, 8px gap
           rows.push(
-            <div key={`u-${u}`} style={{ position: 'relative' }}>
+            <div key={`u-${u}`} style={{ position: 'relative', height: pixelHeight, flexShrink: 0 }}>
               <DeviceCard
   onEditDevice={onEditDevice}
                 device={slot.device}
@@ -248,9 +268,9 @@ export default function RackGrid({
         <div style={s.rackBody}>
           {/* Left Mounting Post */}
           <div style={s.sideRail}>
-            {Array.from({ length: Math.min(totalU, 24) }, (_, i) => (
+            {Array.from({ length: totalU }, (_, i) => (
               <div key={i} style={s.uMarker}>
-                ▪
+                U{totalU - i}
               </div>
             ))}
           </div>
@@ -321,9 +341,9 @@ export default function RackGrid({
 
           {/* Right Mounting Post */}
           <div style={s.sideRailRight}>
-            {Array.from({ length: Math.min(totalU, 24) }, (_, i) => (
+            {Array.from({ length: totalU }, (_, i) => (
               <div key={i} style={s.uMarker}>
-                ▪
+                U{totalU - i}
               </div>
             ))}
           </div>
