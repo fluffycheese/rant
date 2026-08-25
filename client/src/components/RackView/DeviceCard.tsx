@@ -1,5 +1,6 @@
 import { useState, useEffect, type CSSProperties } from 'react'
 import type { RackDevice, Port, CableLink } from '../../api/client.ts'
+import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 const CATEGORY_ICONS: Record<string, string> = {
   switch:      '🔀',
@@ -40,6 +41,7 @@ export default function DeviceCard({
   compact = false,
 }: Props) {
   const [hoveredPortId, setHoveredPortId] = useState<string | null>(null)
+  const { highlightedLinkId } = usePatching()
   const [localU, setLocalU] = useState<string>(device.positionU?.toString() || '')
 
   // Keep local input in sync with external updates
@@ -138,6 +140,8 @@ export default function DeviceCard({
     const { front, back } = getPortLinks(port.id)
     const isFrontSelected = selectedPort?.port.id === port.id && selectedPort.slot === 'front'
     const isBackSelected = selectedPort?.port.id === port.id && selectedPort.slot === 'back'
+    const isFrontHighlighted = highlightedLinkId && front?.id === highlightedLinkId
+    const isBackHighlighted = highlightedLinkId && back?.id === highlightedLinkId
     const isHovered = hoveredPortId === port.id
 
     const frontColor = front?.color || '#238636'
@@ -166,15 +170,15 @@ export default function DeviceCard({
             background: isFrontSelected
               ? '#1f6feb33'
               : front
-              ? '#161b22'
+              ? (isFrontHighlighted ? '#2e4a2d' : '#161b22')
               : '#0d1117',
             border: isFrontSelected
               ? '2px solid #58a6ff'
               : front
-              ? `1px solid ${frontColor}`
+              ? (isFrontHighlighted ? `2px solid #fff` : `1px solid ${frontColor}`)
               : '1px solid #30363d',
             borderRadius: 4,
-            color: isFrontSelected ? '#58a6ff' : front ? '#e2e8f0' : '#8b949e',
+            color: isFrontSelected ? '#58a6ff' : (front && isFrontHighlighted) ? '#fff' : front ? '#e2e8f0' : '#8b949e',
             fontSize: 10,
             fontWeight: 600,
             cursor: 'pointer',
@@ -184,7 +188,8 @@ export default function DeviceCard({
             justifyContent: 'space-between',
             transition: 'all 0.15s ease',
             outline: 'none',
-            boxShadow: isFrontSelected ? '0 0 8px rgba(88, 166, 255, 0.4)' : 'none',
+            boxShadow: isFrontSelected ? '0 0 8px rgba(88, 166, 255, 0.4)' : (isFrontHighlighted ? `0 0 8px ${frontColor}` : 'none'),
+            zIndex: (isFrontHighlighted || isFrontSelected) ? 2 : 1,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontSize: 8 }}>
@@ -195,7 +200,7 @@ export default function DeviceCard({
                   width: 5,
                   height: 5,
                   borderRadius: '50%',
-                  background: backColor,
+                  background: isBackHighlighted ? '#fff' : backColor,
                   display: 'inline-block',
                 }}
                 title={`Back: ${getTargetDescription(back, port.id)}`}
