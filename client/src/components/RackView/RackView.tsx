@@ -20,7 +20,7 @@ type Props = {
 
 export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
-  const { selectedPort, setSelectedPort, setIsManualSplitView } = usePatching()
+  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, isManualSplitView, setHighlightedLinkId } = usePatching()
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
@@ -28,6 +28,17 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
   const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>(isSecondaryView ? 'grid' : 'both')
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
+
+  const isSplitActive = isManualSplitView || !!crossSiteTargetRackId
+
+  useEffect(() => {
+    if (isSecondaryView) return
+    if (isSplitActive && activeTab === 'both') {
+      setActiveTab('split')
+    } else if (!isSplitActive && (activeTab === 'split' || activeTab === 'grid')) {
+      setActiveTab('both')
+    }
+  }, [isSplitActive, isSecondaryView]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Connection dialog state
   const [linkForm, setLinkForm] = useState<{
@@ -73,12 +84,19 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       return
     }
 
-    // First click: check if port is empty
-    const portLinks = internalLinks.filter(l => l.portAId === info.port.id || l.portBId === info.port.id)
-    if (portLinks.length === 0) {
+    // First click: check if port slot is empty
+    const linkForSlot = internalLinks.find(l => 
+      (l.portAId === info.port.id && l.portASlot === info.slot) ||
+      (l.portBId === info.port.id && l.portBSlot === info.slot)
+    )
+
+    if (!linkForSlot) {
       setSelectedPort(info)
     } else {
-      setDetailsPortInfo(info)
+      setHighlightedLinkId(linkForSlot.id)
+      if (activeTab === 'grid' || activeTab === 'split') {
+        setActiveTab('both')
+      }
     }
   }
 
@@ -370,7 +388,10 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
           {isSecondaryView && onCloseSplitView && (
             <button
               type="button"
-              onClick={onCloseSplitView}
+              onClick={() => {
+                onCloseSplitView()
+                setIsManualSplitView(false)
+              }}
               style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#ff7b72', borderColor: '#ff7b72' }}
             >
               ❌ Close
