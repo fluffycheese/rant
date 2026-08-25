@@ -1,4 +1,4 @@
-# RANT (Rack And Networking Tool)
+# RANT — Rack And Networking Tool
 
 > [!WARNING]
 > **ALPHA BUILD - HEAVY DEVELOPMENT**
