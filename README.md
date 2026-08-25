@@ -17,13 +17,17 @@ A self-hosted tool for documenting racks, patching cables, and visualising netwo
 
 ## 📖 Why RANT exists
 
-If you've ever needed to document a network rack, you've probably hit the same wall:
+If you've ever needed to document a network rack, you've probably hit the same wall: **there was nothing in between** a handful of single-purpose tools and a full enterprise DCIM platform. No tool that combined rack layout with cable documentation in a single, lightweight, self-hosted package.
 
-**On one side**, there are brilliant single-purpose tools like [ECCM](https://github.com/bijomaru78/eccm) and [Rackula](https://github.com/RackulaLives/Rackula) — fast, focused, and easy to use. But they each solve only *half* the problem. ECCM maps cable connections beautifully but has no concept of racks or sites. Rackula renders gorgeous rack elevations but has no cable awareness at all.
+RANT fills that gap. If you can draw your network on a whiteboard in 10 minutes, you should be able to document it in RANT in 10 minutes.
 
-**On the other side**, there's [NetBox](https://github.com/netbox-community/netbox) — the industry standard for data centre infrastructure management. It does everything: IPAM, circuits, power, tenancy, custom fields, plugins, REST + GraphQL APIs. It's phenomenal software. But it requires PostgreSQL, Redis, a task queue, and dedicated maintenance — serious infrastructure for what might be a 12-device homelab or a 3-rack comms room.
+Built for homelabbers, small IT teams, and anyone who needs to know which cable goes where — without deploying an enterprise platform to find out.
 
-**There was nothing in between.** No tool that combined rack layout with cable documentation in a single, lightweight, self-hosted package. RANT fills that gap.
+**Why not the existing tools?** They're excellent — but each leaves part of the problem unsolved:
+
+- **[ECCM](https://github.com/bijomaru78/eccm)** maps cable connections beautifully, but has no concept of racks or sites.
+- **[Rackula](https://github.com/RackulaLives/Rackula)** renders gorgeous rack elevations, but has no cable awareness at all.
+- **[NetBox](https://github.com/netbox-community/netbox)** does everything — IPAM, circuits, power, tenancy, plugins, REST + GraphQL APIs — but requires PostgreSQL, Redis, a task queue, and dedicated maintenance. That's serious infrastructure for a 12-device homelab or a 3-rack comms room.
 
 ### How RANT compares
 
@@ -59,7 +63,14 @@ RANT takes direct inspiration from two excellent projects:
 - **[ECCM](https://github.com/bijomaru78/eccm)** by bijomaru78 — RANT's card-based port grid and "click to patch" interaction pattern come straight from ECCM's zero-friction design. We owe this project a huge debt for proving that cable documentation doesn't need to be painful.
 - **[NetBox](https://github.com/netbox-community/netbox)** by the NetBox community — RANT's data model (Sites → Racks → Devices → Ports) borrows heavily from NetBox's proven hierarchy. We just strip away the parts that most small teams never use (IPAM, circuits, tenancy, power).
 
-The guiding principle: **if you can draw your network on a whiteboard in 10 minutes, you should be able to document it in RANT in 10 minutes.**
+### Deliberate non-goals
+
+RANT documents the **physical infrastructure layer** and nothing else. These are explicit non-goals to protect the project's simplicity:
+
+- **Not an IPAM** — use NetBox for IP address and VLAN management
+- **Not a monitoring tool** — RANT documents what exists, not whether it's healthy
+- **Not a DCIM platform** — no power, cooling, or capacity modelling
+- **Not a configuration manager** — that's Ansible, Nornir, etc.
 
 ## 🚀 Deployment Options
 
