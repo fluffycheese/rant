@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef, type CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import mermaid from 'mermaid'
+import { api } from '../api/client.ts'
 import { usePatching } from '../contexts/PatchingContext.tsx'
 
 export type LinkData = {
@@ -33,9 +34,10 @@ type Props = {
   title: string
   mermaidData: string | null
   links: LinkData[]
+  siteId?: string
 }
 
-export default function TopologyView({ title, mermaidData, links }: Props) {
+export default function TopologyView({ title, mermaidData, links, siteId }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { setCrossSiteTargetRackId } = usePatching()
@@ -307,6 +309,32 @@ export default function TopologyView({ title, mermaidData, links }: Props) {
           {title}
           <span style={s.countBadge}>{links.length} Links</span>
         </div>
+        {siteId && (
+          <button
+            type="button"
+            onClick={async () => {
+              if (confirm('Are you sure you want to delete this site and ALL its racks? This cannot be undone.')) {
+                try {
+                  await api.sites.delete(siteId)
+                  window.location.href = '/'
+                } catch (err: any) {
+                  alert(`Failed to delete site: ${err.message}`)
+                }
+              }
+            }}
+            style={{
+              background: 'none',
+              color: '#ff7b72',
+              border: '1px solid #ff7b72',
+              borderRadius: 6,
+              padding: '6px 12px',
+              fontSize: 13,
+              cursor: 'pointer',
+            }}
+          >
+            Delete Site
+          </button>
+        )}
       </div>
 
       <div style={s.mermaidWrapper} onClick={handleMermaidClick}>

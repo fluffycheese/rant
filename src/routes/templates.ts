@@ -107,9 +107,13 @@ app.post('/:id/instantiate', async (c) => {
     groupLayout:   p.groupLayout || null,
   }))
 
-  const insertedPorts = devicePorts.length > 0
-    ? await db.insert(ports).values(devicePorts).returning()
-    : []
+  const insertedPorts = []
+  const CHUNK_SIZE = 10
+  for (let i = 0; i < devicePorts.length; i += CHUNK_SIZE) {
+    const chunk = devicePorts.slice(i, i + CHUNK_SIZE)
+    const res = await db.insert(ports).values(chunk).returning()
+    insertedPorts.push(...res)
+  }
 
   return c.json({ device, ports: insertedPorts }, 201)
 })

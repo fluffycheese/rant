@@ -5,6 +5,7 @@ type Props = {
   initialRack?: Partial<Rack>
   mode: 'create' | 'edit'
   onConfirm: (name: string, description: string, uHeight: number) => void
+  onDelete?: () => void
   onCancel: () => void
 }
 
@@ -12,6 +13,7 @@ export default function RackFormModal({
   initialRack,
   mode,
   onConfirm,
+  onDelete,
   onCancel,
 }: Props) {
   const [name, setName] = useState(initialRack?.name || '')
@@ -79,31 +81,48 @@ export default function RackFormModal({
           />
         </label>
 
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={!name.trim()}
-            onClick={() => onConfirm(name.trim(), description.trim(), uHeight)}
-            style={{
-              background: '#238636',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 6,
-              padding: '6px 18px',
-              cursor: 'pointer',
-              fontWeight: 600,
-              opacity: !name.trim() ? 0.5 : 1,
-            }}
-          >
-            {mode === 'create' ? 'Create Rack' : 'Save Changes'}
-          </button>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between', marginTop: 6 }}>
+          <div>
+            {mode === 'edit' && onDelete && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this rack? This cannot be undone.')) {
+                    onDelete()
+                  }
+                }}
+                style={{ background: 'none', color: '#ff7b72', border: '1px solid #ff7b72', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+              >
+                Delete Rack
+              </button>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              type="button"
+              onClick={onCancel}
+              style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={!name.trim()}
+              onClick={() => onConfirm(name.trim(), description.trim(), uHeight)}
+              style={{
+                background: '#238636',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 18px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                opacity: !name.trim() ? 0.5 : 1,
+              }}
+            >
+              {mode === 'create' ? 'Create Rack' : 'Save Changes'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
