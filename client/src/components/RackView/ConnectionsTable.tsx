@@ -20,7 +20,7 @@ export default function ConnectionsTable({
   onEditLink,
 }: Props) {
   const [filter, setFilter] = useState('')
-  const { highlightedLinkId, setHighlightedLinkId } = usePatching()
+  const { highlightedLinkId, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
   const tableRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to highlighted link
@@ -273,10 +273,21 @@ export default function ConnectionsTable({
                 const b = portLookup.get(link.portBId)
 
                 return (
-                  <tr key={link.id}>
-                    {/* Endpoint A */}
-                    <td style={s.td}>
-                      <div style={s.endpoint}>
+                <tr
+                  key={link.id}
+                  data-link-id={link.id}
+                  onClick={() => setPinnedLinkId(pinnedLinkId === link.id ? null : link.id)}
+                  onMouseEnter={() => setHighlightedLinkId(link.id)}
+                  onMouseLeave={() => setHighlightedLinkId(null)}
+                  style={{
+                    backgroundColor: highlightedLinkId === link.id ? '#1f6feb33' : 'transparent',
+                    transition: 'background-color 0.2s',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {/* Endpoint A */}
+                  <td style={s.td}>
+                    <div style={s.endpoint}>
                         <span style={s.deviceName}>
                           {a ? (a.device.rack.id !== currentRack.id ? `${a.device.site.name} / ${a.device.rack.name} / ${a.device.name}` : a.device.name) : 'Unknown Device'}
                         </span>
