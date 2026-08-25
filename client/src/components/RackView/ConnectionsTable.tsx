@@ -1,5 +1,6 @@
-import { useState, useMemo, type CSSProperties } from 'react'
+import { useState, useMemo, useRef, useEffect, type CSSProperties } from 'react'
 import type { CableLink, RackDevice, Rack } from '../../api/client.ts'
+import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 type Props = {
   currentRack: Rack
@@ -19,6 +20,18 @@ export default function ConnectionsTable({
   onEditLink,
 }: Props) {
   const [filter, setFilter] = useState('')
+  const { highlightedLinkId, setHighlightedLinkId } = usePatching()
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll to highlighted link
+  useEffect(() => {
+    if (highlightedLinkId && tableRef.current) {
+      const row = tableRef.current.querySelector(`[data-link-id="${highlightedLinkId}"]`)
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }
+  }, [highlightedLinkId])
 
   // Build quick lookup for portId -> { device, port }
   const portLookup = useMemo(() => {
@@ -227,7 +240,7 @@ export default function ConnectionsTable({
       </div>
 
       {/* Table */}
-      <div style={s.tableWrapper}>
+      <div style={s.tableWrapper} ref={tableRef}>
         <table style={s.table}>
           <thead>
             <tr>
