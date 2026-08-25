@@ -151,5 +151,7 @@ export const api = {
     list:   () => request<User[]>('/users'),
     create: (d: any) => request<User>('/users', { method: 'POST', body: JSON.stringify(d) }),
     delete: (id: string) => request<{ ok: boolean }>(`/users/${id}`, { method: 'DELETE' }),
+    changePassword: (id: string, password: string) =>
+      request<{ ok: boolean }>(`/users/${id}/password`, { method: 'PUT', body: JSON.stringify({ password }) }),
   },
 }
