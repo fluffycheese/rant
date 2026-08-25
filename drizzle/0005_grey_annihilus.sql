@@ -16,7 +16,7 @@ CREATE TABLE `__new_devices` (
 	FOREIGN KEY (`template_id`) REFERENCES `device_templates`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
-INSERT INTO `__new_devices`("id", "site_id", "rack_id", "template_id", "name", "category", "position_u", "color", "notes", "created_at", "updated_at") SELECT "id", "site_id", "rack_id", "template_id", "name", "category", "position_u", "color", "notes", "created_at", "updated_at" FROM `devices`;--> statement-breakpoint
+INSERT INTO `__new_devices`("id", "site_id", "rack_id", "template_id", "name", "category", "position_u", "color", "notes", "created_at", "updated_at") SELECT "id", NULL, "rack_id", "template_id", "name", "category", "position_u", "color", "notes", "created_at", "updated_at" FROM `devices`;--> statement-breakpoint
 DROP TABLE `devices`;--> statement-breakpoint
 ALTER TABLE `__new_devices` RENAME TO `devices`;--> statement-breakpoint
 PRAGMA foreign_keys=ON;
