@@ -6,7 +6,7 @@ import { usePatching } from '../contexts/PatchingContext.tsx'
 
 export default function RackViewPage() {
   const { rackId } = useParams<{ rackId: string }>()
-  const { crossSiteTargetRackId, isManualSplitView } = usePatching()
+  const { crossSiteTargetRackId, isManualSplitView, setCrossSiteTargetRackId } = usePatching()
   const navigate = useNavigate()
   
   const [payload, setPayload] = useState<RackViewPayload | null>(null)
@@ -111,6 +111,9 @@ export default function RackViewPage() {
             onReload={handleReloadBoth}
             isSecondaryView={true}
             onMakePrimary={() => navigate(`/racks/${targetPayload.rack.id}`)}
+            onCloseSplitView={() => {
+              setCrossSiteTargetRackId(null)
+            }}
           />
         </div>
       ) : isManualSplitView ? (

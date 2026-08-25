@@ -28,9 +28,15 @@ export default function Sidebar() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.profiles.list().then(ps => {
-      setProfiles(ps)
-      if (ps.length > 0) setActiveProfileId(ps[0].id)
+    api.profiles.list().then(async ps => {
+      if (ps.length > 0) {
+        setProfiles(ps)
+        setActiveProfileId(ps[0].id)
+      } else {
+        const p = await api.profiles.create({ name: 'Default Profile' })
+        setProfiles([p])
+        setActiveProfileId(p.id)
+      }
     }).catch(console.error)
   }, [])
 
@@ -89,17 +95,7 @@ export default function Sidebar() {
         <span>RANT</span>
       </div>
 
-      <div style={{ padding: '10px 16px' }}>
-        <div style={{ fontSize: 11, color: '#8b949e', marginBottom: 4 }}>Profile</div>
-        <select
-          style={s.select}
-          value={activeProfileId ?? ''}
-          onChange={e => setActiveProfileId(e.target.value)}
-        >
-          {profiles.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        <button style={s.addBtn} onClick={handleAddProfile}>+ New profile</button>
-      </div>
+
 
       <div style={s.scroll}>
         {sites.map(site => (

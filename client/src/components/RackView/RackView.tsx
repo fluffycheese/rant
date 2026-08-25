@@ -14,16 +14,17 @@ type Props = {
   onReload: () => void
   isSecondaryView?: boolean
   onMakePrimary?: () => void
+  onCloseSplitView?: () => void
 }
 
-export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary }: Props) {
+export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
   const { selectedPort, setSelectedPort, setIsManualSplitView } = usePatching()
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [showEditRack, setShowEditRack] = useState(false)
-  const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>('both')
+  const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>(isSecondaryView ? 'grid' : 'both')
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
 
@@ -365,39 +366,35 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
               ⬅️ Make Primary
             </button>
           )}
+          {isSecondaryView && onCloseSplitView && (
+            <button
+              type="button"
+              onClick={onCloseSplitView}
+              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#ff7b72', borderColor: '#ff7b72' }}
+            >
+              ❌ Close
+            </button>
+          )}
         </div>
 
         <div style={s.btnGroup}>
-          <div style={s.tabGroup}>
-            <button
-              type="button"
-              style={{ ...s.tabBtn, ...(activeTab === 'both' ? s.activeTabBtn : {}) }}
-              onClick={() => { setActiveTab('both'); setIsManualSplitView(false); }}
-            >
-              Hybrid
-            </button>
-            <button
-              type="button"
-              style={{ ...s.tabBtn, ...(activeTab === 'split' ? s.activeTabBtn : {}) }}
-              onClick={() => { setActiveTab('split'); setIsManualSplitView(true); }}
-            >
-              Split View
-            </button>
-            <button
-              type="button"
-              style={{ ...s.tabBtn, ...(activeTab === 'grid' ? s.activeTabBtn : {}) }}
-              onClick={() => { setActiveTab('grid'); setIsManualSplitView(false); }}
-            >
-              Rack Elevation
-            </button>
-            <button
-              type="button"
-              style={{ ...s.tabBtn, ...(activeTab === 'connections' ? s.activeTabBtn : {}) }}
-              onClick={() => { setActiveTab('connections'); setIsManualSplitView(false); }}
-            >
-              Connections
-            </button>
-          </div>
+          <select
+            value={activeTab}
+            onChange={(e) => {
+              const val = e.target.value as 'both' | 'grid' | 'connections' | 'split'
+              setActiveTab(val)
+              setIsManualSplitView(val === 'split')
+            }}
+            style={{
+              background: '#0d1117', color: '#e2e8f0', border: '1px solid #30363d',
+              borderRadius: 6, padding: '4px 8px', fontSize: 13, outline: 'none', cursor: 'pointer'
+            }}
+          >
+            <option value="both">View: Hybrid</option>
+            <option value="grid">View: Rack Elevation</option>
+            <option value="connections">View: Connections Table</option>
+            <option value="split">View: Split (Compare)</option>
+          </select>
 
           <button
             type="button"
@@ -599,6 +596,14 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
           mode="edit"
           initialRack={rack}
           onConfirm={handleEditRack}
+          onDelete={async () => {
+            try {
+              await api.racks.delete(rack.id)
+              window.location.href = '/'
+            } catch (err: any) {
+              alert(`Failed to delete rack: ${err.message}`)
+            }
+          }}
           onCancel={() => setShowEditRack(false)}
         />
       )}
