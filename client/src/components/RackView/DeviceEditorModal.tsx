@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from 'react'
 import { api, type RackDevice, type Rack } from '../../api/client.ts'
+import ColorPicker from '../ColorPicker.tsx'
 
 const CONNECTORS = ['rj45', 'sfp', 'sfp+', 'qsfp', 'lc', 'sc', 'other']
 
@@ -213,20 +214,7 @@ export default function DeviceEditorModal({
 
             <label style={labelStyle}>
               Colour
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={e => setColor(e.target.value)}
-                  style={{ width: 36, height: 32, border: 'none', borderRadius: 4, cursor: 'pointer', padding: 0 }}
-                />
-                <input
-                  type="text"
-                  value={color}
-                  onChange={e => setColor(e.target.value)}
-                  style={{ ...inputStyle, flex: 1 }}
-                />
-              </div>
+              <ColorPicker value={color} onChange={setColor} />
             </label>
           </div>
 
