@@ -1,5 +1,9 @@
 # RANT (Rack And Networking Tool)
 
+> [!WARNING]
+> **ALPHA BUILD - HEAVY DEVELOPMENT**
+> This repository is currently in an early Alpha state and is undergoing heavy, rapid development. Things *will* break, APIs will change without warning, and the database schema is not guaranteed to be stable. Use in production environments at your own risk!
+
 A lightweight, self-hosted tool for documenting racks, patching cables, and visualising network topology — without the overhead of enterprise DCIM.
 
 > [!TIP]
