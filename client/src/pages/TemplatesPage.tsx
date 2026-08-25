@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import ColorPicker from '../components/ColorPicker.tsx'
 import { api, type DeviceTemplate } from '../api/client.ts'
 
 const CATEGORIES = ['switch', 'patch_panel', 'router', 'server', 'wall_panel', 'other']
@@ -223,11 +225,7 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
           </label>
           <label style={labelStyle}>
             Colour
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input type="color" value={form.color} onChange={e => set('color', e.target.value)}
-                style={{ width: 36, height: 32, border: 'none', borderRadius: 4, cursor: 'pointer', padding: 0 }} />
-              <input type="text" value={form.color} onChange={e => set('color', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-            </div>
+            <ColorPicker value={form.color} onChange={color => set('color', color)} />
           </label>
         </div>
 
