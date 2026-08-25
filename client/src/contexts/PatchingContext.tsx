@@ -9,6 +9,8 @@ type PatchingContextType = {
   setCrossSiteTargetRackId: (id: string | null) => void
   isManualSplitView: boolean
   setIsManualSplitView: (val: boolean) => void
+  highlightedLinkId: string | null
+  setHighlightedLinkId: (id: string | null) => void
 }
 
 const PatchingContext = createContext<PatchingContextType | null>(null)
@@ -17,6 +19,7 @@ export function PatchingProvider({ children }: { children: ReactNode }) {
   const [selectedPort, setSelectedPort] = useState<SelectedPortInfo | null>(null)
   const [crossSiteTargetRackId, setCrossSiteTargetRackId] = useState<string | null>(null)
   const [isManualSplitView, setIsManualSplitView] = useState(false)
+  const [highlightedLinkId, setHighlightedLinkId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!selectedPort && crossSiteTargetRackId && !isManualSplitView) {
@@ -32,7 +35,9 @@ export function PatchingProvider({ children }: { children: ReactNode }) {
       crossSiteTargetRackId,
       setCrossSiteTargetRackId,
       isManualSplitView,
-      setIsManualSplitView
+      setIsManualSplitView,
+      highlightedLinkId,
+      setHighlightedLinkId
     }}>
       {children}
     </PatchingContext.Provider>
