@@ -32,9 +32,20 @@ app.get('/', async (c) => {
   const db = c.get('db')
   const portIds = c.req.queries('portId') ?? []
   if (portIds.length > 0) {
-    const rows = await db.select().from(cableLinks).where(
-      or(inArray(cableLinks.portAId, portIds), inArray(cableLinks.portBId, portIds))
-    )
+    const rows = []
+    const seen = new Set<string>()
+    for (let i = 0; i < portIds.length; i += 40) {
+      const chunk = portIds.slice(i, i + 40)
+      const res = await db.select().from(cableLinks).where(
+        or(inArray(cableLinks.portAId, chunk), inArray(cableLinks.portBId, chunk))
+      )
+      for (const row of res) {
+        if (!seen.has(row.id)) {
+          seen.add(row.id)
+          rows.push(row)
+        }
+      }
+    }
     return c.json(rows)
   }
   const rows = await db.select().from(cableLinks)
