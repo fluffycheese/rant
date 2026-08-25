@@ -33,7 +33,7 @@ If you've ever needed to document a network rack, you've probably hit the same w
 |---|---|---|---|---|---|---|
 | **Rack layout** | ✅ U-position, collision detection | ❌ No rack concept | ✅ Drag-and-drop, real device images | ✅ Full elevation views | ✅ Basic | ✅ Full + power/cooling |
 | **Cable documentation** | ✅ Port-to-port, front/back slots, cross-site | ✅ Excellent — its core strength | ❌ None | ✅ Full cable tracing | ✅ Physical ports | ⚠️ Limited |
-| **Multi-site topology** | ✅ Profile → Site → Rack → Device hierarchy, Mermaid diagrams | ❌ Single-page, no hierarchy | ❌ Single rack at a time | ✅ Full multi-tenancy | ✅ Locations | ✅ Data centres |
+| **Multi-site topology** | ✅ Site → Rack → Device hierarchy, Mermaid diagrams | ❌ Single-page, no hierarchy | ❌ Single rack at a time | ✅ Full multi-tenancy | ✅ Locations | ✅ Data centres |
 | **Shared database** | ✅ SQLite (team access via server) | ❌ Browser localStorage only | ⚠️ Optional backend | ✅ PostgreSQL | ✅ MySQL | ✅ MySQL |
 | **IPAM / VLANs** | ❌ Out of scope | ❌ | ❌ | ✅ Full IPAM | ⚠️ Basic | ❌ |
 | **Automation API** | ✅ REST API | ❌ | ❌ | ✅ REST + GraphQL + webhooks | ⚠️ Basic | ⚠️ Basic |
@@ -57,7 +57,7 @@ If you've ever needed to document a network rack, you've probably hit the same w
 RANT takes direct inspiration from two excellent projects:
 
 - **[ECCM](https://github.com/bijomaru78/eccm)** by bijomaru78 — RANT's card-based port grid and "click to patch" interaction pattern come straight from ECCM's zero-friction design. We owe this project a huge debt for proving that cable documentation doesn't need to be painful.
-- **[NetBox](https://github.com/netbox-community/netbox)** by the NetBox community — RANT's data model (Profiles → Sites → Racks → Devices → Ports) borrows heavily from NetBox's proven hierarchy. We just strip away the parts that most small teams never use (IPAM, circuits, tenancy, power).
+- **[NetBox](https://github.com/netbox-community/netbox)** by the NetBox community — RANT's data model (Sites → Racks → Devices → Ports) borrows heavily from NetBox's proven hierarchy. We just strip away the parts that most small teams never use (IPAM, circuits, tenancy, power).
 
 The guiding principle: **if you can draw your network on a whiteboard in 10 minutes, you should be able to document it in RANT in 10 minutes.**
 

@@ -8,7 +8,7 @@
 We are building RANT — a self-hosted network topology and infrastructure documentation tool. The reference point is ECCM, which is a single HTML file with no backend. RANT requires:
 
 - Server-side data persistence (cross-site Cable Links require a shared, authoritative data store)
-- Multi-rack, multi-site hierarchy (Profile → Site → Rack → Device → Port)
+- Multi-rack, multi-site hierarchy (Site → Rack → Device → Port)
 - Self-hostable with Docker
 - Auth handled externally (Traefik forward auth → Keycloak)
 - Usable by a small trusted team with equal access

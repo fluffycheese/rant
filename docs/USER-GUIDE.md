@@ -10,11 +10,10 @@ There are no massive forms to fill out or complex drawing canvases. Everything i
 
 Here is the absolute fastest way to get your first rack mapped and patched.
 
-### 1. Create a Profile, Site and Rack
-1. RANT uses **Profiles** as the top-level workspace (a default Profile is created for you).
-2. Look at the left-hand sidebar and click **+ site**. Give it a name (e.g., "London HQ").
-3. Expand your new site using the tiny arrow next to it.
-4. Click **+ rack** under your site to create a new physical cabinet (e.g., "Comms Rack 1").
+### 1. Create a Site and Rack
+1. Look at the left-hand sidebar and click **+ site**. Give it a name (e.g., "London HQ").
+2. Expand your new site using the tiny arrow next to it.
+3. Click **+ rack** under your site to create a new physical cabinet (e.g., "Comms Rack 1").
 
 ### 2. Add or Mount a Device
 1. Devices can be mounted in a Rack or placed directly at a Site (e.g., wall ports).

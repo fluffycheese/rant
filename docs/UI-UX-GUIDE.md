@@ -62,7 +62,7 @@ We utilize a responsive multi-view system to allow users to inspect and patch ha
 ## 6. Topology & Visualization
 To provide macro-level overviews without introducing heavy interactive canvas plugins, RANT uses a specific **Diagram Top, Table Bottom** pattern for topology pages.
 
-- **Profile Topology (Macro):** Displays Site-to-Site connections. Individual racks are not drawn to prevent "spiderwebbing".
+- **Global Topology (Macro):** Displays Site-to-Site connections. Individual racks are not drawn to prevent "spiderwebbing".
 - **Site Topology (Micro):** Displays Rack-to-Rack connections within a specific site. Links leaving the site terminate at a generic `Site: [Name]` node.
 - **Interactive SVG Event Delegation:** Mermaid.js diagrams are rendered statically. We do not use Mermaid's native click bindings. Instead, we use CSS (`svg .node { cursor: pointer; }`) and attach a standard React `onClick` to the SVG container. We use `e.target.closest('.node')` to intercept clicks on nodes (like Racks or Sites) to dynamically filter the Data Table below.
 - **Mermaid React Strict-Mode Bug:** When calling `mermaid.render()` inside a `useEffect`, you MUST generate a mathematically unique ID (e.g., `mermaid-graph-` + random string) for every render pass. Re-using the same ID causes internal Mermaid cache crashes during React Strict Mode's double-mount cycle, resulting in vanishing diagrams.
