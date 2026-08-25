@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, useMemo, useEffect, type CSSProperties } from 'react'
 import type { RackViewPayload, DeviceTemplate, Port, RackDevice, CableLink } from '../../api/client.ts'
 import { api } from '../../api/client.ts'
 import RackGrid from './RackGrid.tsx'
