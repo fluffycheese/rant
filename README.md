@@ -4,7 +4,9 @@
 > **ALPHA BUILD - HEAVY DEVELOPMENT**
 > This repository is currently in an early Alpha state and is undergoing heavy, rapid development. Things *will* break, APIs will change without warning, and the database schema is not guaranteed to be stable. Use in production environments at your own risk!
 
-A lightweight, self-hosted tool for documenting racks, patching cables, and visualising network topology — without the overhead of enterprise DCIM.
+**A lightweight source of truth for physical network infrastructure** — racks, devices, ports, and cables.
+
+A self-hosted tool for documenting racks, patching cables, and visualising network topology — without the overhead of enterprise DCIM.
 
 > [!TIP]
 > **Are you an end-user?** 📖 [Read the User Guide](./docs/USER-GUIDE.md) to learn how to wire up your first rack and master cross-site patching.
