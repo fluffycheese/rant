@@ -38,6 +38,21 @@ export default function AdminPage() {
     }
   }
 
+  const handlePasswordChange = async (id: string, name: string) => {
+    const newPassword = prompt(`Enter new password for "${name}":`)
+    if (newPassword === null) return
+    if (newPassword.length < 6) {
+      alert('Password must be at least 6 characters')
+      return
+    }
+    try {
+      await api.users.changePassword(id, newPassword)
+      alert(`Password updated for user "${name}"`)
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete user "${name}"?`)) return
     try {
@@ -56,6 +71,7 @@ export default function AdminPage() {
     btn: { background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', cursor: 'pointer', fontWeight: 600 },
     row: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #30363d' },
     delBtn: { background: 'none', border: 'none', color: '#ff7b72', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
+    pwBtn: { background: 'none', border: 'none', color: '#58a6ff', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
   }
 
   return (
@@ -92,7 +108,10 @@ export default function AdminPage() {
         {users.map(u => (
           <div key={u.id} style={s.row}>
             <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{u.username}</span>
-            <button style={s.delBtn} onClick={() => handleDelete(u.id, u.username)}>Delete</button>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button style={s.pwBtn} onClick={() => handlePasswordChange(u.id, u.username)}>Change Password</button>
+              <button style={s.delBtn} onClick={() => handleDelete(u.id, u.username)}>Delete</button>
+            </div>
           </div>
         ))}
         {users.length === 0 && <div style={{ color: '#8b949e', fontSize: 13 }}>No users found.</div>}
