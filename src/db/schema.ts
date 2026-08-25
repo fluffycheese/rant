@@ -68,7 +68,8 @@ export const deviceTemplates = sqliteTable('device_templates', {
 // ── Devices ──────────────────────────────────────────────────────────────────
 export const devices = sqliteTable('devices', {
   id:         text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
-  rackId:     text('rack_id').notNull().references(() => racks.id, { onDelete: 'cascade' }),
+  siteId:     text('site_id').references(() => sites.id, { onDelete: 'cascade' }),
+  rackId:     text('rack_id').references(() => racks.id, { onDelete: 'cascade' }),
   templateId: text('template_id').references(() => deviceTemplates.id, { onDelete: 'set null' }),
   name:       text('name').notNull(),
   category:   text('category').notNull(),
