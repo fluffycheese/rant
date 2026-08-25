@@ -74,4 +74,30 @@ app.delete('/:id', async (c) => {
   return c.json({ ok: true })
 })
 
+const ChangePasswordSchema = z.object({
+  password: z.string().min(6),
+})
+
+app.put('/:id/password', async (c) => {
+  const db = c.get('db')
+  const id = c.req.param('id')
+  const body = await c.req.json()
+  const input = ChangePasswordSchema.parse(body)
+
+  const passwordHash = await hashPassword(input.password)
+
+  const [row] = await db
+    .update(users)
+    .set({ passwordHash, updatedAt: new Date() })
+    .where(eq(users.id, id))
+    .returning({
+      id: users.id,
+      username: users.username,
+    })
+
+  if (!row) return c.json({ error: 'Not found' }, 404)
+
+  return c.json({ ok: true })
+})
+
 export default app
