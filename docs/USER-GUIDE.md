@@ -10,19 +10,21 @@ There are no massive forms to fill out or complex drawing canvases. Everything i
 
 Here is the absolute fastest way to get your first rack mapped and patched.
 
-### 1. Create a Site and a Rack
-1. Look at the left-hand sidebar and click **+ site**. Give it a name (e.g., "London HQ").
-2. Expand your new site using the tiny arrow next to it.
-3. Click **+ rack** under your site to create a new physical cabinet (e.g., "Comms Rack 1").
+### 1. Create a Profile, Site and Rack
+1. RANT uses **Profiles** as the top-level workspace (a default Profile is created for you).
+2. Look at the left-hand sidebar and click **+ site**. Give it a name (e.g., "London HQ").
+3. Expand your new site using the tiny arrow next to it.
+4. Click **+ rack** under your site to create a new physical cabinet (e.g., "Comms Rack 1").
 
-### 2. Mount a Device
-1. Navigate to your new rack. You will see an empty 19" cabinet.
-2. Click the **+ Mount Device** button.
-3. Select a device from your templates (e.g., a 24-port switch or a patch panel). 
-4. Pick the **U-slot** where it physically sits in the cabinet.
+### 2. Add or Mount a Device
+1. Devices can be mounted in a Rack or placed directly at a Site (e.g., wall ports).
+2. Navigate to your new rack. You will see an empty 19" cabinet.
+3. Click the **+ Mount Device** button (or click an empty U-slot).
+4. Select a device from your templates (e.g., a 24-port switch or a patch panel). 
+5. Pick the **U-slot** where it physically sits in the cabinet.
 
 > [!TIP]
-> If you need to nudge a device up or down, hover over it in the rack diagram and use the small `▲` and `▼` arrows.
+> **Editing Devices:** Click the `✏️` icon on any mounted device to rename it, change its color, modify its U-position, or customize individual port labels and connector types (e.g., changing port 24 to SFP+) without altering the master template!
 
 ### 3. Patch a Cable
 This is where RANT shines. You do not need to navigate to a complex "Cable Management" page.
@@ -96,4 +98,10 @@ Every port in RANT has two physical slots: <code>Front</code> and <code>Back</co
 <br><br>
 This is crucial for patch panels. The <code>Back</code> slot is typically used for the permanent structured cabling hidden in the walls, while the <code>Front</code> slot is used for the temporary patch leads you plug into the switch.
 </details>
+
+
+### 5. View Modes & User Management
+
+- **View Selector**: Switch between Hybrid (Grid+Table), Rack Elevation (Grid only), Connections Table, and Split (Side-by-side) views using the dropdown in the Rack header.
+- **Users (Admin)**: Navigate to `👥 Users (Admin)` in the sidebar footer to create team accounts, change passwords, and manage access (when built-in authentication is active).
 

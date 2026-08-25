@@ -1,29 +1,29 @@
 # RANT — Rack And Networking Tool
 
-> Domain model. No implementation details. Last updated: 2026-08-19.
+> Domain model. No implementation details. Last updated: 2026-08-25.
 
 ## Glossary
 
+**Profile**
+A named workspace containing one or more Sites and all their associated Racks, Devices, Ports, and Cable Links. A Profile is the top-level organisational unit, allowing users to manage completely separate network environments (e.g., different customer networks or tenants).
+
 **Site**
-A physical location (e.g., a building, floor, or data centre) that contains one or more Comms Racks. A Site is the top-level organisational unit.
+A physical location (e.g., a building, floor, or data centre) that belongs to a Profile. A Site contains Comms Racks and can also directly host unmounted/site-level Devices (e.g., wall port panels, access points).
 
 **Comms Rack**
 A physical equipment rack at a Site. Contains Devices. A rack belongs to exactly one Site.
 
 **Device**
-A piece of physical network equipment installed in a Comms Rack or directly at a Site (e.g. wall ports, access points) — e.g., a Switch, Patch Panel, Router, Wall Port panel, or Server. A Device has one or more Ports. When mounted in a Rack, a Device occupies a specific vertical position (`positionU`) and height (`uHeight`) within the Rack, and overlapping devices are strictly prohibited. Devices are instantiated from Device Templates, but once mounted, their properties and ports can be edited completely independently of the master template.
+A piece of physical network equipment installed in a Comms Rack or directly at a Site (e.g. wall ports, access points) — e.g., a Switch, Patch Panel, Router, Wall Port panel, or Server. A Device has one or more Ports. When mounted in a Rack, a Device occupies a specific vertical position (`positionU`) and height (`uHeight`) within the Rack, and overlapping devices are strictly prohibited. Devices are instantiated from Device Templates, but once created, their properties and ports can be edited completely independently of the master template.
 
 **Port**
-A physical connection point on a Device. A Port has two named link slots: `front` and `back`. Most ports (switch ports, wall sockets) use only the `front` slot. Patch panel ports can use both — `front` typically faces the active equipment (e.g., a switch) or patch leads, `back` faces the passive side (e.g., a wall socket) or structural cabling. A Port may carry at most one Cable Link per slot.
-
-**Port Group**
-A physical grouping of Ports on a Device's front panel (e.g., "Access", "Uplinks"). Each group defines its own layout (e.g., single or double row) to accurately reflect the hardware. Simple devices implicitly have exactly one Port Group.
+A physical connection point on a Device. It has a label (e.g., "1", "Gi0/1", "MGMT") and a connector type (e.g., "rj45", "lc_fiber", "sfp+"). Ports are either standalone or visually grouped by `groupName` and `groupLayout` in the UI.
 
 **Cable Link**
-A physical connection between a specific slot on Port A and a specific slot on Port B. A Cable Link may cross Device, Rack, or Site boundaries (e.g., a fibre trunk between Rack A at Site 1 and Rack B at Site 2). Inter-site Cable Links are a first-class concept, not an afterthought. The DB enforces at most one Cable Link per (Port, slot) pair.
+A logical representation of a patch cable connecting two Ports. A Cable Link has a type (e.g., "cat6", "fiber"), a colour, an optional label, and optional notes. Cable links can be internal to a Rack, cross-rack, or cross-site.
 
-**Data Store**
-A server-side persistence layer that holds all Sites, Racks, Devices, Ports, and Cable Links for a Profile. Backed by SQLite (via Drizzle ORM + better-sqlite3) in the initial deployment. The repository interface is DB-agnostic so Postgres can be substituted later without changing application logic.
+## Data Store
+A server-side persistence layer that holds all Profiles, Sites, Racks, Devices, Ports, Cable Links, Users, and Sessions. Backed by SQLite across all deployment targets (`better-sqlite3` on Docker/Nix, Cloudflare D1 on Pages Functions) via Drizzle ORM.
 
 **User**
 A member of a small trusted team. All Users have identical access to all Profiles, Sites, and Racks within the instance. The application enforces no per-user permissions.

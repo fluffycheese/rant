@@ -40,18 +40,20 @@ RANT utilizes a deep, high-contrast dark mode (heavily inspired by GitHub Dark D
 - **Back Connections:** Purple family (`#a371f7` to `#d2a8ff`)
 
 ## 3. Layout & Navigation Patterns
-We utilize a dual-pane system to allow users to compare and patch hardware without losing their contextual anchor.
+We utilize a responsive multi-view system to allow users to inspect and patch hardware across different workflows:
 
-- **Rack Elevation:** A single-pane view focusing entirely on the physical layout of one rack.
-- **Hybrid View:** The default view. Shows the physical Rack on the left, and a searchable Connections Table on the right. Below 1200px width, the table stacks smoothly under the rack using standard `@media` queries.
+- **Hybrid View:** The default view. Shows the physical Rack on the left and a searchable Connections Table on the right. Below 1200px width, the table stacks smoothly under the rack using standard `@media` queries.
+- **Rack Elevation:** A single-pane view focusing entirely on the physical layout of the rack cabinet and installed devices.
+- **Connections Table:** A dedicated full-width view of all internal and cross-boundary cable links for the current rack.
 - **Split View (Side-by-Side):** Used for cross-rack or cross-site patching and comparison.
-  - **Interaction Rule:** When the Split View tab is active, clicking a rack in the sidebar intercepts the browser navigation. Instead of leaving the page, it loads the clicked rack into the right-hand pane for comparison.
-  - **The "Make Primary" Pivot:** To prevent complex routing state, the left pane is ALWAYS tied to the current browser URL (`/racks/:id`). To swap your focus, users click a "⬅️ Make Primary" button on the right-hand rack, which navigates the browser to that rack, moving it to the left pane.
+  - **Interaction Rule:** When the Split View tab is active (or during active cross-rack patching), clicking a rack in the sidebar intercepts browser navigation to load that rack into the right-hand pane.
+  - **The "Make Primary" Pivot:** The left pane is tied to the current URL (`/racks/:id`). Clicking "⬅️ Make Primary" pivots the right-hand rack to the primary left position.
 
 ## 4. Interaction Paradigms
-- **Empty Ports (Action First):** Clicking an empty port immediately drops the user into Link Mode. It assumes you want to patch a cable. 
-- **Connected Ports (Details First):** Clicking a partially or fully connected port opens the `PortDetailsModal`. This allows users to view what is plugged in, disconnect cables, or edit metadata.
-- **Editing Cables:** Users can edit cable metadata (Color, Label, Cable Type), but they **cannot** edit a cable's Port endpoints. If a cable is plugged into the wrong port, physical logic applies: delete the connection and patch a new one.
+- **Empty Ports (Action First):** Clicking an empty port immediately drops the user into Link Mode to start patching.
+- **Connected Ports (Inspection & Pinning):** Clicking a connected port highlights and pins its cable link across both the rack visualizer and the Connections Table.
+- **Editing Devices & Ports:** Users can edit mounted device metadata (Name, Color, U-slot) and modify individual port labels and connector types (e.g. converting a port to SFP) via the `DeviceEditorModal` (`✏️` icon).
+- **Editing Cables:** Cable metadata (Color, Label, Cable Type, Slot) can be updated via the Connections Table or Port Details modal, but endpoint ports cannot be swapped—to change ports, disconnect and patch a new cable.
 
 ## 5. Terminology strictly enforced in the UI
 - **Link Slots:** Ports use `Front` and `Back` terminology (never primary/secondary).

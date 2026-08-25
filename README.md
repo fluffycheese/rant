@@ -31,7 +31,7 @@ If you've ever needed to document a network rack, you've probably hit the same w
 |---|---|---|---|---|---|---|
 | **Rack layout** | ✅ U-position, collision detection | ❌ No rack concept | ✅ Drag-and-drop, real device images | ✅ Full elevation views | ✅ Basic | ✅ Full + power/cooling |
 | **Cable documentation** | ✅ Port-to-port, front/back slots, cross-site | ✅ Excellent — its core strength | ❌ None | ✅ Full cable tracing | ✅ Physical ports | ⚠️ Limited |
-| **Multi-site topology** | ✅ Site → Rack → Device hierarchy, Mermaid diagrams | ❌ Single-page, no hierarchy | ❌ Single rack at a time | ✅ Full multi-tenancy | ✅ Locations | ✅ Data centres |
+| **Multi-site topology** | ✅ Profile → Site → Rack → Device hierarchy, Mermaid diagrams | ❌ Single-page, no hierarchy | ❌ Single rack at a time | ✅ Full multi-tenancy | ✅ Locations | ✅ Data centres |
 | **Shared database** | ✅ SQLite (team access via server) | ❌ Browser localStorage only | ⚠️ Optional backend | ✅ PostgreSQL | ✅ MySQL | ✅ MySQL |
 | **IPAM / VLANs** | ❌ Out of scope | ❌ | ❌ | ✅ Full IPAM | ⚠️ Basic | ❌ |
 | **Automation API** | ✅ REST API | ❌ | ❌ | ✅ REST + GraphQL + webhooks | ⚠️ Basic | ⚠️ Basic |
@@ -55,7 +55,7 @@ If you've ever needed to document a network rack, you've probably hit the same w
 RANT takes direct inspiration from two excellent projects:
 
 - **[ECCM](https://github.com/bijomaru78/eccm)** by bijomaru78 — RANT's card-based port grid and "click to patch" interaction pattern come straight from ECCM's zero-friction design. We owe this project a huge debt for proving that cable documentation doesn't need to be painful.
-- **[NetBox](https://github.com/netbox-community/netbox)** by the NetBox community — RANT's data model (Sites → Racks → Devices → Ports) borrows heavily from NetBox's proven hierarchy. We just strip away the parts that most small teams never use (IPAM, circuits, tenancy, power).
+- **[NetBox](https://github.com/netbox-community/netbox)** by the NetBox community — RANT's data model (Profiles → Sites → Racks → Devices → Ports) borrows heavily from NetBox's proven hierarchy. We just strip away the parts that most small teams never use (IPAM, circuits, tenancy, power).
 
 The guiding principle: **if you can draw your network on a whiteboard in 10 minutes, you should be able to document it in RANT in 10 minutes.**
 
@@ -281,6 +281,15 @@ On NixOS, use `nix-shell -p python3 gnumake gcc` or add these to your dev shell.
 ### First-Run Setup
 
 On first launch with an empty database, navigate to the app. You'll be prompted to create your first admin user. This replaces the old `create-admin.ts` script.
+
+### User Management & Password Changes
+
+When running with built-in authentication (default), navigate to **Users (Admin)** (`/admin`) from the sidebar footer to:
+- Create additional team member accounts
+- Update user passwords
+- Remove users (with safety protection preventing deletion of the last user)
+
+*Note: User management is automatically disabled when `PROXY_AUTH=true` is enabled.*
 
 ### Architecture
 
