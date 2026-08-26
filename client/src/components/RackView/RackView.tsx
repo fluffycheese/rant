@@ -3,6 +3,7 @@ import type { RackViewPayload, DeviceTemplate, Port, RackDevice, CableLink } fro
 import { api } from '../../api/client.ts'
 import RackGrid from './RackGrid.tsx'
 import ConnectionsTable from './ConnectionsTable.tsx'
+import EndpointsTable from './EndpointsTable.tsx'
 import type { SelectedPortInfo } from './DeviceCard.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 import DeviceEditorModal from './DeviceEditorModal.tsx'
@@ -499,7 +500,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 }}
               />
             </div>
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <ConnectionsTable
                 currentRack={rack}
                 links={internalLinks}
@@ -518,6 +519,21 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                   })
                   setShowLinkDialog(true)
                 }}
+                onEditLink={(link) => {
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
+                }}
+              />
+              <EndpointsTable
+                currentRack={rack}
+                links={internalLinks}
+                devices={devices}
+                onEditDevice={setEditingDeviceId}
+                onDeleteDevice={handleDeleteDevice}
+                onSelectPort={handleSelectPort}
                 onEditLink={(link) => {
                   const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
                   const port = device?.ports.find(p => p.id === link.portAId)
@@ -545,32 +561,49 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
           />
         ) : (
           <div style={{ maxWidth: 900, margin: '0 auto', width: '100%' }}>
-            <ConnectionsTable
-              currentRack={rack}
-              links={internalLinks}
-              devices={devices}
-              onDeleteLink={handleDeleteLink}
-              onAddLink={() => {
-                setEditingLinkId(null)
-                setLinkForm({
-                  portAId: devices[0]?.ports[0]?.id ?? '',
-                  portASlot: 'front',
-                  portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
-                  portBSlot: 'front',
-                  cableType: 'cat6',
-                  color: '#4a9eff',
-                  label: '',
-                })
-                setShowLinkDialog(true)
-              }}
-              onEditLink={(link) => {
-                const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                const port = device?.ports.find(p => p.id === link.portAId)
-                if (device && port) {
-                  setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                }
-              }}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <ConnectionsTable
+                currentRack={rack}
+                links={internalLinks}
+                devices={devices}
+                onDeleteLink={handleDeleteLink}
+                onAddLink={() => {
+                  setEditingLinkId(null)
+                  setLinkForm({
+                    portAId: devices[0]?.ports[0]?.id ?? '',
+                    portASlot: 'front',
+                    portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
+                    portBSlot: 'front',
+                    cableType: 'cat6',
+                    color: '#4a9eff',
+                    label: '',
+                  })
+                  setShowLinkDialog(true)
+                }}
+                onEditLink={(link) => {
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
+                }}
+              />
+              <EndpointsTable
+                currentRack={rack}
+                links={internalLinks}
+                devices={devices}
+                onEditDevice={setEditingDeviceId}
+                onDeleteDevice={handleDeleteDevice}
+                onSelectPort={handleSelectPort}
+                onEditLink={(link) => {
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

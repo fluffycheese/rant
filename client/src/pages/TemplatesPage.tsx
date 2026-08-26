@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import ColorPicker from '../components/ColorPicker.tsx'
 import { api, type DeviceTemplate } from '../api/client.ts'
 
-const CATEGORIES = ['switch', 'patch_panel', 'router', 'server', 'wall_panel', 'other']
+const CATEGORIES = ['switch', 'patch_panel', 'router', 'server', 'wall_panel', 'wifi_ap', 'ip_camera', 'other']
 const CONNECTORS = ['rj45', 'sfp', 'sfp+', 'qsfp', 'lc', 'sc', 'other']
 
 const CAT_ICONS: Record<string, string> = {
-  switch: '🔀', patch_panel: '🔌', router: '📡', server: '🖥', wall_panel: '🧱', other: '📦'
+  switch: '🔀', patch_panel: '🔌', router: '📡', server: '🖥', wall_panel: '🧱', wifi_ap: '📶', ip_camera: '📹', other: '📦'
 }
 
 type PortDef = { label: string; connectorType: string; position: number; groupName?: string | null; groupLayout?: 'single_row' | 'double_row' | null }
@@ -207,7 +207,14 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
           </label>
           <label style={labelStyle}>
             Category
-            <select style={inputStyle} value={form.category} onChange={e => set('category', e.target.value)}>
+            <select style={inputStyle} value={form.category} onChange={e => {
+              const newCat = e.target.value;
+              let newLayout = form.portLayout;
+              if (['wifi_ap', 'ip_camera', 'wall_panel'].includes(newCat) && newLayout.length > 1) {
+                newLayout = newLayout.slice(0, 1);
+              }
+              onChange({ ...form, category: newCat, portLayout: newLayout });
+            }}>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>

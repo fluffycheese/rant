@@ -37,8 +37,11 @@ export default function RackGrid({
     const map = new Map<number, { device: RackDevice; isStart: boolean }>()
     const unplaced: RackDevice[] = []
 
+    const ENDPOINT_CATEGORIES = ['wall_panel', 'wifi_ap', 'ip_camera']
+
     for (const dev of devices) {
       if (dev.rackId !== rack.id) continue // Skip remote devices in the grid
+      if (ENDPOINT_CATEGORIES.includes(dev.category)) continue // Skip endpoints in the main grid
 
       if (dev.positionU != null && dev.positionU > 0) {
         const uH = dev.template?.uHeight || 1
@@ -312,7 +315,7 @@ export default function RackGrid({
               </>
             ) : (
               /* Sequential Vertical Stack */
-              devices.filter(d => d.rackId === rack.id).map((device, idx) => (
+              devices.filter(d => d.rackId === rack.id && !['wall_panel', 'wifi_ap', 'ip_camera'].includes(d.category)).map((device, idx) => (
                 <div key={device.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#6e7681' }}>
                     <span>Slot {idx + 1}</span>

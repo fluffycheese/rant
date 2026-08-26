@@ -4,7 +4,7 @@
 > **ALPHA BUILD - HEAVY DEVELOPMENT**
 > This repository is currently in an early Alpha state and is undergoing heavy, rapid development. Things *will* break, APIs will change without warning, and the database schema is not guaranteed to be stable. Use in production environments at your own risk!
 
-**A lightweight source of truth for physical network infrastructure** — racks, devices, ports, and cables.
+#### **A lightweight source of truth for physical network infrastructure** — racks, devices, ports, and cables.
 
 A self-hosted tool for documenting racks, patching cables, and visualising network topology — without the overhead of enterprise DCIM.
 

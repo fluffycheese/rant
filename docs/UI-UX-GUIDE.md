@@ -52,8 +52,10 @@ We utilize a responsive multi-view system to allow users to inspect and patch ha
 ## 4. Interaction Paradigms
 - **Empty Ports (Action First):** Clicking an empty port immediately drops the user into Link Mode to start patching.
 - **Connected Ports (Inspection & Pinning):** Clicking a connected port highlights and pins its cable link across both the rack visualizer and the Connections Table.
-- **Editing Devices & Ports:** Users can edit mounted device metadata (Name, Color, U-slot) and modify individual port labels and connector types (e.g. converting a port to SFP) via the `DeviceEditorModal` (`✏️` icon).
+- **Patching / Linking (🔗):** Managing connections directly from tables is done via the `🔗` button. Clicking it on an unconnected endpoint port drops you into patching mode. Clicking it on an existing link opens the Link Editor to adjust cable type or color.
+- **Editing Devices & Ports (✎):** Users can edit mounted device metadata (Name, Color, U-slot) and modify individual port labels and connector types (e.g. converting a port to SFP) via the `DeviceEditorModal` (`✎` icon).
 - **Editing Cables:** Cable metadata (Color, Label, Cable Type, Slot) can be updated via the Connections Table or Port Details modal, but endpoint ports cannot be swapped—to change ports, disconnect and patch a new cable.
+- **Endpoints:** Endpoint devices (`wifi_ap`, `ip_camera`, `wall_panel`) are logically part of a Rack but physically float outside it. They are always rendered in an `EndpointsTable` below the main connections table. They utilize the exact same `🔗` button for managing their uplink connections.
 
 ## 5. Terminology strictly enforced in the UI
 - **Link Slots:** Ports use `Front` and `Back` terminology (never primary/secondary).

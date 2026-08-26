@@ -9,7 +9,7 @@
     "build:client": "npm --prefix client run build",
     "build": "npm run build:server && npm run build:client",
     "build:cf": "npm run build:client && npx esbuild src/entry.cloudflare.ts --bundle --outfile=dist/public/_worker.js --format=esm --target=es2022 --platform=browser && cp public/_routes.json dist/public/_routes.json",
-    "deploy:cf": "npm run build:cf && wrangler d1 migrations apply rant-db --local && wrangler pages deploy dist/public",
+    "deploy:cf": "npm run build:cf && wrangler d1 migrations apply rant-db --remote && wrangler pages deploy dist/public",
     "start": "node dist/entry.node.js",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
