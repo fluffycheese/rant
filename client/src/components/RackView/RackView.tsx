@@ -533,6 +533,14 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 devices={devices}
                 onEditDevice={setEditingDeviceId}
                 onDeleteDevice={handleDeleteDevice}
+                onSelectPort={handleSelectPort}
+                onEditLink={(link) => {
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
+                }}
               />
             </div>
           </div>
@@ -586,6 +594,14 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 devices={devices}
                 onEditDevice={setEditingDeviceId}
                 onDeleteDevice={handleDeleteDevice}
+                onSelectPort={handleSelectPort}
+                onEditLink={(link) => {
+                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                  const port = device?.ports.find(p => p.id === link.portAId)
+                  if (device && port) {
+                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                  }
+                }}
               />
             </div>
           </div>
