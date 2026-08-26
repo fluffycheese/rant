@@ -207,7 +207,14 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
           </label>
           <label style={labelStyle}>
             Category
-            <select style={inputStyle} value={form.category} onChange={e => set('category', e.target.value)}>
+            <select style={inputStyle} value={form.category} onChange={e => {
+              const newCat = e.target.value;
+              let newLayout = form.portLayout;
+              if (['wifi_ap', 'ip_camera', 'wall_panel'].includes(newCat) && newLayout.length > 1) {
+                newLayout = newLayout.slice(0, 1);
+              }
+              onChange({ ...form, category: newCat, portLayout: newLayout });
+            }}>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
