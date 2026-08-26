@@ -37,8 +37,11 @@ export default function RackGrid({
     const map = new Map<number, { device: RackDevice; isStart: boolean }>()
     const unplaced: RackDevice[] = []
 
+    const ENDPOINT_CATEGORIES = ['wall_panel', 'wifi_ap', 'ip_camera']
+
     for (const dev of devices) {
       if (dev.rackId !== rack.id) continue // Skip remote devices in the grid
+      if (ENDPOINT_CATEGORIES.includes(dev.category)) continue // Skip endpoints in the main grid
 
       if (dev.positionU != null && dev.positionU > 0) {
         const uH = dev.template?.uHeight || 1

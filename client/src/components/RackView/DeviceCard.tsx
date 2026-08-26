@@ -1,4 +1,5 @@
 import { useState, useEffect, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import type { RackDevice, Port, CableLink } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
@@ -8,6 +9,8 @@ const CATEGORY_ICONS: Record<string, string> = {
   router:      '📡',
   server:      '🖥',
   wall_panel:  '🧱',
+  wifi_ap:     '📶',
+  ip_camera:   '📹',
   other:       '📦',
 }
 
@@ -41,6 +44,7 @@ export default function DeviceCard({
   compact = false,
 }: Props) {
   const [hoveredPortId, setHoveredPortId] = useState<string | null>(null)
+  const [hoverBox, setHoverBox] = useState<{ portId: string, rect: DOMRect } | null>(null)
   const { highlightedLinkId } = usePatching()
   const [localU, setLocalU] = useState<string>(device.positionU?.toString() || '')
 
@@ -142,7 +146,7 @@ export default function DeviceCard({
     const isBackSelected = selectedPort?.port.id === port.id && selectedPort.slot === 'back'
     const isFrontHighlighted = highlightedLinkId && front?.id === highlightedLinkId
     const isBackHighlighted = highlightedLinkId && back?.id === highlightedLinkId
-    const isHovered = hoveredPortId === port.id
+    const isHovered = hoverBox?.portId === port.id
 
     const frontColor = front?.color || '#238636'
     const backColor = back?.color || '#a371f7'
@@ -150,8 +154,8 @@ export default function DeviceCard({
     return (
       <div
         key={port.id}
-        onMouseEnter={() => setHoveredPortId(port.id)}
-        onMouseLeave={() => setHoveredPortId(null)}
+        onMouseEnter={(e) => setHoverBox({ portId: port.id, rect: e.currentTarget.getBoundingClientRect() })}
+        onMouseLeave={() => setHoverBox(null)}
         style={{
           position: 'relative',
           display: 'flex',
@@ -165,7 +169,7 @@ export default function DeviceCard({
           title={`Port ${port.label} (${port.connectorType})\nFront: ${front ? getTargetDescription(front, port.id) : 'Unconnected'}\nBack: ${back ? getTargetDescription(back, port.id) : 'Unconnected'}`}
           style={{
             minWidth: 36,
-            height: compact ? 26 : 30,
+            height: compact ? 26 : 32,
             padding: '2px 4px',
             background: isFrontSelected
               ? '#1f6feb33'
@@ -192,46 +196,25 @@ export default function DeviceCard({
             zIndex: (isFrontHighlighted || isFrontSelected) ? 2 : 1,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontSize: 8 }}>
+          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: back ? backColor : '#30363d' }} />
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', fontSize: 8, marginTop: 1 }}>
             <span style={{ color: '#6e7681' }}>{port.connectorType.slice(0, 3)}</span>
-            {back && (
-              <span
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: '50%',
-                  background: isBackHighlighted ? '#fff' : backColor,
-                  display: 'inline-block',
-                }}
-                title={`Back: ${getTargetDescription(back, port.id)}`}
-              />
-            )}
           </div>
 
-          <div style={{ fontSize: 10, fontWeight: 700 }}>{port.label}</div>
+          <div style={{ fontSize: 10, fontWeight: 700, marginTop: -2, marginBottom: -1 }}>{port.label}</div>
 
-          <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <span
-              style={{
-                width: 6,
-                height: 3,
-                borderRadius: 1,
-                background: front ? frontColor : '#30363d',
-                display: 'inline-block',
-              }}
-            />
-          </div>
+          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: front ? frontColor : '#30363d' }} />
         </button>
 
-        {/* Hover detail tooltip */}
-        {isHovered && (
+        {/* Hover detail tooltip using Portal */}
+        {isHovered && hoverBox && createPortal(
           <div
             style={{
-              position: 'absolute',
-              bottom: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              marginBottom: 6,
+              position: 'fixed',
+              left: hoverBox.rect.left + hoverBox.rect.width / 2,
+              top: hoverBox.rect.top - 6,
+              transform: 'translate(-50%, -100%)',
               background: '#1c2128',
               border: '1px solid #444c56',
               borderRadius: 6,
@@ -239,7 +222,7 @@ export default function DeviceCard({
               fontSize: 11,
               color: '#e2e8f0',
               whiteSpace: 'nowrap',
-              zIndex: 1000,
+              zIndex: 9999,
               pointerEvents: 'none',
               boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
               display: 'flex',
@@ -256,7 +239,8 @@ export default function DeviceCard({
             <div style={{ fontSize: 10, color: back ? '#d2a8ff' : '#8b949e' }}>
               ● 2°: {back ? getTargetDescription(back, port.id) : 'Empty'}
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     )
