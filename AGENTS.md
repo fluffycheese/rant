@@ -34,6 +34,7 @@ RANT is a self-hosted tool for mapping network racks and connections. It is heav
   - *Warning (Frontend):* In `RackGrid.tsx`, handle overlapping or out-of-bounds devices gracefully by rendering them in an `unplacedDevices` bucket. Do NOT attempt to force rigid pixel heights on `DeviceCard` wrappers, as the layout relies on flexible content scaling.
 - **Blueprint vs Instance:** `Device Templates` act as blueprints. When instantiated, their ports are deeply copied into the `ports` table. Updating a template does *not* retroactively alter existing devices.
 - **Port Groups UI:** To keep the DB flat, "Port Groups" don't have their own table. Instead, `PortDef` and `Port` records store `groupName` and `groupLayout` strings. The `DeviceCard` component groups them into contiguous UI blocks on-the-fly.
+- **Endpoints vs Rack Devices:** Devices with endpoint categories (`wifi_ap`, `ip_camera`, `wall_panel`) are logically assigned to a Rack but are rendered separately in an `<EndpointsTable>`. They bypass standard U-slot mounting logic and are deliberately filtered out of the visual `RackGrid` elevation.
 - **Focus Loss Bugs:** When building inline-edit inputs (e.g., changing a device's `U:` position on a card), always use a local React state buffer and only trigger the API update `onBlur` or `onKeyDown('Enter')`. Otherwise, the parent component re-fetches and unmounts your input mid-keystroke.
 
 ## 📚 Domain Knowledge
