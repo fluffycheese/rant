@@ -46,6 +46,7 @@ Before making logical changes or adding features, you **MUST** read `CONTEXT.md`
 - Frontend dev server: `npm run dev:client` (Port 5173, proxies `/api` to 3001)
 - First-run setup: navigate to the app; if no users exist, `LoginPage.tsx` automatically morphs into a setup screen to create the first admin.
 - Database migrations: Run `npm run db:generate` after changing schema. Migrations automatically apply when the backend server starts.
+- **QA & Cross-Platform Review:** Before concluding any complex feature or schema change, you MUST read `AGENTS_QA.md` or spawn a QA subagent to verify the changes don't break Cloudflare D1 limits or cause data loss.
 - **Subagents:** To conserve tokens and context during large features, aggressively define and invoke cheap/flash subagents to handle isolated tasks (e.g. "update the CSS grid for the device card" or "write the database migration"). Review their work before concluding your turn.
 
 ## 🎨 UI & Design Paradigms
