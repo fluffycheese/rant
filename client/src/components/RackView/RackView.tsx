@@ -3,6 +3,7 @@ import type { RackViewPayload, DeviceTemplate, Port, RackDevice, CableLink } fro
 import { api } from '../../api/client.ts'
 import RackGrid from './RackGrid.tsx'
 import ConnectionsTable from './ConnectionsTable.tsx'
+import EndpointsTable from './EndpointsTable.tsx'
 import type { SelectedPortInfo } from './DeviceCard.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 import DeviceEditorModal from './DeviceEditorModal.tsx'

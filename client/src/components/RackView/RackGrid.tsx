@@ -315,7 +315,7 @@ export default function RackGrid({
               </>
             ) : (
               /* Sequential Vertical Stack */
-              devices.filter(d => d.rackId === rack.id).map((device, idx) => (
+              devices.filter(d => d.rackId === rack.id && !['wall_panel', 'wifi_ap', 'ip_camera'].includes(d.category)).map((device, idx) => (
                 <div key={device.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#6e7681' }}>
                     <span>Slot {idx + 1}</span>
