@@ -2,12 +2,16 @@ import { useState, useMemo, useRef, useEffect, type CSSProperties } from 'react'
 import type { RackDevice, CableLink, Rack } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
+import type { SelectedPortInfo } from './DeviceCard.tsx'
+
 type Props = {
   currentRack: Rack
   links: CableLink[]
   devices: RackDevice[]
   onEditDevice?: (deviceId: string) => void
   onDeleteDevice?: (deviceId: string) => void
+  onSelectPort?: (info: SelectedPortInfo) => void
+  onEditLink?: (link: CableLink) => void
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -25,6 +29,8 @@ export default function EndpointsTable({
   devices,
   onEditDevice,
   onDeleteDevice,
+  onSelectPort,
+  onEditLink,
 }: Props) {
   const [filter, setFilter] = useState('')
   const { highlightedLinkId, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
@@ -43,6 +49,7 @@ export default function EndpointsTable({
       portLabel: string
       portType: string
       portId: string
+      port: any // passing raw port for onSelectPort
       link: CableLink | undefined
     }[] = []
 
@@ -57,6 +64,7 @@ export default function EndpointsTable({
           portLabel: p.label,
           portType: p.connectorType,
           portId: p.id,
+          port: p,
           link,
         })
       }
@@ -262,7 +270,7 @@ export default function EndpointsTable({
               <th style={s.th}>Endpoint</th>
               <th style={s.th}>Connected To</th>
               <th style={s.th}>Cable</th>
-              <th style={{ ...s.th, width: 60, textAlign: 'center' }}>Actions</th>
+              <th style={{ ...s.th, width: 80, textAlign: 'center' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -351,6 +359,21 @@ export default function EndpointsTable({
 
                     {/* Actions */}
                     <td style={{ ...s.td, textAlign: 'center' }}>
+                      <button
+                        type="button"
+                        style={s.deleteBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (row.link && onEditLink) {
+                            onEditLink(row.link);
+                          } else if (!row.link && onSelectPort) {
+                            onSelectPort({ port: row.port, slot: 'front', device: row.device });
+                          }
+                        }}
+                        title={row.link ? "Edit connection" : "Patch connection"}
+                      >
+                        🔗
+                      </button>
                       {/* Only render actions on the first port of the device to avoid clutter */}
                       {row.device.ports[0]?.id === row.portId && (
                         <>
