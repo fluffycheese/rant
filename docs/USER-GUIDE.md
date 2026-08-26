@@ -44,6 +44,12 @@ Creating complex device layouts (like a 48-port switch with stacked rows and ded
 > [!TIP]
 > **Where to find templates?** We maintain a community library of templates right inside the RANT repository! Check the `templates/` folder on GitHub (e.g., `templates/dell`, `templates/cisco`) to find the exact hardware you own, then copy and paste the JSON into your app. If you've created a custom template for a device we don't have, use the **Export (📋)** button to grab the JSON and submit a Pull Request to share it!
 
+### 5. Working with Endpoints (WiFi APs, Cameras, etc.)
+Not every device sits inside a standard 19" rack slot. Devices categorized as `wifi_ap`, `ip_camera`, or `wall_panel` are treated as **Endpoints**.
+1. When you mount an endpoint device to a rack, it will *not* take up a physical U-slot in the visual cabinet.
+2. Instead, it appears in a dedicated **Endpoints Table** just below the Connections table.
+3. You can wire up endpoints quickly right from the table using the `🔗` button next to their port!
+
 ---
 
 ## ⚡ Power-User Workflows
