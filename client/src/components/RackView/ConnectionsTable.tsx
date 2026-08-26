@@ -336,7 +336,7 @@ export default function ConnectionsTable({
                           onClick={() => onEditLink(link)}
                           title="Edit connection"
                         >
-                          ✎
+                          🔗
                         </button>
                       )}
                       <button
