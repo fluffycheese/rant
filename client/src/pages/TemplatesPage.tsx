@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import ColorPicker from '../components/ColorPicker.tsx'
 import { api, type DeviceTemplate } from '../api/client.ts'
 
-const CATEGORIES = ['switch', 'patch_panel', 'router', 'server', 'wall_panel', 'wifi_ap', 'ip_camera', 'other']
+const CATEGORIES = ['switch', 'patch_panel', 'router', 'firewall', 'server', 'wall_panel', 'wifi_ap', 'ip_camera', 'other']
 const CONNECTORS = ['rj45', 'sfp', 'sfp+', 'qsfp', 'lc', 'sc', 'other']
 
 const CAT_ICONS: Record<string, string> = {
-  switch: '🔀', patch_panel: '🔌', router: '📡', server: '🖥', wall_panel: '🧱', wifi_ap: '📶', ip_camera: '📹', other: '📦'
+  switch: '🔀', patch_panel: '🔌', router: '📡', firewall: '🛡️', server: '🖥', wall_panel: '🧱', wifi_ap: '📶', ip_camera: '📹', other: '📦'
 }
 
 type PortDef = { label: string; connectorType: string; position: number; groupName?: string | null; groupLayout?: 'single_row' | 'double_row' | null }
