@@ -1,0 +1,67 @@
+{
+  "name": "Generic 1U Firewall",
+  "category": "firewall",
+  "manufacturer": "Generic",
+  "model": "1U Firewall",
+  "uHeight": 1,
+  "color": "#e34c26",
+  "portCount": 8,
+  "portLayout": [
+    {
+      "label": "MGMT",
+      "connectorType": "rj45",
+      "position": 0,
+      "groupName": "Management",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "HA1",
+      "connectorType": "rj45",
+      "position": 1,
+      "groupName": "HA",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "HA2",
+      "connectorType": "rj45",
+      "position": 2,
+      "groupName": "HA",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "WAN1",
+      "connectorType": "rj45",
+      "position": 3,
+      "groupName": "Interfaces",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "WAN2",
+      "connectorType": "rj45",
+      "position": 4,
+      "groupName": "Interfaces",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "LAN1",
+      "connectorType": "rj45",
+      "position": 5,
+      "groupName": "Interfaces",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "LAN2",
+      "connectorType": "rj45",
+      "position": 6,
+      "groupName": "Interfaces",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "LAN3",
+      "connectorType": "rj45",
+      "position": 7,
+      "groupName": "Interfaces",
+      "groupLayout": "single_row"
+    }
+  ]
+}
