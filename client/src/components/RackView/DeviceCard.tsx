@@ -7,6 +7,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   switch:      '🔀',
   patch_panel: '🔌',
   router:      '📡',
+  firewall:    '🛡️',
   server:      '🖥',
   wall_panel:  '🧱',
   wifi_ap:     '📶',

@@ -51,7 +51,7 @@ export const racks = sqliteTable('racks', {
 })
 
 // ── Device Templates ─────────────────────────────────────────────────────────
-//  category: text('category').notNull(), // 'switch' | 'patch_panel' | 'router' | 'server' | 'wall_panel' | 'wifi_ap' | 'ip_camera' | 'other'
+//  category: text('category').notNull(), // 'switch' | 'patch_panel' | 'router' | 'firewall' | 'server' | 'wall_panel' | 'wifi_ap' | 'ip_camera' | 'other'
 export const deviceTemplates = sqliteTable('device_templates', {
   id:           text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   name:         text('name').notNull(),
