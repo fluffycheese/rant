@@ -11,7 +11,7 @@ A physical location (e.g., a building, floor, or data centre). A Site is the top
 A physical equipment rack at a Site. Contains Devices. A rack belongs to exactly one Site.
 
 **Device**
-A piece of physical network equipment installed in a Comms Rack or directly at a Site (e.g. wall ports, access points) — e.g., a Switch, Patch Panel, Router, Wall Port panel, or Server. A Device has one or more Ports. When mounted in a Rack, a Device occupies a specific vertical position (`positionU`) and height (`uHeight`) within the Rack, and overlapping devices are strictly prohibited. Devices are instantiated from Device Templates, but once created, their properties and ports can be edited completely independently of the master template.
+A piece of physical network equipment installed in a Comms Rack or directly at a Site (e.g. wall ports, access points) — e.g., a Switch, Patch Panel, Router, Firewall, Wall Port panel, or Server. A Device has one or more Ports. When mounted in a Rack, a Device occupies a specific vertical position (`positionU`) and height (`uHeight`) within the Rack, and overlapping devices are strictly prohibited. Devices are instantiated from Device Templates, but once created, their properties and ports can be edited completely independently of the master template.
 
 **Port**
 A physical connection point on a Device. It has a label (e.g., "1", "Gi0/1", "MGMT") and a connector type (e.g., "rj45", "lc_fiber", "sfp+"). Ports are either standalone or visually grouped by `groupName` and `groupLayout` in the UI.
