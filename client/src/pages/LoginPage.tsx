@@ -129,11 +129,19 @@ export default function LoginPage() {
     <div style={s.container}>
       <div style={s.card}>
         <div style={s.header}>
-          <img
-            src="/primary-horizontal.png"
-            alt="RANT — Rack And Networking Tool"
-            style={{ width: 240, marginBottom: 4 }}
-          />
+          <div style={{
+            background: '#F8FAFC',
+            borderRadius: 10,
+            padding: '16px 24px',
+            marginBottom: 4,
+            display: 'inline-block',
+          }}>
+            <img
+              src="/primary-horizontal.png"
+              alt="RANT — Rack And Networking Tool"
+              style={{ width: 220, display: 'block' }}
+            />
+          </div>
           <div style={s.subtitle}>
             {needsSetup ? 'Create first admin user' : 'Sign in to continue'}
           </div>
