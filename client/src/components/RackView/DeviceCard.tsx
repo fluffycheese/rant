@@ -1,4 +1,4 @@
-import { useState, useEffect, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import type { RackDevice, Port, CableLink } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
@@ -48,8 +48,18 @@ export default function DeviceCard({
 }: Props) {
   const [hoveredPortId, setHoveredPortId] = useState<string | null>(null)
   const [hoverBox, setHoverBox] = useState<{ portId: string, rect: DOMRect } | null>(null)
+  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { highlightedLinkId } = usePatching()
   const [localU, setLocalU] = useState<string>(device.positionU?.toString() || '')
+
+  // Debounced hide — gives the user time to move from the port button to the popup
+  const scheduleHide = () => {
+    hoverTimeout.current = setTimeout(() => setHoverBox(null), 120)
+  }
+  const cancelHide = () => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current)
+  }
+
 
   // Keep local input in sync with external updates
   useEffect(() => {
@@ -160,8 +170,8 @@ export default function DeviceCard({
     return (
       <div
         key={port.id}
-        onMouseEnter={(e) => setHoverBox({ portId: port.id, rect: e.currentTarget.getBoundingClientRect() })}
-        onMouseLeave={() => setHoverBox(null)}
+        onMouseEnter={(e) => { cancelHide(); setHoverBox({ portId: port.id, rect: e.currentTarget.getBoundingClientRect() }) }}
+        onMouseLeave={scheduleHide}
         style={{
           position: 'relative',
           display: 'flex',
@@ -215,8 +225,8 @@ export default function DeviceCard({
         {/* Hover detail popup using Portal */}
         {isHovered && hoverBox && createPortal(
           <div
-            onMouseEnter={() => setHoverBox(prev => prev)}
-            onMouseLeave={() => setHoverBox(null)}
+            onMouseEnter={cancelHide}
+            onMouseLeave={scheduleHide}
             style={{
               position: 'fixed',
               left: hoverBox.rect.left + hoverBox.rect.width / 2,
