@@ -8,6 +8,7 @@ type Props = {
   currentRack: Rack
   links: CableLink[]
   devices: RackDevice[]
+  compact?: boolean
   onEditDevice?: (deviceId: string) => void
   onDeleteDevice?: (deviceId: string) => void
   onSelectPort?: (info: SelectedPortInfo) => void
@@ -27,6 +28,7 @@ export default function EndpointsTable({
   currentRack,
   links,
   devices,
+  compact = false,
   onEditDevice,
   onDeleteDevice,
   onSelectPort,
@@ -163,7 +165,8 @@ export default function EndpointsTable({
       width: 180,
     },
     tableWrapper: {
-      overflowX: 'auto',
+      overflowX: compact ? 'hidden' : 'auto',
+      overflowY: 'auto',
     },
     table: {
       width: '100%',
@@ -269,14 +272,14 @@ export default function EndpointsTable({
             <tr>
               <th style={s.th}>Endpoint</th>
               <th style={s.th}>Connected To</th>
-              <th style={s.th}>Cable</th>
-              <th style={{ ...s.th, width: 80, textAlign: 'center' }}>Actions</th>
+              {!compact && <th style={s.th}>Cable</th>}
+              {!compact && <th style={{ ...s.th, width: 80, textAlign: 'center' }}>Actions</th>}
             </tr>
           </thead>
           <tbody>
             {filteredRows.length === 0 ? (
               <tr>
-                <td colSpan={4} style={s.emptyRow}>
+                <td colSpan={compact ? 2 : 4} style={s.emptyRow}>
                   {rows.length === 0 ? (
                     <div>
                       <div>No endpoint devices (WiFi APs, IP Cameras, Wall Panels) installed.</div>
@@ -341,6 +344,7 @@ export default function EndpointsTable({
                     </td>
 
                     {/* Cable */}
+                    {!compact && (
                     <td style={s.td}>
                       {row.link ? (
                         <span style={s.cableBadge}>
@@ -356,8 +360,10 @@ export default function EndpointsTable({
                         <span style={{ color: '#6e7681' }}>—</span>
                       )}
                     </td>
+                    )}
 
                     {/* Actions */}
+                    {!compact && (
                     <td style={{ ...s.td, textAlign: 'center' }}>
                       <button
                         type="button"
@@ -405,6 +411,7 @@ export default function EndpointsTable({
                         </>
                       )}
                     </td>
+                    )}
                   </tr>
                 )
               })
