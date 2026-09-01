@@ -656,6 +656,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                             setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
                           }
                         }}
+                        onTrace={(portId, slot) => {
+                          setTraceOrigin({ portId, slot })
+                          setRightPanelOpen(true)
+                          setRightPanelTab('trace')
+                        }}
                       />
                     )}
                     {rightPanelTab === 'endpoints' && (
@@ -673,6 +678,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                           if (device && port) {
                             setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
                           }
+                        }}
+                        onTrace={(portId, slot) => {
+                          setTraceOrigin({ portId, slot })
+                          setRightPanelOpen(true)
+                          setRightPanelTab('trace')
                         }}
                       />
                     )}
