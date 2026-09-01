@@ -110,7 +110,7 @@ export default function Sidebar() {
         transition: 'width 0.2s ease',
       }}>
         {/* Logo icon */}
-        <div style={{ padding: '10px 0', display: 'flex', justifyContent: 'center', borderBottom: border }}>
+        <div style={{ padding: '10px 0', display: 'flex', justifyContent: 'center', borderBottom: border, background: '#F8FAFC' }}>
           <img src="/icon.png" alt="RANT" style={{ width: 32, height: 32, objectFit: 'contain' }} />
         </div>
 
@@ -182,13 +182,13 @@ export default function Sidebar() {
   // ---------------------------------------------------------------------------
   const s: Record<string, CSSProperties> = {
     sidebar:    { width: EXPANDED_W, background: '#1E293B', borderRight: border, display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden', transition: 'width 0.2s ease' },
-    header:     { padding: '10px 12px 10px 16px', borderBottom: border, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-    collapseBtn:{ background: 'none', border: 'none', color: mutedColor, cursor: 'pointer', fontSize: 16, padding: '2px 6px', borderRadius: 4, lineHeight: 1 },
+    header:     { padding: '12px 12px 12px 12px', borderBottom: border, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: '#F8FAFC' },
+    collapseBtn:{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontSize: 18, padding: '2px 6px', borderRadius: 4, lineHeight: 1, flexShrink: 0 },
     section:    { padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: mutedColor, textTransform: 'uppercase', letterSpacing: 0.8 },
     scroll:     { flex: 1, overflowY: 'auto' },
     footer:     { padding: '10px 16px', borderTop: border, display: 'flex', flexDirection: 'column', gap: 8 },
     footerLink: { color: mutedColor, fontSize: 12, textDecoration: 'none', display: 'block', padding: '2px 0' },
-    userRow:    { display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#CBD5E1', paddingTop: 6, borderTop: '1px solid #1E293B' },
+    userRow:    { display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#CBD5E1', paddingTop: 6, borderTop: '1px solid #334155' },
     logoutBtn:  { background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontSize: 11, padding: '2px 4px', borderRadius: 4 },
     addBtn:     { background: 'none', border: '1px dashed #334155', color: mutedColor, borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer', width: '100%', marginTop: 8 },
   }
@@ -200,7 +200,7 @@ export default function Sidebar() {
         <img
           src="/primary-stacked.png"
           alt="RANT"
-          style={{ height: 52, objectFit: 'contain', objectPosition: 'left' }}
+          style={{ height: 80, objectFit: 'contain', objectPosition: 'left' }}
         />
         <button
           type="button"
