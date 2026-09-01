@@ -28,6 +28,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
   const [showEditRack, setShowEditRack] = useState(false)
   const [rightPanelOpen, setRightPanelOpen] = useState(true)
   const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints'>('connections')
+  const [panelExpanded, setPanelExpanded] = useState(false)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
 
@@ -334,6 +335,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'row',
+      position: 'relative' as const,
     },
     rackSection: {
       flex: 1,
@@ -341,7 +343,20 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       padding: 16,
       minWidth: 0,
     },
-    rightPanel: {
+    rightPanel: panelExpanded ? {
+      position: 'absolute' as const,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: 680,
+      background: '#1E293B',
+      borderLeft: '1px solid #334155',
+      display: 'flex',
+      flexDirection: 'column' as const,
+      overflow: 'hidden',
+      zIndex: 20,
+      boxShadow: '-4px 0 20px rgba(0,0,0,0.5)',
+    } : {
       width: rightPanelOpen ? 360 : 28,
       minWidth: rightPanelOpen ? 360 : 28,
       borderLeft: '1px solid #334155',
@@ -504,8 +519,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
 
       {/* Main Body: Rack grid + collapsible right panel */}
       <div style={s.contentArea}>
-        {/* Rack section */}
-        <div style={s.rackSection}>
+        {/* Rack section — click collapses expanded overlay */}
+        <div
+          style={s.rackSection}
+          onClick={() => { if (panelExpanded) setPanelExpanded(false) }}
+        >
           <RackGrid
             rack={rack}
             devices={devices}
@@ -526,77 +544,112 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
         <div style={s.rightPanel}>
           {rightPanelOpen ? (
             <>
-              {/* Tab bar with collapse button on the right */}
-              <div style={s.panelTabBar}>
+              {/* Full-height layout: [expand strip] [tab bar + body] */}
+              <div style={{ display: 'flex', flexDirection: 'row', flex: 1, overflow: 'hidden' }}>
+
+                {/* Full-height expand/collapse strip on the left edge */}
                 <button
                   type="button"
-                  style={{ ...s.panelTab, ...(rightPanelTab === 'connections' ? s.panelTabActive : {}) }}
-                  onClick={() => setRightPanelTab('connections')}
-                >
-                  Connections ({internalLinks.length})
-                </button>
-                <button
-                  type="button"
-                  style={{ ...s.panelTab, ...(rightPanelTab === 'endpoints' ? s.panelTabActive : {}) }}
-                  onClick={() => setRightPanelTab('endpoints')}
-                >
-                  Endpoints
-                </button>
-                {/* Collapse toggle — inside tab bar, always visible */}
-                <button
-                  type="button"
-                  onClick={() => setRightPanelOpen(false)}
-                  title="Collapse panel"
+                  onClick={(e) => { e.stopPropagation(); setPanelExpanded(x => !x) }}
+                  title={panelExpanded ? 'Collapse to normal' : 'Expand to full view'}
                   style={{
-                    background: 'none',
+                    background: panelExpanded ? '#0EA5E9' : '#0F172A',
                     border: 'none',
-                    borderLeft: '1px solid #334155',
-                    color: '#64748B',
-                    padding: '0 12px',
+                    borderRight: '1px solid #334155',
+                    color: panelExpanded ? '#fff' : '#64748B',
+                    padding: '0 6px',
                     cursor: 'pointer',
-                    fontSize: 14,
-                    lineHeight: 1,
+                    fontSize: 10,
                     flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    writingMode: 'vertical-rl' as const,
+                    letterSpacing: 1,
+                    transition: 'background 0.15s, color 0.15s',
+                    width: 20,
                   }}
                 >
-                  ›
+                  {panelExpanded ? '↙ collapse' : '↗ expand'}
                 </button>
-              </div>
 
-              {/* Panel body */}
-              <div style={s.panelBody}>
-                {rightPanelTab === 'connections' && (
-                  <ConnectionsTable
-                    currentRack={rack}
-                    links={internalLinks}
-                    devices={devices}
-                    onDeleteLink={handleDeleteLink}
-                    onEditLink={(link) => {
-                      const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                      const port = device?.ports.find(p => p.id === link.portAId)
-                      if (device && port) {
-                        setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                      }
-                    }}
-                  />
-                )}
-                {rightPanelTab === 'endpoints' && (
-                  <EndpointsTable
-                    currentRack={rack}
-                    links={internalLinks}
-                    devices={devices}
-                    onEditDevice={setEditingDeviceId}
-                    onDeleteDevice={handleDeleteDevice}
-                    onSelectPort={handleSelectPort}
-                    onEditLink={(link) => {
-                      const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                      const port = device?.ports.find(p => p.id === link.portAId)
-                      if (device && port) {
-                        setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                      }
-                    }}
-                  />
-                )}
+                {/* Tab bar + body */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                  {/* Tab bar */}
+                  <div style={s.panelTabBar}>
+                    <button
+                      type="button"
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'connections' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('connections')}
+                    >
+                      Connections ({internalLinks.length})
+                    </button>
+                    <button
+                      type="button"
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'endpoints' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('endpoints')}
+                    >
+                      Endpoints
+                    </button>
+                    {/* Collapse toggle */}
+                    <button
+                      type="button"
+                      onClick={() => { setRightPanelOpen(false); setPanelExpanded(false) }}
+                      title="Collapse panel"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        borderLeft: '1px solid #334155',
+                        color: '#64748B',
+                        padding: '0 12px',
+                        cursor: 'pointer',
+                        fontSize: 14,
+                        lineHeight: 1,
+                        flexShrink: 0,
+                      }}
+                    >
+                      ›
+                    </button>
+                  </div>
+
+                  {/* Panel body */}
+                  <div style={s.panelBody}>
+                    {rightPanelTab === 'connections' && (
+                      <ConnectionsTable
+                        currentRack={rack}
+                        links={internalLinks}
+                        devices={devices}
+                        compact={!panelExpanded}
+                        onDeleteLink={handleDeleteLink}
+                        onEditLink={(link) => {
+                          const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                          const port = device?.ports.find(p => p.id === link.portAId)
+                          if (device && port) {
+                            setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                          }
+                        }}
+                      />
+                    )}
+                    {rightPanelTab === 'endpoints' && (
+                      <EndpointsTable
+                        currentRack={rack}
+                        links={internalLinks}
+                        devices={devices}
+                        compact={!panelExpanded}
+                        onEditDevice={setEditingDeviceId}
+                        onDeleteDevice={handleDeleteDevice}
+                        onSelectPort={handleSelectPort}
+                        onEditLink={(link) => {
+                          const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                          const port = device?.ports.find(p => p.id === link.portAId)
+                          if (device && port) {
+                            setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                          }
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
             </>
           ) : (
