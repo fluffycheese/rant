@@ -46,6 +46,14 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     if (!isSplitActive) setIsManualSplitView(false)
   }, [isSplitActive, isSecondaryView, setIsManualSplitView])
 
+  // When split view activates, collapse the right panel to maximise rack space
+  useEffect(() => {
+    if (isSplitActive) {
+      setRightPanelOpen(false)
+      setPanelExpanded(false)
+    }
+  }, [isSplitActive])
+
   // Connection dialog state
   const [linkForm, setLinkForm] = useState<{
     portAId: string
