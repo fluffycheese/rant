@@ -342,16 +342,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       minWidth: 0,
     },
     rightPanel: {
-      width: rightPanelOpen ? 360 : 0,
-      minWidth: rightPanelOpen ? 360 : 0,
-      borderLeft: rightPanelOpen ? '1px solid #334155' : 'none',
+      width: rightPanelOpen ? 360 : 28,
+      minWidth: rightPanelOpen ? 360 : 28,
+      borderLeft: '1px solid #334155',
       background: '#1E293B',
       display: 'flex',
       flexDirection: 'column' as const,
       overflow: 'hidden',
       transition: 'width 0.2s ease, min-width 0.2s ease',
       flexShrink: 0,
-      position: 'relative' as const,
     },
     panelTabBar: {
       display: 'flex',
@@ -525,19 +524,9 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
 
         {/* Right panel */}
         <div style={s.rightPanel}>
-          {/* Collapse/expand handle */}
-          <button
-            type="button"
-            style={s.collapseHandle}
-            onClick={() => setRightPanelOpen(o => !o)}
-            title={rightPanelOpen ? 'Collapse panel' : 'Expand panel'}
-          >
-            {rightPanelOpen ? '›' : '‹'}
-          </button>
-
-          {rightPanelOpen && (
+          {rightPanelOpen ? (
             <>
-              {/* Tab bar */}
+              {/* Tab bar with collapse button on the right */}
               <div style={s.panelTabBar}>
                 <button
                   type="button"
@@ -552,6 +541,25 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                   onClick={() => setRightPanelTab('endpoints')}
                 >
                   Endpoints
+                </button>
+                {/* Collapse toggle — inside tab bar, always visible */}
+                <button
+                  type="button"
+                  onClick={() => setRightPanelOpen(false)}
+                  title="Collapse panel"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    borderLeft: '1px solid #334155',
+                    color: '#64748B',
+                    padding: '0 12px',
+                    cursor: 'pointer',
+                    fontSize: 14,
+                    lineHeight: 1,
+                    flexShrink: 0,
+                  }}
+                >
+                  ›
                 </button>
               </div>
 
@@ -591,6 +599,31 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 )}
               </div>
             </>
+          ) : (
+            /* Collapsed state — slim expand strip */
+            <button
+              type="button"
+              onClick={() => setRightPanelOpen(true)}
+              title="Expand panel"
+              style={{
+                width: '100%',
+                height: '100%',
+                background: 'none',
+                border: 'none',
+                borderLeft: '1px solid #334155',
+                color: '#64748B',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 14,
+                writingMode: 'vertical-rl',
+                gap: 8,
+                padding: '16px 4px',
+              }}
+            >
+              ‹ Connections
+            </button>
           )}
         </div>
       </div>
