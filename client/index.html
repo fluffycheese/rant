@@ -15,6 +15,15 @@
       html, body, #root { height: 100%; }
       body { font-family: system-ui, -apple-system, sans-serif; background: #0F172A; color: #F1F5F9; }
     </style>
+    <style>
+      /* Styled scrollbars */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: #1E293B; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb { background: #64748B; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+      ::-webkit-scrollbar-corner { background: #1E293B; }
+      * { scrollbar-width: thin; scrollbar-color: #64748B #1E293B; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
