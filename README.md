@@ -1,4 +1,8 @@
-<img src="/assets/img/primary-horizontal.png" alt="RANT logo" width="500px">
+<table width="100%"><tr><td align="center" bgcolor="#64748B" height="200">
+<br>
+<img src="/assets/img/primary-horizontal.png" alt="RANT logo" width="500">
+<br><br>
+</td></tr></table>
 
 # RANT — Rack And Networking Tool
 
