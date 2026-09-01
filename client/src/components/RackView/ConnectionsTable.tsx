@@ -9,6 +9,7 @@ type Props = {
   compact?: boolean
   onDeleteLink: (linkId: string) => void
   onEditLink?: (link: CableLink) => void
+  onTrace?: (portId: string, slot: 'front' | 'back') => void
 }
 
 const CATEGORY_PRIORITY: Record<string, number> = {
@@ -23,6 +24,7 @@ export default function ConnectionsTable({
   compact = false,
   onDeleteLink,
   onEditLink,
+  onTrace,
 }: Props) {
   const [filter, setFilter] = useState('')
   const [hoveredLinkId, setHoveredLinkId] = useState<string | null>(null)
@@ -364,6 +366,12 @@ export default function ConnectionsTable({
                           </div>
                           {isHovered && (
                             <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
+                              {onTrace && displayA && (
+                                <button type="button"
+                                  style={{ ...s.actionBtn, color: '#0EA5E9' }}
+                                  onClick={(e) => { e.stopPropagation(); const tracePortId = (!aIsLocal && bIsLocal) ? link.portBId : link.portAId; const traceSlot = (!aIsLocal && bIsLocal) ? link.portBSlot : link.portASlot; onTrace(tracePortId, traceSlot) }}
+                                  title="Trace">↯</button>
+                              )}
                               {onEditLink && (
                                 <button type="button" style={s.actionBtn}
                                   onClick={(e) => { e.stopPropagation(); onEditLink(link) }} title="Edit">🔗</button>
@@ -398,6 +406,12 @@ export default function ConnectionsTable({
 
                     {!compact && (
                       <td style={{ ...s.td, textAlign: 'center' }}>
+                        {onTrace && displayA && (
+                          <button type="button"
+                            style={{ ...s.actionBtn, color: '#0EA5E9' }}
+                            onClick={(e) => { e.stopPropagation(); const tracePortId = (!aIsLocal && bIsLocal) ? link.portBId : link.portAId; const traceSlot = (!aIsLocal && bIsLocal) ? link.portBSlot : link.portASlot; onTrace(tracePortId, traceSlot) }}
+                            title="Trace path">↯</button>
+                        )}
                         {onEditLink && (
                           <button type="button" style={s.actionBtn}
                             onClick={(e) => { e.stopPropagation(); onEditLink(link) }} title="Edit connection">🔗</button>
