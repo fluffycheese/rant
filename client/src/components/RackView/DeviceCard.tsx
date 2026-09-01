@@ -149,8 +149,11 @@ export default function DeviceCard({
     const isBackHighlighted = highlightedLinkId && back?.id === highlightedLinkId
     const isHovered = hoverBox?.portId === port.id
 
-    const frontColor = front?.color || '#238636'
-    const backColor = back?.color || '#a371f7'
+    const frontColor = front?.color || '#10B981'
+    const backColor = back?.color || '#A78BFA'
+
+    // Smart slot: if only back is connected (no front), clicking should select back slot
+    const clickSlot = (!front && back) ? 'back' : 'front'
 
     return (
       <div
@@ -166,24 +169,23 @@ export default function DeviceCard({
       >
         <button
           type="button"
-          onClick={() => onSelectPort?.({ port, slot: 'front', device })}
-          title={`Port ${port.label} (${port.connectorType})\nFront: ${front ? getTargetDescription(front, port.id) : 'Unconnected'}\nBack: ${back ? getTargetDescription(back, port.id) : 'Unconnected'}`}
+          onClick={() => onSelectPort?.({ port, slot: clickSlot, device })}
           style={{
             minWidth: 36,
             height: compact ? 26 : 32,
             padding: '2px 4px',
             background: isFrontSelected
-              ? '#1f6feb33'
+              ? '#0EA5E922'
               : front
-              ? (isFrontHighlighted ? '#2e4a2d' : '#161b22')
-              : '#0d1117',
+              ? (isFrontHighlighted ? '#10B98122' : '#1E293B')
+              : '#0F172A',
             border: isFrontSelected
-              ? '2px solid #58a6ff'
+              ? '2px solid #3BB2F6'
               : front
               ? (isFrontHighlighted ? `2px solid #fff` : `1px solid ${frontColor}`)
-              : '1px solid #30363d',
+              : '1px solid #334155',
             borderRadius: 4,
-            color: isFrontSelected ? '#58a6ff' : (front && isFrontHighlighted) ? '#fff' : front ? '#e2e8f0' : '#8b949e',
+            color: isFrontSelected ? '#3BB2F6' : (front && isFrontHighlighted) ? '#fff' : front ? '#F1F5F9' : '#64748B',
             fontSize: 10,
             fontWeight: 600,
             cursor: 'pointer',
@@ -193,19 +195,19 @@ export default function DeviceCard({
             justifyContent: 'space-between',
             transition: 'all 0.15s ease',
             outline: 'none',
-            boxShadow: isFrontSelected ? '0 0 8px rgba(88, 166, 255, 0.4)' : (isFrontHighlighted ? `0 0 8px ${frontColor}` : 'none'),
+            boxShadow: isFrontSelected ? '0 0 8px rgba(59, 178, 246, 0.4)' : (isFrontHighlighted ? `0 0 8px ${frontColor}` : 'none'),
             zIndex: (isFrontHighlighted || isFrontSelected) ? 2 : 1,
           }}
         >
-          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: back ? backColor : '#30363d' }} />
+          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: back ? backColor : '#334155' }} />
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', fontSize: 8, marginTop: 1 }}>
-            <span style={{ color: '#6e7681' }}>{port.connectorType.slice(0, 3)}</span>
+            <span style={{ color: '#475569' }}>{port.connectorType.slice(0, 3)}</span>
           </div>
 
           <div style={{ fontSize: 10, fontWeight: 700, marginTop: -2, marginBottom: -1 }}>{port.label}</div>
 
-          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: front ? frontColor : '#30363d' }} />
+          <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: front ? frontColor : '#334155' }} />
         </button>
 
         {/* Hover detail tooltip using Portal */}
