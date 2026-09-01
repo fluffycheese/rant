@@ -85,9 +85,8 @@ export default function RackGrid({
     cabinet: {
       width: '100%',
       maxWidth: 1200,
-      background: '#090d13',
-      border: '2px solid #30363d',
-      borderRadius: 8,
+      background: '#0F172A',
+      border: '2px solid #334155',
       boxShadow: '0 12px 36px rgba(0,0,0,0.6)',
       position: 'relative',
       display: 'flex',
@@ -96,15 +95,15 @@ export default function RackGrid({
     },
     topRail: {
       height: 24,
-      background: 'linear-gradient(180deg, #21262d 0%, #161b22 100%)',
-      borderBottom: '1px solid #30363d',
+      background: 'linear-gradient(180deg, #1E293B 0%, #1E293B 100%)',
+      borderBottom: '1px solid #334155',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '0 16px',
       fontSize: 11,
       fontWeight: 700,
-      color: '#8b949e',
+      color: '#64748B',
       letterSpacing: 1,
     },
     rackBody: {
@@ -115,8 +114,8 @@ export default function RackGrid({
     },
     sideRail: {
       width: 38,
-      background: '#161b22',
-      borderRight: '1px solid #30363d',
+      background: '#1E293B',
+      borderRight: '1px solid #334155',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -125,8 +124,8 @@ export default function RackGrid({
     },
     sideRailRight: {
       width: 38,
-      background: '#161b22',
-      borderLeft: '1px solid #30363d',
+      background: '#1E293B',
+      borderLeft: '1px solid #334155',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -145,14 +144,14 @@ export default function RackGrid({
     emptyState: {
       padding: '48px 24px',
       textAlign: 'center',
-      color: '#8b949e',
+      color: '#64748B',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       gap: 12,
     },
     emptyButton: {
-      background: '#238636',
+      background: '#10B981',
       color: '#fff',
       border: 'none',
       borderRadius: 6,
@@ -163,24 +162,24 @@ export default function RackGrid({
     },
     uMarker: {
       fontSize: 9,
-      color: '#6e7681',
+      color: '#475569',
       fontFamily: 'monospace',
       height: 48,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
-      borderBottom: '1px dashed #21262d',
+      borderBottom: '1px dashed #334155',
     },
     bottomRail: {
       height: 20,
-      background: 'linear-gradient(180deg, #161b22 0%, #0d1117 100%)',
-      borderTop: '1px solid #30363d',
+      background: 'linear-gradient(180deg, #1E293B 0%, #0F172A 100%)',
+      borderTop: '1px solid #334155',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       fontSize: 10,
-      color: '#6e7681',
+      color: '#475569',
     },
   }
 
@@ -216,7 +215,7 @@ export default function RackGrid({
             key={`empty-u-${u}`}
             style={{
               height: 36,
-              border: '1px dashed #21262d',
+              border: '1px dashed #334155',
               borderRadius: 4,
               display: 'flex',
               alignItems: 'center',
@@ -235,7 +234,7 @@ export default function RackGrid({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#58a6ff',
+                  color: '#3BB2F6',
                   cursor: 'pointer',
                   fontSize: 11,
                   padding: '2px 6px',
@@ -277,7 +276,7 @@ export default function RackGrid({
             {devices.length === 0 ? (
               <div style={s.emptyState}>
                 <div style={{ fontSize: 32 }}>🗄️</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Rack is Empty</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#F1F5F9' }}>Rack is Empty</div>
                 <div style={{ fontSize: 12, maxWidth: 320 }}>
                   No equipment has been mounted in {rack.name} yet. Add a device from your templates to begin patching.
                 </div>
@@ -291,8 +290,8 @@ export default function RackGrid({
               <>
                 {renderPositionalElevation()}
                 {unplacedDevices.length > 0 && (
-                  <div style={{ marginTop: 16, borderTop: '1px solid #30363d', paddingTop: 12 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#8b949e', marginBottom: 8 }}>
+                  <div style={{ marginTop: 16, borderTop: '1px solid #334155', paddingTop: 12 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', marginBottom: 8 }}>
                       Unplaced Devices ({unplacedDevices.length})
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -317,7 +316,7 @@ export default function RackGrid({
               /* Sequential Vertical Stack */
               devices.filter(d => d.rackId === rack.id && !['wall_panel', 'wifi_ap', 'ip_camera'].includes(d.category)).map((device, idx) => (
                 <div key={device.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#6e7681' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#475569' }}>
                     <span>Slot {idx + 1}</span>
                     <span>{device.template?.uHeight || 1}U</span>
                   </div>

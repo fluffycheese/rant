@@ -34,8 +34,8 @@ export default function SiteViewPage() {
     load()
   }, [siteId])
 
-  if (loading) return <div style={{ padding: 24, color: '#c9d1d9' }}>Loading topology...</div>
-  if (error) return <div style={{ padding: 24, color: '#ff7b72' }}>{error}</div>
+  if (loading) return <div style={{ padding: 24, color: '#CBD5E1' }}>Loading topology...</div>
+  if (error) return <div style={{ padding: 24, color: '#F87171' }}>{error}</div>
 
   const title = site ? `${site.name} - Topology` : 'Site Topology'
 

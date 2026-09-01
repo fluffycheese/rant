@@ -63,7 +63,7 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       }).catch(err => {
         console.error('Mermaid render error:', err)
         if (active && containerRef.current) {
-          containerRef.current.innerHTML = `<div style="color: #ff7b72;">Error rendering topology diagram.</div>`
+          containerRef.current.innerHTML = `<div style="color: #F87171;">Error rendering topology diagram.</div>`
         }
       })
     }
@@ -135,14 +135,14 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       display: 'flex',
       flexDirection: 'column',
       gap: 16,
-      background: '#0d1117',
-      color: '#c9d1d9',
+      background: '#0F172A',
+      color: '#CBD5E1',
       overflow: 'hidden'
     },
     header: {
       fontSize: 20,
       fontWeight: 600,
-      color: '#e2e8f0',
+      color: '#F1F5F9',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -151,16 +151,16 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       fontSize: 12,
       padding: '2px 8px',
       borderRadius: 12,
-      background: '#21262d',
-      color: '#8b949e',
-      border: '1px solid #30363d',
+      background: '#1E293B',
+      color: '#64748B',
+      border: '1px solid #334155',
       marginLeft: 12,
     },
     mermaidWrapper: {
       flex: 1,
       minHeight: 200,
-      background: '#161b22',
-      border: '1px solid #30363d',
+      background: '#1E293B',
+      border: '1px solid #334155',
       borderRadius: 8,
       padding: '24px',
       overflow: 'auto',
@@ -170,7 +170,7 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
     },
     hint: {
       fontSize: 13,
-      color: '#8b949e',
+      color: '#64748B',
       marginBottom: 12,
       alignSelf: 'flex-start',
     },
@@ -180,8 +180,8 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       justifyContent: 'center',
     },
     tableContainer: {
-      background: '#161b22',
-      border: '1px solid #30363d',
+      background: '#1E293B',
+      border: '1px solid #334155',
       borderRadius: 8,
       display: 'flex',
       flexDirection: 'column',
@@ -191,19 +191,19 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
     },
     tableHeader: {
       padding: '12px 16px',
-      borderBottom: '1px solid #30363d',
+      borderBottom: '1px solid #334155',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      background: '#0d1117',
+      background: '#0F172A',
     },
     searchInput: {
-      background: '#0d1117',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: '6px 12px',
       fontSize: 13,
-      color: '#e2e8f0',
+      color: '#F1F5F9',
       outline: 'none',
       width: 240,
     },
@@ -220,11 +220,11 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
     },
     th: {
       padding: '12px 16px',
-      color: '#8b949e',
+      color: '#64748B',
       fontWeight: 600,
       fontSize: 12,
-      borderBottom: '1px solid #30363d',
-      background: '#161b22',
+      borderBottom: '1px solid #334155',
+      background: '#1E293B',
       textTransform: 'uppercase',
       letterSpacing: 0.5,
       position: 'sticky',
@@ -236,8 +236,8 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
     },
     td: {
       padding: '12px 16px',
-      borderBottom: '1px solid #21262d',
-      color: '#c9d1d9',
+      borderBottom: '1px solid #334155',
+      color: '#CBD5E1',
       verticalAlign: 'middle',
     },
     endpoint: {
@@ -247,28 +247,28 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       flexWrap: 'wrap'
     },
     pathBadge: {
-      color: '#8b949e',
+      color: '#64748B',
       fontSize: 12,
     },
     deviceName: {
       fontWeight: 600,
-      color: '#e2e8f0',
+      color: '#F1F5F9',
     },
     portBadge: {
-      background: '#0d1117',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      border: '1px solid #334155',
       borderRadius: 4,
       padding: '2px 6px',
       fontSize: 11,
       fontWeight: 700,
-      color: '#58a6ff',
+      color: '#3BB2F6',
     },
     slotBadge: {
       fontSize: 10,
       padding: '2px 5px',
       borderRadius: 3,
-      background: '#21262d',
-      color: '#8b949e',
+      background: '#1E293B',
+      color: '#64748B',
     },
     cableBadge: {
       display: 'inline-flex',
@@ -277,8 +277,8 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
       fontSize: 12,
       padding: '4px 10px',
       borderRadius: 4,
-      background: '#0d1117',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      border: '1px solid #334155',
       textTransform: 'uppercase',
       fontWeight: 600,
     },
@@ -291,7 +291,7 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
     emptyRow: {
       padding: 48,
       textAlign: 'center',
-      color: '#8b949e',
+      color: '#64748B',
       fontSize: 14,
     },
   }
@@ -324,8 +324,8 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
             }}
             style={{
               background: 'none',
-              color: '#ff7b72',
-              border: '1px solid #ff7b72',
+              color: '#F87171',
+              border: '1px solid #F87171',
               borderRadius: 6,
               padding: '6px 12px',
               fontSize: 13,
@@ -344,7 +344,7 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
 
       <div style={s.tableContainer}>
         <div style={s.tableHeader}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Connections {filterNodeId && `(Filtered)`}</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#F1F5F9' }}>Connections {filterNodeId && `(Filtered)`}</div>
           <input
             type="text"
             placeholder="Filter connections…"
@@ -405,7 +405,7 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
                     </td>
 
                     <td style={s.td}>
-                      <span style={{ color: link.label ? '#e2e8f0' : '#6e7681', fontSize: 12 }}>
+                      <span style={{ color: link.label ? '#F1F5F9' : '#475569', fontSize: 12 }}>
                         {link.label || '—'}
                       </span>
                     </td>

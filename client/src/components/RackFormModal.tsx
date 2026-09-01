@@ -22,9 +22,9 @@ export default function RackFormModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '7px 10px',
     fontSize: 13,
@@ -33,7 +33,7 @@ export default function RackFormModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 5,
@@ -41,8 +41,8 @@ export default function RackFormModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
           {mode === 'create' ? 'Create New Rack' : 'Edit Rack Settings'}
         </div>
 
@@ -91,7 +91,7 @@ export default function RackFormModal({
                     onDelete()
                   }
                 }}
-                style={{ background: 'none', color: '#ff7b72', border: '1px solid #ff7b72', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+                style={{ background: 'none', color: '#F87171', border: '1px solid #F87171', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
               >
                 Delete Rack
               </button>
@@ -101,7 +101,7 @@ export default function RackFormModal({
             <button
               type="button"
               onClick={onCancel}
-              style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+              style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
             >
               Cancel
             </button>
@@ -110,7 +110,7 @@ export default function RackFormModal({
               disabled={!name.trim()}
               onClick={() => onConfirm(name.trim(), description.trim(), uHeight)}
               style={{
-                background: '#238636',
+                background: '#10B981',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 6,

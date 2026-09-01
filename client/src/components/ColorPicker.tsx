@@ -2,13 +2,13 @@ import React, { useRef } from 'react'
 
 export const STANDARD_CABLE_COLORS = [
   { name: 'Blue', hex: '#4a9eff' },
-  { name: 'Green', hex: '#238636' },
+  { name: 'Green', hex: '#10B981' },
   { name: 'Yellow', hex: '#e3b341' },
   { name: 'Orange', hex: '#f0883e' },
-  { name: 'Red', hex: '#ff7b72' },
-  { name: 'Purple', hex: '#a371f7' },
-  { name: 'Light Grey', hex: '#8b949e' },
-  { name: 'Dark Grey', hex: '#30363d' },
+  { name: 'Red', hex: '#F87171' },
+  { name: 'Purple', hex: '#A78BFA' },
+  { name: 'Light Grey', hex: '#64748B' },
+  { name: 'Dark Grey', hex: '#334155' },
 ] as const
 
 export interface ColorPickerProps {
@@ -85,9 +85,9 @@ export default function ColorPicker({
             height: 24,
             padding: '0 8px',
             borderRadius: 4,
-            background: !isStandardColor && value ? value : '#0d1117',
-            color: !isStandardColor && value ? '#ffffff' : '#8b949e',
-            border: !isStandardColor && value ? '2px solid #ffffff' : '1px solid #30363d',
+            background: !isStandardColor && value ? value : '#0F172A',
+            color: !isStandardColor && value ? '#ffffff' : '#64748B',
+            border: !isStandardColor && value ? '2px solid #ffffff' : '1px solid #334155',
             boxShadow: !isStandardColor && value ? '0 0 0 1px #000, 0 0 4px rgba(255,255,255,0.4)' : 'none',
             fontSize: 11,
             fontWeight: 500,

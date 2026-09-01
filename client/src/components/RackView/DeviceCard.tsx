@@ -218,12 +218,12 @@ export default function DeviceCard({
               left: hoverBox.rect.left + hoverBox.rect.width / 2,
               top: hoverBox.rect.top - 6,
               transform: 'translate(-50%, -100%)',
-              background: '#1c2128',
+              background: '#1E293B',
               border: '1px solid #444c56',
               borderRadius: 6,
               padding: '6px 10px',
               fontSize: 11,
-              color: '#e2e8f0',
+              color: '#F1F5F9',
               whiteSpace: 'nowrap',
               zIndex: 9999,
               pointerEvents: 'none',
@@ -233,13 +233,13 @@ export default function DeviceCard({
               gap: 3,
             }}
           >
-            <div style={{ fontWeight: 700, color: '#58a6ff' }}>
+            <div style={{ fontWeight: 700, color: '#3BB2F6' }}>
               {device.name} · Port {port.label} ({port.connectorType})
             </div>
-            <div style={{ fontSize: 10, color: front ? '#7ee787' : '#8b949e' }}>
+            <div style={{ fontSize: 10, color: front ? '#34D399' : '#64748B' }}>
               ● 1°: {front ? getTargetDescription(front, port.id) : 'Empty'}
             </div>
-            <div style={{ fontSize: 10, color: back ? '#d2a8ff' : '#8b949e' }}>
+            <div style={{ fontSize: 10, color: back ? '#C4B5FD' : '#64748B' }}>
               ● 2°: {back ? getTargetDescription(back, port.id) : 'Empty'}
             </div>
           </div>,
@@ -251,8 +251,8 @@ export default function DeviceCard({
 
   const s: Record<string, CSSProperties> = {
     card: {
-      background: '#161b22',
-      border: '1px solid #30363d',
+      background: '#1E293B',
+      border: '1px solid #334155',
       borderLeft: `4px solid ${device.color || '#4a9eff'}`,
       borderRadius: 6,
       overflow: 'hidden',
@@ -264,7 +264,7 @@ export default function DeviceCard({
     header: {
       padding: '8px 12px',
       background: 'rgba(255,255,255,0.02)',
-      borderBottom: '1px solid #21262d',
+      borderBottom: '1px solid #334155',
       display: 'flex',
       alignItems: 'center',
       gap: 10,
@@ -279,7 +279,7 @@ export default function DeviceCard({
     name: {
       fontSize: 13,
       fontWeight: 700,
-      color: '#e2e8f0',
+      color: '#F1F5F9',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
@@ -288,14 +288,14 @@ export default function DeviceCard({
       fontSize: 10,
       padding: '1px 6px',
       borderRadius: 4,
-      background: '#0d1117',
-      border: '1px solid #30363d',
-      color: '#8b949e',
+      background: '#0F172A',
+      border: '1px solid #334155',
+      color: '#64748B',
       whiteSpace: 'nowrap',
     },
     subtext: {
       fontSize: 11,
-      color: '#8b949e',
+      color: '#64748B',
       marginLeft: 'auto',
       display: 'flex',
       alignItems: 'center',
@@ -304,7 +304,7 @@ export default function DeviceCard({
     deleteBtn: {
       background: 'none',
       border: 'none',
-      color: '#8b949e',
+      color: '#64748B',
       cursor: 'pointer',
       fontSize: 13,
       padding: '2px 4px',
@@ -314,7 +314,7 @@ export default function DeviceCard({
     nudgeBtn: {
       background: 'none',
       border: 'none',
-      color: '#8b949e',
+      color: '#64748B',
       cursor: 'pointer',
       fontSize: 7,
       padding: 0,
@@ -331,7 +331,7 @@ export default function DeviceCard({
     },
 
     emptyPorts: {
-      color: '#6e7681',
+      color: '#475569',
       fontSize: 11,
       fontStyle: 'italic',
       padding: '8px 0',
@@ -360,15 +360,15 @@ export default function DeviceCard({
           <span style={{ textTransform: 'capitalize', fontSize: 11 }}>{device.category.replace('_', ' ')}</span>
           
           {onUpdateDevicePosition && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 8, marginRight: 4, background: '#0d1117', border: '1px solid #30363d', borderRadius: 4, padding: '2px 4px' }}>
-              <span style={{ fontSize: 9, color: '#8b949e', fontWeight: 600 }}>U:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 8, marginRight: 4, background: '#0F172A', border: '1px solid #334155', borderRadius: 4, padding: '2px 4px' }}>
+              <span style={{ fontSize: 9, color: '#64748B', fontWeight: 600 }}>U:</span>
               <input
                 type="number"
                 value={localU}
                 onChange={e => setLocalU(e.target.value)}
                 onBlur={handleUBlur}
                 onKeyDown={handleUKeyDown}
-                style={{ width: 30, background: 'transparent', border: 'none', color: '#e2e8f0', fontSize: 11, outline: 'none', textAlign: 'center', MozAppearance: 'textfield' }}
+                style={{ width: 30, background: 'transparent', border: 'none', color: '#F1F5F9', fontSize: 11, outline: 'none', textAlign: 'center', MozAppearance: 'textfield' }}
                 placeholder="-"
               />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -421,7 +421,7 @@ export default function DeviceCard({
             {portGroups.map((g, idx) => (
               <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {portGroups.length > 1 && g.name !== 'Default' && (
-                  <div style={{ fontSize: 9, color: '#8b949e', textTransform: 'uppercase', marginBottom: -2, letterSpacing: 0.5, fontWeight: 700 }}>{g.name}</div>
+                  <div style={{ fontSize: 9, color: '#64748B', textTransform: 'uppercase', marginBottom: -2, letterSpacing: 0.5, fontWeight: 700 }}>{g.name}</div>
                 )}
                 {g.useTwoRows ? (
                   <>

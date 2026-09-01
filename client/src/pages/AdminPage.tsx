@@ -17,8 +17,8 @@ export default function AdminPage() {
 
   if (proxyAuth) {
     return (
-      <div style={{ padding: 40, color: '#8b949e', textAlign: 'center' }}>
-        <h2 style={{ color: '#e2e8f0' }}>Admin Disabled</h2>
+      <div style={{ padding: 40, color: '#64748B', textAlign: 'center' }}>
+        <h2 style={{ color: '#F1F5F9' }}>Admin Disabled</h2>
         <p>Built-in user management is disabled because <code>PROXY_AUTH=true</code> is set.</p>
         <p>Please manage users via your reverse proxy or identity provider.</p>
       </div>
@@ -65,13 +65,13 @@ export default function AdminPage() {
 
   const s = {
     page: { padding: 32, maxWidth: 600, margin: '0 auto' },
-    title: { fontSize: 22, fontWeight: 700, color: '#e2e8f0', marginBottom: 24 },
-    card: { background: '#161b22', border: '1px solid #30363d', borderRadius: 8, padding: 20, marginBottom: 24 },
-    input: { width: '100%', background: '#0d1117', color: '#e2e8f0', border: '1px solid #30363d', borderRadius: 6, padding: '8px 12px', fontSize: 14, marginBottom: 12 },
-    btn: { background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', cursor: 'pointer', fontWeight: 600 },
-    row: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #30363d' },
-    delBtn: { background: 'none', border: 'none', color: '#ff7b72', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
-    pwBtn: { background: 'none', border: 'none', color: '#58a6ff', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
+    title: { fontSize: 22, fontWeight: 700, color: '#F1F5F9', marginBottom: 24 },
+    card: { background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: 20, marginBottom: 24 },
+    input: { width: '100%', background: '#0F172A', color: '#F1F5F9', border: '1px solid #334155', borderRadius: 6, padding: '8px 12px', fontSize: 14, marginBottom: 12 },
+    btn: { background: '#10B981', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', cursor: 'pointer', fontWeight: 600 },
+    row: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #334155' },
+    delBtn: { background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
+    pwBtn: { background: 'none', border: 'none', color: '#3BB2F6', cursor: 'pointer', fontSize: 13, padding: '4px 8px' },
   }
 
   return (
@@ -79,7 +79,7 @@ export default function AdminPage() {
       <div style={s.title}>Admin / Users</div>
 
       <div style={s.card}>
-        <h3 style={{ marginTop: 0, marginBottom: 16, color: '#c9d1d9', fontSize: 16 }}>Add User</h3>
+        <h3 style={{ marginTop: 0, marginBottom: 16, color: '#CBD5E1', fontSize: 16 }}>Add User</h3>
         <form onSubmit={handleCreate}>
           <input
             style={s.input}
@@ -96,7 +96,7 @@ export default function AdminPage() {
             onChange={e => setPassword(e.target.value)}
             required
           />
-          {error && <div style={{ color: '#ff7b72', fontSize: 13, marginBottom: 12 }}>{error}</div>}
+          {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 12 }}>{error}</div>}
           <button type="submit" style={s.btn} disabled={!username || !password}>
             Create User
           </button>
@@ -104,17 +104,17 @@ export default function AdminPage() {
       </div>
 
       <div style={s.card}>
-        <h3 style={{ marginTop: 0, marginBottom: 16, color: '#c9d1d9', fontSize: 16 }}>Existing Users</h3>
+        <h3 style={{ marginTop: 0, marginBottom: 16, color: '#CBD5E1', fontSize: 16 }}>Existing Users</h3>
         {users.map(u => (
           <div key={u.id} style={s.row}>
-            <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{u.username}</span>
+            <span style={{ color: '#F1F5F9', fontWeight: 600 }}>{u.username}</span>
             <div style={{ display: 'flex', gap: 8 }}>
               <button style={s.pwBtn} onClick={() => handlePasswordChange(u.id, u.username)}>Change Password</button>
               <button style={s.delBtn} onClick={() => handleDelete(u.id, u.username)}>Delete</button>
             </div>
           </div>
         ))}
-        {users.length === 0 && <div style={{ color: '#8b949e', fontSize: 13 }}>No users found.</div>}
+        {users.length === 0 && <div style={{ color: '#64748B', fontSize: 13 }}>No users found.</div>}
       </div>
     </div>
   )

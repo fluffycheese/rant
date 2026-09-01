@@ -237,15 +237,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       flexDirection: 'column',
       height: '100%',
       overflow: 'hidden',
-      background: '#0f1117',
+      background: '#0F172A',
     },
     toolbar: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '10px 16px',
-      borderBottom: '1px solid #30363d',
-      background: '#161b22',
+      borderBottom: '1px solid #334155',
+      background: '#1E293B',
       flexShrink: 0,
       gap: 12,
     },
@@ -256,11 +256,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       fontSize: 14,
     },
     siteName: {
-      color: '#8b949e',
+      color: '#64748B',
       fontWeight: 500,
     },
     rackName: {
-      color: '#e2e8f0',
+      color: '#F1F5F9',
       fontWeight: 700,
       fontSize: 15,
     },
@@ -268,9 +268,9 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       fontSize: 11,
       padding: '2px 6px',
       borderRadius: 4,
-      background: '#0d1117',
-      border: '1px solid #30363d',
-      color: '#8b949e',
+      background: '#0F172A',
+      border: '1px solid #334155',
+      color: '#64748B',
     },
     btnGroup: {
       display: 'flex',
@@ -280,15 +280,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     tabGroup: {
       display: 'flex',
       alignItems: 'center',
-      background: '#0d1117',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: 2,
     },
     tabBtn: {
       background: 'none',
       border: 'none',
-      color: '#8b949e',
+      color: '#64748B',
       padding: '4px 10px',
       fontSize: 12,
       fontWeight: 500,
@@ -296,12 +296,12 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       cursor: 'pointer',
     },
     activeTabBtn: {
-      background: '#21262d',
-      color: '#e2e8f0',
+      background: '#1E293B',
+      color: '#F1F5F9',
       fontWeight: 600,
     },
     primaryBtn: {
-      background: '#238636',
+      background: '#10B981',
       color: '#fff',
       border: 'none',
       borderRadius: 6,
@@ -312,21 +312,21 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     },
     secondaryBtn: {
       background: 'none',
-      color: '#8b949e',
-      border: '1px solid #30363d',
+      color: '#64748B',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: '6px 12px',
       fontSize: 13,
       cursor: 'pointer',
     },
     patchingBanner: {
-      background: '#1f6feb22',
-      borderBottom: '1px solid #1f6feb66',
+      background: '#0EA5E922',
+      borderBottom: '1px solid #0EA5E966',
       padding: '8px 16px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      color: '#58a6ff',
+      color: '#3BB2F6',
       fontSize: 12,
       fontWeight: 500,
     },
@@ -793,9 +793,9 @@ function AddDeviceModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '7px 10px',
     fontSize: 13,
@@ -804,7 +804,7 @@ function AddDeviceModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 5,
@@ -812,12 +812,12 @@ function AddDeviceModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>Mount Device in Rack</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Mount Device in Rack</div>
 
         {templates.length === 0 ? (
-          <div style={{ color: '#8b949e', fontSize: 13 }}>
-            No templates configured yet. <a href="/templates" style={{ color: '#58a6ff' }}>Create a template first →</a>
+          <div style={{ color: '#64748B', fontSize: 13 }}>
+            No templates configured yet. <a href="/templates" style={{ color: '#3BB2F6' }}>Create a template first →</a>
           </div>
         ) : (
           <>
@@ -833,7 +833,7 @@ function AddDeviceModal({
             </label>
 
             {selected && (
-              <div style={{ background: '#0d1117', borderRadius: 6, padding: '8px 12px', fontSize: 12, color: '#8b949e' }}>
+              <div style={{ background: '#0F172A', borderRadius: 6, padding: '8px 12px', fontSize: 12, color: '#64748B' }}>
                 {selected.manufacturer && <div>{selected.manufacturer} {selected.model}</div>}
                 <div>{selected.portCount} ports · {selected.category} · {selected.uHeight}U</div>
               </div>
@@ -868,7 +868,7 @@ function AddDeviceModal({
               <button
                 type="button"
                 onClick={onCancel}
-                style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+                style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -877,7 +877,7 @@ function AddDeviceModal({
                 disabled={!templateId || !name.trim()}
                 onClick={() => onConfirm(templateId, name.trim(), typeof positionU === 'number' ? positionU : undefined)}
                 style={{
-                  background: '#238636',
+                  background: '#10B981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -932,9 +932,9 @@ function LinkModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '6px 8px',
     fontSize: 13,
@@ -943,7 +943,7 @@ function LinkModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
@@ -951,8 +951,8 @@ function LinkModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>{isEditing ? 'Edit Cable Link' : 'Connect Ports (Cable Link)'}</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>{isEditing ? 'Edit Cable Link' : 'Connect Ports (Cable Link)'}</div>
 
         {/* Endpoint A */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: 8 }}>
@@ -1050,14 +1050,14 @@ function LinkModal({
           <button
             type="button"
             onClick={onCancel}
-            style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+            style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            style={{ background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600 }}
+            style={{ background: '#10B981', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600 }}
           >
             {isEditing ? 'Save Changes' : 'Connect'}
           </button>
@@ -1106,24 +1106,24 @@ function PortDetailsModal({
   }
 
   const renderSlot = (slotName: 'front' | 'back', link?: CableLink) => (
-    <div style={{ background: '#0d1117', padding: 12, borderRadius: 6, border: '1px solid #30363d' }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', marginBottom: 8, textTransform: 'capitalize' }}>
+    <div style={{ background: '#0F172A', padding: 12, borderRadius: 6, border: '1px solid #334155' }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', marginBottom: 8, textTransform: 'capitalize' }}>
         {slotName} Slot
       </div>
       {link ? (
-        <div style={{ fontSize: 12, color: '#c9d1d9', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ fontSize: 12, color: '#CBD5E1', display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div><strong>Connected to:</strong> {getTargetDesc(link, slotName)}</div>
           <div><strong>Cable:</strong> {link.cableType} <span style={{display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: link.color || '#4a9eff'}}></span></div>
           {link.label && <div><strong>Label:</strong> {link.label}</div>}
           <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-            <button type="button" onClick={() => onEditLink(link)} style={{ background: 'none', border: '1px solid #8b949e', color: '#8b949e', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>✎ Edit</button>
-            <button type="button" onClick={() => { if(confirm('Delete connection?')) onDeleteLink(link.id) }} style={{ background: 'none', border: '1px solid #f85149', color: '#f85149', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>Disconnect</button>
+            <button type="button" onClick={() => onEditLink(link)} style={{ background: 'none', border: '1px solid #64748B', color: '#64748B', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>✎ Edit</button>
+            <button type="button" onClick={() => { if(confirm('Delete connection?')) onDeleteLink(link.id) }} style={{ background: 'none', border: '1px solid #F87171', color: '#F87171', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>Disconnect</button>
           </div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
-          <span style={{ fontSize: 12, color: '#8b949e' }}>Empty</span>
-          <button type="button" onClick={() => onAddLink(slotName)} style={{ background: '#238636', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>+ Add Connection</button>
+          <span style={{ fontSize: 12, color: '#64748B' }}>Empty</span>
+          <button type="button" onClick={() => onAddLink(slotName)} style={{ background: '#10B981', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>+ Add Connection</button>
         </div>
       )}
     </div>
@@ -1131,14 +1131,14 @@ function PortDetailsModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>Port Connections - {info.device.name} / Port {info.port.label}</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Port Connections - {info.device.name} / Port {info.port.label}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {renderSlot('front', frontLink)}
           {renderSlot('back', backLink)}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-          <button type="button" onClick={onClose} style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>Close</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>Close</button>
         </div>
       </div>
     </div>
