@@ -8,8 +8,12 @@ type Props = {
   devices: RackDevice[]
   compact?: boolean
   onDeleteLink: (linkId: string) => void
-  onAddLink?: () => void
   onEditLink?: (link: CableLink) => void
+}
+
+const CATEGORY_PRIORITY: Record<string, number> = {
+  patch_panel: 100, switch: 80, firewall: 70, router: 60,
+  server: 50, wifi_ap: 40, ip_camera: 30, wall_panel: 20,
 }
 
 export default function ConnectionsTable({
@@ -18,7 +22,6 @@ export default function ConnectionsTable({
   devices,
   compact = false,
   onDeleteLink,
-  onAddLink,
   onEditLink,
 }: Props) {
   const [filter, setFilter] = useState('')
@@ -74,6 +77,29 @@ export default function ConnectionsTable({
       )
     })
   }, [links, filter, portLookup])
+
+  const sortedLinks = [...filteredLinks].sort((l1, l2) => {
+    const a1 = portLookup.get(l1.portAId)
+    const b1 = portLookup.get(l1.portBId)
+    const a1IsLocal = a1?.device.rack.id === currentRack.id
+    const b1IsLocal = b1?.device.rack.id === currentRack.id
+    const ep1 = (!a1IsLocal && b1IsLocal) ? b1 : a1
+
+    const a2 = portLookup.get(l2.portAId)
+    const b2 = portLookup.get(l2.portBId)
+    const a2IsLocal = a2?.device.rack.id === currentRack.id
+    const b2IsLocal = b2?.device.rack.id === currentRack.id
+    const ep2 = (!a2IsLocal && b2IsLocal) ? b2 : a2
+
+    const p1 = CATEGORY_PRIORITY[ep1?.device.category ?? ''] ?? 0
+    const p2 = CATEGORY_PRIORITY[ep2?.device.category ?? ''] ?? 0
+    if (p1 !== p2) return p2 - p1
+
+    const nameCmp = (ep1?.device.name ?? '').localeCompare(ep2?.device.name ?? '')
+    if (nameCmp !== 0) return nameCmp
+
+    return (ep1?.portLabel ?? '').localeCompare(ep2?.portLabel ?? '')
+  })
 
   const border = '1px solid #334155'
 
@@ -245,14 +271,6 @@ export default function ConnectionsTable({
               style={s.searchInput}
             />
           )}
-          {onAddLink && (
-            <button type="button" onClick={onAddLink} style={{
-              background: '#10B981', color: '#fff', border: 'none',
-              borderRadius: 5, padding: '4px 10px', fontSize: 11, fontWeight: 600, cursor: 'pointer',
-            }}>
-              + Add
-            </button>
-          )}
         </div>
       </div>
 
@@ -277,7 +295,7 @@ export default function ConnectionsTable({
             </tr>
           </thead>
           <tbody>
-            {filteredLinks.length === 0 ? (
+            {sortedLinks.length === 0 ? (
               <tr>
                 <td colSpan={colCount} style={s.emptyRow}>
                   {links.length === 0 ? (
@@ -293,9 +311,15 @@ export default function ConnectionsTable({
                 </td>
               </tr>
             ) : (
-              filteredLinks.map((link) => {
+              sortedLinks.map((link) => {
                 const a = portLookup.get(link.portAId)
                 const b = portLookup.get(link.portBId)
+                const aIsLocal = a?.device.rack.id === currentRack.id
+                const bIsLocal = b?.device.rack.id === currentRack.id
+                const displayA = (!aIsLocal && bIsLocal) ? b : a
+                const displayASlot = (!aIsLocal && bIsLocal) ? link.portBSlot : link.portASlot
+                const displayB = (!aIsLocal && bIsLocal) ? a : b
+                const displayBSlot = (!aIsLocal && bIsLocal) ? link.portASlot : link.portBSlot
                 const isHovered = hoveredLinkId === link.id
                 const isHighlighted = highlightedLinkId === link.id
 
@@ -328,7 +352,7 @@ export default function ConnectionsTable({
                   >
                     {/* Endpoint A — with colour strip on left */}
                     <td style={{ ...s.td, borderLeft: `3px solid ${link.color || '#4a9eff'}` }}>
-                      {endpointLabel(a, link.portASlot)}
+                      {endpointLabel(displayA, displayASlot)}
                     </td>
 
                     {/* Endpoint B — in compact mode, action icons appear here on hover */}
@@ -336,7 +360,7 @@ export default function ConnectionsTable({
                       {compact ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, minWidth: 0 }}>
                           <div style={{ minWidth: 0, flex: 1 }}>
-                            {endpointLabel(b, link.portBSlot)}
+                            {endpointLabel(displayB, displayBSlot)}
                           </div>
                           {isHovered && (
                             <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
@@ -351,7 +375,7 @@ export default function ConnectionsTable({
                           )}
                         </div>
                       ) : (
-                        endpointLabel(b, link.portBSlot)
+                        endpointLabel(displayB, displayBSlot)
                       )}
                     </td>
 
