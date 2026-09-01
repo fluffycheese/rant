@@ -111,48 +111,78 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
       const originEntry = resolvePort(originPortId, portLookups)
       if (!originEntry) throw new Error('Could not resolve origin port')
 
-      const origin: HopEndpoint = { ...originEntry, slot: originSlot }
-      const hops: TraceHop[] = []
-      let currentPortId = originPortId
-      let currentSlot: 'front' | 'back' = originSlot
-      const visited = new Set<string>()
+      // ── Bidirectional walk ─────────────────────────────────────────────
+      // Walk from startPortId:startSlot forward until a non-PP terminal or
+      // an unresolvable port. Returns the ordered hops in traversal order.
+      async function walkDirection(
+        startPortId: string,
+        startSlot: 'front' | 'back'
+      ): Promise<TraceHop[]> {
+        const hops: TraceHop[] = []
+        let currentPortId = startPortId
+        let currentSlot: 'front' | 'back' = startSlot
+        const visited = new Set<string>()
 
-      while (true) {
-        const key = `${currentPortId}:${currentSlot}`
-        if (visited.has(key)) break
-        visited.add(key)
+        while (true) {
+          const key = `${currentPortId}:${currentSlot}`
+          if (visited.has(key)) break
+          visited.add(key)
 
-        const link = findLink(currentPortId, currentSlot, getAllLinks())
-        if (!link) break
+          const link = findLink(currentPortId, currentSlot, getAllLinks())
+          if (!link) break
 
-        const otherSide = getOtherSide(link, currentPortId, currentSlot)
-        let otherEntry = resolvePort(otherSide.portId, portLookups)
+          const otherSide = getOtherSide(link, currentPortId, currentSlot)
+          let otherEntry = resolvePort(otherSide.portId, portLookups)
+          if (!otherEntry) break
 
-        if (!otherEntry) {
-          // Try to find the rack from the link's context by checking any cross-rack info
-          // For cross-rack links both ends appear in their respective rack's internalLinks
-          // If we still can't resolve, we're at a boundary — stop
-          break
+          // Lazy-load the remote rack if needed
+          await ensureRack(otherEntry.device.rack.id)
+          // Re-resolve after possible cache update
+          otherEntry = resolvePort(otherSide.portId, portLookups)
+          if (!otherEntry) break
+
+          const fromEntry = resolvePort(currentPortId, portLookups)
+          if (!fromEntry) break
+
+          hops.push({
+            link,
+            from: { ...fromEntry, slot: currentSlot },
+            to: { ...otherEntry, slot: otherSide.slot },
+          })
+
+          // Passthrough patch panels; stop at any other device
+          if (otherEntry.device.category === 'patch_panel') {
+            currentPortId = otherSide.portId
+            currentSlot = passthroughSlot(otherSide.slot)
+          } else {
+            break
+          }
         }
-
-        await ensureRack(otherEntry.device.rack.id)
-
-        const fromEntry = resolvePort(currentPortId, portLookups)
-        if (!fromEntry) break
-
-        hops.push({ link, from: { ...fromEntry, slot: currentSlot }, to: { ...otherEntry, slot: otherSide.slot } })
-
-        if (otherEntry.device.category === 'patch_panel') {
-          currentPortId = otherSide.portId
-          currentSlot = passthroughSlot(otherSide.slot)
-        } else {
-          break
-        }
+        return hops
       }
 
-      const lastHop = hops[hops.length - 1]
-      const terminus: HopEndpoint = lastHop ? lastHop.to : origin
-      setTrace({ hops, origin, terminus })
+      // Walk in the clicked direction (forward)
+      const forwardHops = await walkDirection(originPortId, originSlot)
+
+      // Walk in the opposite direction (backward), then reverse+flip to get
+      // the chain leading *to* the clicked port
+      const backwardRaw = await walkDirection(originPortId, passthroughSlot(originSlot))
+      const backwardHops: TraceHop[] = backwardRaw
+        .map(h => ({ link: h.link, from: h.to, to: h.from }))
+        .reverse()
+
+      // Full ordered chain: origin-side → ... → clicked port → ... → terminus-side
+      const allHops = [...backwardHops, ...forwardHops]
+
+      // True origin/terminus are the outer endpoints of the combined chain
+      const origin: HopEndpoint = allHops.length > 0
+        ? allHops[0].from
+        : { ...originEntry, slot: originSlot }
+      const terminus: HopEndpoint = allHops.length > 0
+        ? allHops[allHops.length - 1].to
+        : { ...originEntry, slot: originSlot }
+
+      setTrace({ hops: allHops, origin, terminus })
     } catch (err: any) {
       setError(err.message ?? 'Trace failed')
     } finally {
@@ -216,7 +246,7 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
         <div style={{ ...s.card, borderLeft: `3px solid ${color}`, cursor: 'default' }}>
           <div style={s.sectionLabel}>{role === 'origin' ? '⬤ Origin' : '⬤ Terminus'}</div>
           <div style={s.deviceName}>
-            {!isCurrentRack && <span style={{ fontSize: 10, color: '#64748B', marginRight: 4 }}>{ep.device.site.name} / {ep.device.rack.name} / </span>}
+            {!isCurrentRack && <span style={{ fontSize: 10, color: '#64748B', marginRight: 4 }}>{ep.device.site?.name} / {ep.device.rack?.name} / </span>}
             {ep.device.name}
           </div>
           <div style={s.portRow}>
@@ -232,8 +262,8 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
   function renderHopCard(hop: TraceHop, index: number) {
     const isSelected = selectedHopIndex === index
     const color = hop.link.color ?? '#64748B'
-    const isCrossRack = hop.from.device.rack.id !== hop.to.device.rack.id
-    const isCrossSite = hop.from.device.site.id !== hop.to.device.site.id
+    const isCrossRack = hop.from.device.rack?.id !== hop.to.device.rack?.id
+    const isCrossSite = (hop.from.device.site?.id ?? hop.from.device.rack?.id) !== (hop.to.device.site?.id ?? hop.to.device.rack?.id)
 
     return (
       <div key={hop.link.id}>
