@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { api, type Profile, type Site, type Rack } from '../../api/client.ts'
 import { useAuth } from '../../auth/AuthContext.tsx'
+import { usePatching } from '../../contexts/PatchingContext.tsx'
 import RackTree from './RackTree.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 
@@ -13,6 +14,7 @@ const RAIL_W = 56
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
+  const { isManualSplitView } = usePatching()
   const [collapsed, setCollapsed]               = useState(false)
   const [profiles, setProfiles]                 = useState<Profile[]>([])
   const [activeProfileId, setActiveProfileId]   = useState<string | null>(null)
@@ -21,6 +23,11 @@ export default function Sidebar() {
   const [rackModalSiteId, setRackModalSiteId]   = useState<string | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
+
+  // Auto-collapse sidebar when split view activates to maximise rack space
+  useEffect(() => {
+    if (isManualSplitView) setCollapsed(true)
+  }, [isManualSplitView])
 
   useEffect(() => {
     api.profiles.list().then(async ps => {
