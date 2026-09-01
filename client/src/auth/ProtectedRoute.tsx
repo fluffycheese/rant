@@ -12,8 +12,8 @@ export default function ProtectedRoute() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        background: '#0f1117',
-        color: '#8b949e',
+        background: '#0F172A',
+        color: '#64748B',
         fontSize: 14,
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}>
