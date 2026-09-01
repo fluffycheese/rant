@@ -110,7 +110,7 @@ export default function Sidebar() {
         transition: 'width 0.2s ease',
       }}>
         {/* Logo icon */}
-        <div style={{ padding: '10px 0', display: 'flex', justifyContent: 'center', borderBottom: border, background: '#F8FAFC' }}>
+        <div style={{ padding: '12px 0', display: 'flex', justifyContent: 'center', borderBottom: border, background: '#64748B' }}>
           <img src="/icon.png" alt="RANT" style={{ width: 32, height: 32, objectFit: 'contain' }} />
         </div>
 
@@ -182,8 +182,8 @@ export default function Sidebar() {
   // ---------------------------------------------------------------------------
   const s: Record<string, CSSProperties> = {
     sidebar:    { width: EXPANDED_W, background: '#1E293B', borderRight: border, display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden', transition: 'width 0.2s ease' },
-    header:     { padding: '12px 12px 12px 12px', borderBottom: border, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: '#F8FAFC' },
-    collapseBtn:{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontSize: 18, padding: '2px 6px', borderRadius: 4, lineHeight: 1, flexShrink: 0 },
+    header:     { padding: '16px 12px', borderBottom: border, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, background: '#64748B', position: 'relative' as const },
+    collapseBtn:{ background: 'none', border: 'none', color: '#0F172A', cursor: 'pointer', fontSize: 18, padding: '4px 6px', borderRadius: 4, lineHeight: 1, flexShrink: 0, position: 'absolute' as const, top: 8, right: 8 },
     section:    { padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: mutedColor, textTransform: 'uppercase', letterSpacing: 0.8 },
     scroll:     { flex: 1, overflowY: 'auto' },
     footer:     { padding: '10px 16px', borderTop: border, display: 'flex', flexDirection: 'column', gap: 8 },
@@ -200,7 +200,7 @@ export default function Sidebar() {
         <img
           src="/primary-stacked.png"
           alt="RANT"
-          style={{ height: 80, objectFit: 'contain', objectPosition: 'left' }}
+          style={{ height: 140, objectFit: 'contain' }}
         />
         <button
           type="button"
