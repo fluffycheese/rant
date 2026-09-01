@@ -57,13 +57,13 @@ export default function LoginPage() {
       fontFamily: 'system-ui, -apple-system, sans-serif',
     },
     card: {
-      background: '#1E293B',
-      border: '1px solid #334155',
+      background: '#64748B',
+      border: 'none',
       borderRadius: 12,
       padding: '36px 32px',
       width: '100%',
-      maxWidth: 400,
-      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+      maxWidth: 420,
+      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
       display: 'flex',
       flexDirection: 'column',
       gap: 20,
@@ -73,15 +73,17 @@ export default function LoginPage() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      gap: 10,
     },
     subtitle: {
       fontSize: 13,
-      color: '#64748B',
+      color: '#0F172A',
+      fontWeight: 600,
     },
     errorAlert: {
-      background: 'rgba(248, 81, 73, 0.15)',
+      background: 'rgba(0,0,0,0.25)',
       border: '1px solid #F87171',
-      color: '#F87171',
+      color: '#fff',
       borderRadius: 6,
       padding: '10px 12px',
       fontSize: 13,
@@ -93,13 +95,13 @@ export default function LoginPage() {
     },
     label: {
       fontSize: 12,
-      fontWeight: 600,
-      color: '#CBD5E1',
+      fontWeight: 700,
+      color: '#0F172A',
     },
     input: {
       width: '100%',
-      background: '#0F172A',
-      color: '#F1F5F9',
+      background: '#475569',
+      color: '#F8FAFC',
       border: '1px solid #334155',
       borderRadius: 6,
       padding: '8px 12px',
@@ -108,18 +110,18 @@ export default function LoginPage() {
       boxSizing: 'border-box',
     },
     button: {
-      background: '#10B981',
-      color: '#ffffff',
+      background: '#0F172A',
+      color: '#F8FAFC',
       border: 'none',
       borderRadius: 6,
       padding: '10px 16px',
       fontSize: 14,
-      fontWeight: 600,
+      fontWeight: 700,
       cursor: 'pointer',
       width: '100%',
       marginTop: 6,
       opacity: submitting || !username.trim() || !password ? 0.6 : 1,
-      transition: 'background-color 0.2s',
+      transition: 'opacity 0.2s',
     },
   }
 
@@ -129,19 +131,11 @@ export default function LoginPage() {
     <div style={s.container}>
       <div style={s.card}>
         <div style={s.header}>
-          <div style={{
-            background: '#F8FAFC',
-            borderRadius: 10,
-            padding: '16px 24px',
-            marginBottom: 4,
-            display: 'inline-block',
-          }}>
-            <img
-              src="/primary-horizontal.png"
-              alt="RANT — Rack And Networking Tool"
-              style={{ width: 220, display: 'block' }}
-            />
-          </div>
+          <img
+            src="/primary-horizontal.png"
+            alt="RANT — Rack And Networking Tool"
+            style={{ width: 240, display: 'block' }}
+          />
           <div style={s.subtitle}>
             {needsSetup ? 'Create first admin user' : 'Sign in to continue'}
           </div>
