@@ -95,10 +95,10 @@ export default function ConnectionsTable({
     const p2 = CATEGORY_PRIORITY[ep2?.device.category ?? ''] ?? 0
     if (p1 !== p2) return p2 - p1
 
-    const nameCmp = (ep1?.device.name ?? '').localeCompare(ep2?.device.name ?? '')
+    const nameCmp = (ep1?.device.name ?? '').localeCompare(ep2?.device.name ?? '', undefined, { numeric: true, sensitivity: 'base' })
     if (nameCmp !== 0) return nameCmp
 
-    return (ep1?.portLabel ?? '').localeCompare(ep2?.portLabel ?? '')
+    return (ep1?.portLabel ?? '').localeCompare(ep2?.portLabel ?? '', undefined, { numeric: true, sensitivity: 'base' })
   })
 
   const border = '1px solid #334155'
