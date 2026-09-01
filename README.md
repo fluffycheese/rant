@@ -1,3 +1,5 @@
+<img src="/assets/img/primary-horizontal.png" alt="RANT logo" width="500px">
+
 # RANT — Rack And Networking Tool
 
 > [!WARNING]

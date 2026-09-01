@@ -47,7 +47,7 @@ Creating complex device layouts (like a 48-port switch with stacked rows and ded
 ### 5. Working with Endpoints (WiFi APs, Cameras, etc.)
 Not every device sits inside a standard 19" rack slot. Devices categorized as `wifi_ap`, `ip_camera`, or `wall_panel` are treated as **Endpoints**.
 1. When you mount an endpoint device to a rack, it will *not* take up a physical U-slot in the visual cabinet.
-2. Instead, it appears in a dedicated **Endpoints Table** just below the Connections table.
+2. Instead, it appears in a dedicated **Endpoints Table** in the right panel.
 3. You can wire up endpoints quickly right from the table using the `🔗` button next to their port!
 
 ---
@@ -55,6 +55,18 @@ Not every device sits inside a standard 19" rack slot. Devices categorized as `w
 ## ⚡ Power-User Workflows
 
 Once you master basic patching, you can start using RANT to map complex, multi-site network topologies.
+
+### ↯ Cable Tracing
+RANT can trace the complete physical path of a cable from one endpoint to the other, automatically walking through patch panels.
+
+1. **From a port:** Hover over any connected port on a device card. A popup appears showing the front/back connections — click the **↯ Trace** button.
+2. **From a table:** Click the **↯** button on any row in the Connections or Endpoints tables.
+3. The **Trace tab** opens in the right panel showing the full chain — from one physical endpoint to the other — regardless of where in the chain you clicked.
+4. Each hop shows the device, port, slot, and cable type. Click any hop card to **highlight that specific cable link** in the rack grid.
+5. If a hop crosses to another rack, click **→ Open rack** to navigate there. If it crosses sites, click **⇄ Split view** to open both racks side by side.
+
+> [!TIP]
+> You can trace from the middle of a chain (e.g., click a patch panel port) and RANT will still show you the complete path from the AP at one end to the switch at the other.
 
 ### Editing and Removing Cables
 If you patch a cable to the wrong port, don't try to edit the endpoints—just like in the real world, you should unplug it and run a new one.
@@ -64,7 +76,7 @@ If you patch a cable to the wrong port, don't try to edit the endpoints—just l
 ### 🌎 Cross-Site Patching
 You can patch a cable from a switch in London directly to a router in Paris.
 1. Click an empty port in your London rack to start patching.
-2. Instead of clicking another port in the same rack, **click your Paris rack in the left sidebar**.
+2. Instead of clicking another port in the same rack, **click your Paris rack in the left sidebar (or use the ↯ Trace panel for an existing cross-site link)**.
 3. RANT will instantly snap into **Split View**, loading Paris side-by-side with London.
 4. Click the destination port in the Paris rack to complete the WAN link.
 
@@ -72,7 +84,7 @@ You can patch a cable from a switch in London directly to a router in Paris.
 > Cross-site connections will automatically display the full `Site / Rack / Device` path in your connections table so you never lose track of where a cable terminates.
 
 ### 🔄 The "Make Primary" Pivot
-When you are manually comparing two racks in the **Split View** tab, your browser's URL is always anchored to the rack on the *left*. 
+When you are manually comparing two racks in **Split View**, your browser's URL is always anchored to the rack on the *left*. 
 
 If you want to pivot your view (for example, you are comparing Rack A to Rack B, and now you want to compare Rack B to Rack C):
 1. Look at the toolbar above the right-hand rack (Rack B).
@@ -104,9 +116,10 @@ Every port in RANT has two physical slots: <code>Front</code> and <code>Back</co
 This is crucial for patch panels. The <code>Back</code> slot is typically used for the permanent structured cabling hidden in the walls, while the <code>Front</code> slot is used for the temporary patch leads you plug into the switch.
 </details>
 
+<details>
+<summary><strong>The Right Panel (Connections / Endpoints / Trace)</strong></summary>
+The right panel in the Rack View has three tabs: <b>Connections</b> (all cable links), <b>Endpoints</b> (WiFi APs, cameras, wall panels), and <b>↯ Trace</b> (appears when a trace is active). The panel can be collapsed to a slim strip, expanded to 360px, or further expanded to a full 680px overlay that floats over the rack grid.
+</details>
 
-### 5. View Modes & User Management
-
-- **View Selector**: Switch between Hybrid (Grid+Table), Rack Elevation (Grid only), Connections Table, and Split (Side-by-side) views using the dropdown in the Rack header.
 - **Users (Admin)**: Navigate to `👥 Users (Admin)` in the sidebar footer to create team accounts, change passwords, and manage access (when built-in authentication is active).
 
