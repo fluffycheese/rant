@@ -13,6 +13,7 @@ type Props = {
   onDeleteDevice?: (deviceId: string) => void
   onSelectPort?: (info: SelectedPortInfo) => void
   onEditLink?: (link: CableLink) => void
+  onTrace?: (portId: string, slot: 'front' | 'back') => void
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -33,6 +34,7 @@ export default function EndpointsTable({
   onDeleteDevice,
   onSelectPort,
   onEditLink,
+  onTrace,
 }: Props) {
   const [filter, setFilter] = useState('')
   const { highlightedLinkId, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
@@ -381,6 +383,21 @@ export default function EndpointsTable({
                     {/* Actions */}
                     {!compact && (
                     <td style={{ ...s.td, textAlign: 'center' }}>
+                      {row.link && onTrace && (
+                        <button
+                          type="button"
+                          style={{ ...s.deleteBtn, color: '#0EA5E9' }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            // Determine which slot this port is on
+                            const slot: 'front' | 'back' = row.link!.portAId === row.portId ? row.link!.portASlot : row.link!.portBSlot
+                            onTrace(row.portId, slot)
+                          }}
+                          title="Trace connection"
+                        >
+                          ↯
+                        </button>
+                      )}
                       <button
                         type="button"
                         style={s.deleteBtn}
