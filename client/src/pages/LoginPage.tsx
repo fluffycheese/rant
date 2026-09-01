@@ -52,13 +52,13 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#0f1117',
+      background: '#0F172A',
       padding: 16,
       fontFamily: 'system-ui, -apple-system, sans-serif',
     },
     card: {
-      background: '#161b22',
-      border: '1px solid #30363d',
+      background: '#1E293B',
+      border: '1px solid #334155',
       borderRadius: 12,
       padding: '36px 32px',
       width: '100%',
@@ -70,22 +70,18 @@ export default function LoginPage() {
     },
     header: {
       textAlign: 'center',
-    },
-    logo: {
-      fontSize: 24,
-      fontWeight: 800,
-      color: '#58a6ff',
-      letterSpacing: 1,
-      marginBottom: 6,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
     subtitle: {
       fontSize: 13,
-      color: '#8b949e',
+      color: '#64748B',
     },
     errorAlert: {
       background: 'rgba(248, 81, 73, 0.15)',
-      border: '1px solid #f85149',
-      color: '#ff7b72',
+      border: '1px solid #F87171',
+      color: '#F87171',
       borderRadius: 6,
       padding: '10px 12px',
       fontSize: 13,
@@ -98,13 +94,13 @@ export default function LoginPage() {
     label: {
       fontSize: 12,
       fontWeight: 600,
-      color: '#c9d1d9',
+      color: '#CBD5E1',
     },
     input: {
       width: '100%',
-      background: '#0d1117',
-      color: '#e2e8f0',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      color: '#F1F5F9',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: '8px 12px',
       fontSize: 14,
@@ -112,7 +108,7 @@ export default function LoginPage() {
       boxSizing: 'border-box',
     },
     button: {
-      background: '#238636',
+      background: '#10B981',
       color: '#ffffff',
       border: 'none',
       borderRadius: 6,
@@ -133,9 +129,13 @@ export default function LoginPage() {
     <div style={s.container}>
       <div style={s.card}>
         <div style={s.header}>
-          <div style={s.logo}>RANT</div>
+          <img
+            src="/primary-horizontal.png"
+            alt="RANT — Rack And Networking Tool"
+            style={{ width: 240, marginBottom: 4 }}
+          />
           <div style={s.subtitle}>
-            {needsSetup ? 'Create first admin user' : 'Rack And Networking Tool'}
+            {needsSetup ? 'Create first admin user' : 'Sign in to continue'}
           </div>
         </div>
 
