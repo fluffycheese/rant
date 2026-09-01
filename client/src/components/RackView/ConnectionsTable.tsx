@@ -51,7 +51,7 @@ export default function ConnectionsTable({
     return map
   }, [devices])
 
-  // Filter links
+  // Filter links — matches full Site / Rack / Device / Port path
   const filteredLinks = useMemo(() => {
     if (!filter.trim()) return links
     const q = filter.toLowerCase()
@@ -60,11 +60,17 @@ export default function ConnectionsTable({
       const a = portLookup.get(l.portAId)
       const b = portLookup.get(l.portBId)
 
+      const matchEndpoint = (info: typeof a, label: string) => {
+        if (!info) return false
+        const fullPath = `${info.device.site?.name ?? ''} / ${info.device.rack?.name ?? ''} / ${info.device.name} / ${label}`.toLowerCase()
+        return fullPath.includes(q)
+      }
+
       return (
         (l.label && l.label.toLowerCase().includes(q)) ||
         l.cableType.toLowerCase().includes(q) ||
-        (a && (a.device.name.toLowerCase().includes(q) || a.portLabel.toLowerCase().includes(q))) ||
-        (b && (b.device.name.toLowerCase().includes(q) || b.portLabel.toLowerCase().includes(q)))
+        matchEndpoint(a, a?.portLabel ?? '') ||
+        matchEndpoint(b, b?.portLabel ?? '')
       )
     })
   }, [links, filter, portLookup])
