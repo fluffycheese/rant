@@ -32,4 +32,6 @@ needs consistency. Perhaps hieracy based on category. e.g patch_panel is highest
 5. make left sidebar collapsible
 6. When in split view when clicking a port or connection in table should show the relevant cross site connections highlighted
 7. given the click and create nature of the app, i don't think the `+ Add Link` button in the connections table is needed
+8. I have added logos in assets/img - `primary-horizontal` is the full logo (icon followed by text horizontaly), good for login screen, repo readme, anywhere size is not a contraint. `primary-stacked` is the icon with text below, good where a narrower sized full logo is needed (perhaps the left side menu). Icon is icon only (no text) good for gihub repo icon. Also I have included favicons. These logos need to be incorporated to the app as neccessary.
+9. With the icon design, some of the colour palette needs updating to match #0F172A is the primary icon and text in the logo. #3BB2F6 is the secondary logo colour for accents. #06B6D4 #10B981 #F59E0B are all used sparingly in icon. Other colours that fit well with this palette #64748B #E2E8F0 #F8FAFC. We need to update the colours throughout the app to incorporate these colours and ensure contrast to ensure logo, given it's colours are visible
 
