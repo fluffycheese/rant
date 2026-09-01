@@ -539,6 +539,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             onDeleteDevice={handleDeleteDevice}
             onUpdateDevicePosition={handleUpdateDevicePosition}
             onEditDevice={setEditingDeviceId}
+            onTrace={(portId, slot) => {
+              setTraceOrigin({ portId, slot })
+              setRightPanelOpen(true)
+              setRightPanelTab('trace')
+            }}
             onAddDevice={(u) => {
               setTargetUPosition(u)
               setShowAddDevice(true)
