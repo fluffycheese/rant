@@ -30,6 +30,7 @@ type Props = {
   onDeleteDevice?: (deviceId: string) => void
   onEditDevice?: (deviceId: string) => void
   onUpdateDevicePosition?: (deviceId: string, u: number | null) => Promise<void> | void
+  onTrace?: (portId: string, slot: 'front' | 'back') => void
   compact?: boolean
 }
 
@@ -42,6 +43,7 @@ export default function DeviceCard({
   onDeleteDevice,
   onEditDevice,
   onUpdateDevicePosition,
+  onTrace,
   compact = false,
 }: Props) {
   const [hoveredPortId, setHoveredPortId] = useState<string | null>(null)
@@ -210,23 +212,25 @@ export default function DeviceCard({
           <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: front ? frontColor : '#334155' }} />
         </button>
 
-        {/* Hover detail tooltip using Portal */}
+        {/* Hover detail popup using Portal */}
         {isHovered && hoverBox && createPortal(
           <div
+            onMouseEnter={() => setHoverBox(prev => prev)}
+            onMouseLeave={() => setHoverBox(null)}
             style={{
               position: 'fixed',
               left: hoverBox.rect.left + hoverBox.rect.width / 2,
               top: hoverBox.rect.top - 6,
               transform: 'translate(-50%, -100%)',
               background: '#1E293B',
-              border: '1px solid #444c56',
+              border: '1px solid #334155',
               borderRadius: 6,
               padding: '6px 10px',
               fontSize: 11,
               color: '#F1F5F9',
               whiteSpace: 'nowrap',
               zIndex: 9999,
-              pointerEvents: 'none',
+              pointerEvents: 'auto',
               boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
               display: 'flex',
               flexDirection: 'column',
@@ -237,11 +241,35 @@ export default function DeviceCard({
               {device.name} · Port {port.label} ({port.connectorType})
             </div>
             <div style={{ fontSize: 10, color: front ? '#34D399' : '#64748B' }}>
-              ● 1°: {front ? getTargetDescription(front, port.id) : 'Empty'}
+              ● Front: {front ? getTargetDescription(front, port.id) : 'Empty'}
             </div>
             <div style={{ fontSize: 10, color: back ? '#C4B5FD' : '#64748B' }}>
-              ● 2°: {back ? getTargetDescription(back, port.id) : 'Empty'}
+              ● Back: {back ? getTargetDescription(back, port.id) : 'Empty'}
             </div>
+            {(front || back) && onTrace && (
+              <button
+                type="button"
+                onClick={() => {
+                  const slot = front ? 'front' : 'back'
+                  onTrace(port.id, slot)
+                  setHoverBox(null)
+                }}
+                style={{
+                  marginTop: 3,
+                  background: '#0EA5E9',
+                  border: 'none',
+                  borderRadius: 4,
+                  color: '#fff',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: '3px 8px',
+                  cursor: 'pointer',
+                  letterSpacing: 0.5,
+                }}
+              >
+                ↯ Trace
+              </button>
+            )}
           </div>,
           document.body
         )}
