@@ -3,8 +3,6 @@
   <img src="/assets/img/primary-horizontal-bg.png" alt="RANT logo" width="500">
 </div>
 
-# RANT — Rack And Networking Tool
-
 > [!WARNING]
 > **ALPHA BUILD - HEAVY DEVELOPMENT**
 > This repository is currently in an early Alpha state and is undergoing heavy, rapid development. Things *will* break, APIs will change without warning, and the database schema is not guaranteed to be stable. Use in production environments at your own risk!
@@ -17,6 +15,10 @@ A self-hosted tool for documenting racks, patching cables, and visualising netwo
 > **Are you an end-user?** 📖 [Read the User Guide](./docs/USER-GUIDE.md) to learn how to wire up your first rack and master cross-site patching.
 > 
 > **Are you a contributor or AI agent?** 🛠️ [Read the UI/UX Design Guide](./docs/UI-UX-GUIDE.md) and [AGENTS.md](./AGENTS.md) before making code changes.
+
+---
+
+# RANT — Rack And Networking Tool
 
 ---
 
