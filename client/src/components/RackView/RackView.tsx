@@ -4,10 +4,12 @@ import { api } from '../../api/client.ts'
 import RackGrid from './RackGrid.tsx'
 import ConnectionsTable from './ConnectionsTable.tsx'
 import EndpointsTable from './EndpointsTable.tsx'
+import TracePanel from './TracePanel.tsx'
 import type { SelectedPortInfo } from './DeviceCard.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 import DeviceEditorModal from './DeviceEditorModal.tsx'
 import ColorPicker from '../ColorPicker.tsx'
+import { useNavigate } from 'react-router-dom'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 type Props = {
@@ -21,16 +23,20 @@ type Props = {
 
 export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
-  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
+  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, setCrossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
+  const navigate = useNavigate()
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [showEditRack, setShowEditRack] = useState(false)
   const [rightPanelOpen, setRightPanelOpen] = useState(true)
-  const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints'>('connections')
+  const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints' | 'trace'>('connections')
   const [panelExpanded, setPanelExpanded] = useState(false)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
+  // trace: portId + slot to trace from
+  const [traceOrigin, setTraceOrigin] = useState<{ portId: string; slot: 'front' | 'back' } | null>(null)
+
 
   const isSplitActive = isManualSplitView || !!crossSiteTargetRackId
 
@@ -591,6 +597,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                     >
                       Endpoints
                     </button>
+                    {traceOrigin && (
+                      <button
+                        type="button"
+                        style={{ ...s.panelTab, ...(rightPanelTab === 'trace' ? s.panelTabActive : {}), color: rightPanelTab === 'trace' ? '#3BB2F6' : '#94A3B8' }}
+                        onClick={() => setRightPanelTab('trace')}
+                      >
+                        ↯ Trace
+                      </button>
+                    )}
                     {/* Collapse toggle */}
                     <button
                       type="button"
@@ -648,7 +663,22 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                         }}
                       />
                     )}
+                    {rightPanelTab === 'trace' && traceOrigin && (
+                      <TracePanel
+                        originPortId={traceOrigin.portId}
+                        originSlot={traceOrigin.slot}
+                        currentPayload={payload}
+                        onNavigateToRack={(rackId, linkId) => {
+                          navigate(`/racks/${rackId}`, { state: { highlightLinkId: linkId } })
+                        }}
+                        onOpenSplitView={(rackId, _linkId) => {
+                          setIsManualSplitView(true)
+                          setCrossSiteTargetRackId(rackId)
+                        }}
+                      />
+                    )}
                   </div>
+
                 </div>
               </div>
             </>
