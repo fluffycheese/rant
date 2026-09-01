@@ -26,22 +26,18 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [showEditRack, setShowEditRack] = useState(false)
-  const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>(isSecondaryView ? 'grid' : 'both')
+  const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints'>('connections')
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
 
   const isSplitActive = isManualSplitView || !!crossSiteTargetRackId
 
+  // Keep split-view context in sync
   useEffect(() => {
     if (isSecondaryView) return
-    if (isSplitActive && activeTab === 'both') {
-      setActiveTab('split')
-      setIsManualSplitView(true)
-    } else if (!isSplitActive && (activeTab === 'split' || activeTab === 'grid')) {
-      setActiveTab('both')
-      setIsManualSplitView(false)
-    }
-  }, [isSplitActive, isSecondaryView, activeTab, setIsManualSplitView])
+    if (!isSplitActive) setIsManualSplitView(false)
+  }, [isSplitActive, isSecondaryView, setIsManualSplitView])
 
   // Connection dialog state
   const [linkForm, setLinkForm] = useState<{
@@ -335,38 +331,83 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     },
     contentArea: {
       flex: 1,
-      overflow: 'auto',
+      overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'row',
+    },
+    rackSection: {
+      flex: 1,
+      overflowY: 'auto' as const,
       padding: 16,
-      gap: 20,
+      minWidth: 0,
+    },
+    rightPanel: {
+      width: rightPanelOpen ? 360 : 0,
+      minWidth: rightPanelOpen ? 360 : 0,
+      borderLeft: rightPanelOpen ? '1px solid #334155' : 'none',
+      background: '#1E293B',
+      display: 'flex',
+      flexDirection: 'column' as const,
+      overflow: 'hidden',
+      transition: 'width 0.2s ease, min-width 0.2s ease',
+      flexShrink: 0,
+      position: 'relative' as const,
+    },
+    panelTabBar: {
+      display: 'flex',
+      borderBottom: '1px solid #334155',
+      background: '#0F172A',
+      flexShrink: 0,
+    },
+    panelTab: {
+      flex: 1,
+      background: 'none',
+      border: 'none',
+      borderBottom: '2px solid transparent',
+      color: '#64748B',
+      padding: '10px 8px',
+      fontSize: 12,
+      fontWeight: 600,
+      cursor: 'pointer',
+      transition: 'color 0.15s, border-color 0.15s',
+    },
+    panelTabActive: {
+      color: '#3BB2F6',
+      borderBottom: '2px solid #3BB2F6',
+    },
+    panelBody: {
+      flex: 1,
+      overflowY: 'auto' as const,
+    },
+    collapseHandle: {
+      position: 'absolute' as const,
+      left: rightPanelOpen ? -14 : -28,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      background: '#1E293B',
+      border: '1px solid #334155',
+      borderRadius: '50%',
+      width: 24,
+      height: 24,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      fontSize: 12,
+      color: '#64748B',
+      zIndex: 10,
+      boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
     },
     // twoColumnLayout moved to css class
   }
 
   return (
     <div style={s.container}>
-      <style>{`
-        .two-column-layout {
-          display: grid;
-          grid-template-columns: minmax(400px, 1fr) minmax(360px, 500px);
-          gap: 20px;
-          align-items: start;
-          max-width: 1400px;
-          margin: 0 auto;
-          width: 100%;
-        }
-        @media (max-width: 1200px) {
-          .two-column-layout {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
       {/* Top Toolbar */}
       <div style={s.toolbar}>
         <div style={s.breadcrumb}>
           <span style={s.siteName}>{site.name}</span>
-          <span style={{ color: '#6e7681' }}>/</span>
+          <span style={{ color: '#475569' }}>/</span>
           <span style={s.rackName}>{rack.name}</span>
           <span style={s.uBadge}>{rack.uHeight}U</span>
           <button
@@ -392,7 +433,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 onCloseSplitView()
                 setIsManualSplitView(false)
               }}
-              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#ff7b72', borderColor: '#ff7b72' }}
+              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#F87171', borderColor: '#F87171' }}
             >
               ❌ Close
             </button>
@@ -400,24 +441,6 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
         </div>
 
         <div style={s.btnGroup}>
-          <select
-            value={activeTab}
-            onChange={(e) => {
-              const val = e.target.value as 'both' | 'grid' | 'connections' | 'split'
-              setActiveTab(val)
-              setIsManualSplitView(val === 'split')
-            }}
-            style={{
-              background: '#0d1117', color: '#e2e8f0', border: '1px solid #30363d',
-              borderRadius: 6, padding: '4px 8px', fontSize: 13, outline: 'none', cursor: 'pointer'
-            }}
-          >
-            <option value="both">View: Hybrid</option>
-            <option value="grid">View: Rack Elevation</option>
-            <option value="connections">View: Connections Table</option>
-            <option value="split">View: Split (Compare)</option>
-          </select>
-
           <button
             type="button"
             onClick={() => {
@@ -446,9 +469,9 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 value={selectedPort.slot}
                 onChange={(e) => setSelectedPort({ ...selectedPort, slot: e.target.value as 'front' | 'back' })}
                 style={{
-                  background: '#0d1117',
-                  color: '#58a6ff',
-                  border: '1px solid #1f6feb66',
+                  background: '#0F172A',
+                  color: '#3BB2F6',
+                  border: '1px solid #0EA5E966',
                   borderRadius: 4,
                   padding: '2px 4px',
                   fontSize: 12,
@@ -467,8 +490,8 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             onClick={() => setSelectedPort(null)}
             style={{
               background: 'none',
-              border: '1px solid #1f6feb',
-              color: '#58a6ff',
+              border: '1px solid #0EA5E9',
+              color: '#3BB2F6',
               borderRadius: 4,
               padding: '2px 8px',
               fontSize: 11,
@@ -480,71 +503,10 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
         </div>
       )}
 
-      {/* Main View Area */}
+      {/* Main Body: Rack grid + collapsible right panel */}
       <div style={s.contentArea}>
-        {activeTab === 'both' ? (
-          <div className="two-column-layout">
-            <div>
-              <RackGrid
-                rack={rack}
-                devices={devices}
-                links={internalLinks}
-                selectedPort={selectedPort}
-                onSelectPort={handleSelectPort}
-                onDeleteDevice={handleDeleteDevice}
-                onUpdateDevicePosition={handleUpdateDevicePosition}
-                onEditDevice={setEditingDeviceId}
-                onAddDevice={(u) => {
-                  setTargetUPosition(u)
-                  setShowAddDevice(true)
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <ConnectionsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onDeleteLink={handleDeleteLink}
-                onAddLink={() => {
-                  setEditingLinkId(null)
-                  setLinkForm({
-                    portAId: devices[0]?.ports[0]?.id ?? '',
-                    portASlot: 'front',
-                    portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
-                    portBSlot: 'front',
-                    cableType: 'cat6',
-                    color: '#4a9eff',
-                    label: '',
-                  })
-                  setShowLinkDialog(true)
-                }}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-              <EndpointsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onEditDevice={setEditingDeviceId}
-                onDeleteDevice={handleDeleteDevice}
-                onSelectPort={handleSelectPort}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-            </div>
-          </div>
-        ) : (activeTab === 'grid' || activeTab === 'split') ? (
+        {/* Rack section */}
+        <div style={s.rackSection}>
           <RackGrid
             rack={rack}
             devices={devices}
@@ -559,53 +521,78 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
               setShowAddDevice(true)
             }}
           />
-        ) : (
-          <div style={{ maxWidth: 900, margin: '0 auto', width: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <ConnectionsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onDeleteLink={handleDeleteLink}
-                onAddLink={() => {
-                  setEditingLinkId(null)
-                  setLinkForm({
-                    portAId: devices[0]?.ports[0]?.id ?? '',
-                    portASlot: 'front',
-                    portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
-                    portBSlot: 'front',
-                    cableType: 'cat6',
-                    color: '#4a9eff',
-                    label: '',
-                  })
-                  setShowLinkDialog(true)
-                }}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-              <EndpointsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onEditDevice={setEditingDeviceId}
-                onDeleteDevice={handleDeleteDevice}
-                onSelectPort={handleSelectPort}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-            </div>
-          </div>
-        )}
+        </div>
+
+        {/* Right panel */}
+        <div style={s.rightPanel}>
+          {/* Collapse/expand handle */}
+          <button
+            type="button"
+            style={s.collapseHandle}
+            onClick={() => setRightPanelOpen(o => !o)}
+            title={rightPanelOpen ? 'Collapse panel' : 'Expand panel'}
+          >
+            {rightPanelOpen ? '›' : '‹'}
+          </button>
+
+          {rightPanelOpen && (
+            <>
+              {/* Tab bar */}
+              <div style={s.panelTabBar}>
+                <button
+                  type="button"
+                  style={{ ...s.panelTab, ...(rightPanelTab === 'connections' ? s.panelTabActive : {}) }}
+                  onClick={() => setRightPanelTab('connections')}
+                >
+                  Connections ({internalLinks.length})
+                </button>
+                <button
+                  type="button"
+                  style={{ ...s.panelTab, ...(rightPanelTab === 'endpoints' ? s.panelTabActive : {}) }}
+                  onClick={() => setRightPanelTab('endpoints')}
+                >
+                  Endpoints
+                </button>
+              </div>
+
+              {/* Panel body */}
+              <div style={s.panelBody}>
+                {rightPanelTab === 'connections' && (
+                  <ConnectionsTable
+                    currentRack={rack}
+                    links={internalLinks}
+                    devices={devices}
+                    onDeleteLink={handleDeleteLink}
+                    onEditLink={(link) => {
+                      const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                      const port = device?.ports.find(p => p.id === link.portAId)
+                      if (device && port) {
+                        setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                      }
+                    }}
+                  />
+                )}
+                {rightPanelTab === 'endpoints' && (
+                  <EndpointsTable
+                    currentRack={rack}
+                    links={internalLinks}
+                    devices={devices}
+                    onEditDevice={setEditingDeviceId}
+                    onDeleteDevice={handleDeleteDevice}
+                    onSelectPort={handleSelectPort}
+                    onEditLink={(link) => {
+                      const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                      const port = device?.ports.find(p => p.id === link.portAId)
+                      if (device && port) {
+                        setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                      }
+                    }}
+                  />
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Edit Device Dialog */}
