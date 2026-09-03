@@ -40,7 +40,7 @@ type Props = {
 export default function TopologyView({ title, mermaidData, links, siteId }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { setCrossSiteTargetRackId } = usePatching()
+  const { setCrossSiteTargetRackId, setIsManualSplitView, setPinnedLinkId } = usePatching()
   const [filter, setFilter] = useState('')
   const [filterNodeId, setFilterNodeId] = useState<string | null>(null)
 
@@ -94,7 +94,9 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
 
   const handleRowClick = (link: LinkData) => {
     if (link.rackBId && link.rackAId) {
+      setIsManualSplitView(true)
       setCrossSiteTargetRackId(link.rackBId)
+      setPinnedLinkId(link.id)
       navigate('/racks/' + link.rackAId)
     }
   }

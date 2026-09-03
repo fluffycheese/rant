@@ -98,7 +98,6 @@ export default function RackViewPage() {
     <div style={{ display: 'flex', height: '100%', width: '100%' }}>
       <div style={{ flex: 1, borderRight: (targetPayload || isManualSplitView) ? '1px solid #334155' : 'none', overflow: 'hidden' }}>
         <RackView
-          key={`primary-${payload.rack.id}-${isManualSplitView || !!targetPayload}`}
           payload={payload}
           templates={templates}
           onReload={handleReloadBoth}
