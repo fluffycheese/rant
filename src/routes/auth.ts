@@ -44,7 +44,16 @@ app.post('/setup', async (c) => {
 // GET /setup/status — check if setup is needed
 app.get('/setup/status', async (c) => {
   const db = c.get('db')
+  const config = c.get('config')
   const existing = await db.select({ id: users.id }).from(users).limit(1)
+  
+  // Auto-seed demo environment if empty
+  if (existing.length === 0 && config.demoMode) {
+    const { resetDemoEnvironment } = await import('../services/demoService.js')
+    await resetDemoEnvironment(db)
+    return c.json({ needsSetup: false })
+  }
+
   return c.json({ needsSetup: existing.length === 0 })
 })
 

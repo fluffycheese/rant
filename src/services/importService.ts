@@ -38,68 +38,98 @@ export async function executeImport(db: AppDatabase, payload: ImportPayload, mod
     await db.delete(profiles)
   }
 
-  for (const p of payload.profiles) {
-    const newId = crypto.randomUUID()
-    idMap.set(p.id, newId)
-    await db.insert(profiles).values({ ...p, id: newId, isProtected: mode === 'replace', createdAt: toDate(p.createdAt), updatedAt: toDate(p.updatedAt) })
+  const chunkInsert = async (table: any, vals: any[]) => {
+    // D1 historically has a limit of 100 parameters per query in some setups
+    // chunkSize of 8 ensures we stay under 100 even with 12 columns (8 * 12 = 96)
+    const chunkSize = 8
+    for (let i = 0; i < vals.length; i += chunkSize) {
+      await db.insert(table).values(vals.slice(i, i + chunkSize))
+    }
   }
 
-  for (const s of payload.sites) {
-    const newId = crypto.randomUUID()
-    idMap.set(s.id, newId)
-    await db.insert(sites).values({ ...s, id: newId, profileId: getNewId(s.profileId), isProtected: mode === 'replace', createdAt: toDate(s.createdAt), updatedAt: toDate(s.updatedAt) })
-  }
-
-  for (const r of payload.racks) {
-    const newId = crypto.randomUUID()
-    idMap.set(r.id, newId)
-    await db.insert(racks).values({ ...r, id: newId, siteId: getNewId(r.siteId), isProtected: mode === 'replace', createdAt: toDate(r.createdAt), updatedAt: toDate(r.updatedAt) })
-  }
-
-  for (const dt of payload.deviceTemplates) {
-    const newId = crypto.randomUUID()
-    idMap.set(dt.id, newId)
-    await db.insert(deviceTemplates).values({ ...dt, id: newId, isProtected: mode === 'replace', createdAt: toDate(dt.createdAt), updatedAt: toDate(dt.updatedAt) })
-  }
-
-  for (const d of payload.devices) {
-    const newId = crypto.randomUUID()
-    idMap.set(d.id, newId)
-    await db.insert(devices).values({
-      ...d,
-      id: newId,
-      siteId: getNewId(d.siteId),
-      rackId: getNewId(d.rackId),
-      templateId: getNewId(d.templateId) || d.templateId,
-      isProtected: mode === 'replace',
-      createdAt: toDate(d.createdAt),
-      updatedAt: toDate(d.updatedAt)
+  if (payload.profiles.length > 0) {
+    const vals = payload.profiles.map((p: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(p.id, newId)
+      return { ...p, id: newId, isProtected: mode === 'replace', createdAt: toDate(p.createdAt), updatedAt: toDate(p.updatedAt) }
     })
+    await chunkInsert(profiles, vals)
   }
 
-  for (const p of payload.ports) {
-    const newId = crypto.randomUUID()
-    idMap.set(p.id, newId)
-    await db.insert(ports).values({
-      ...p,
-      id: newId,
-      deviceId: getNewId(p.deviceId),
-      isProtected: mode === 'replace',
-      createdAt: toDate(p.createdAt)
+  if (payload.sites.length > 0) {
+    const vals = payload.sites.map((s: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(s.id, newId)
+      return { ...s, id: newId, profileId: getNewId(s.profileId), isProtected: mode === 'replace', createdAt: toDate(s.createdAt), updatedAt: toDate(s.updatedAt) }
     })
+    await chunkInsert(sites, vals)
   }
 
-  for (const l of payload.cableLinks) {
-    const newId = crypto.randomUUID()
-    idMap.set(l.id, newId)
-    await db.insert(cableLinks).values({
-      ...l,
-      id: newId,
-      portAId: getNewId(l.portAId),
-      portBId: getNewId(l.portBId),
-      isProtected: mode === 'replace',
-      createdAt: toDate(l.createdAt),
-      updatedAt: toDate(l.updatedAt)
+  if (payload.racks.length > 0) {
+    const vals = payload.racks.map((r: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(r.id, newId)
+      return { ...r, id: newId, siteId: getNewId(r.siteId), isProtected: mode === 'replace', createdAt: toDate(r.createdAt), updatedAt: toDate(r.updatedAt) }
     })
+    await chunkInsert(racks, vals)
+  }
+
+  if (payload.deviceTemplates.length > 0) {
+    const vals = payload.deviceTemplates.map((dt: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(dt.id, newId)
+      return { ...dt, id: newId, isProtected: mode === 'replace', createdAt: toDate(dt.createdAt), updatedAt: toDate(dt.updatedAt) }
+    })
+    await chunkInsert(deviceTemplates, vals)
+  }
+
+  if (payload.devices.length > 0) {
+    const vals = payload.devices.map((d: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(d.id, newId)
+      return {
+        ...d,
+        id: newId,
+        siteId: getNewId(d.siteId),
+        rackId: getNewId(d.rackId),
+        templateId: getNewId(d.templateId) || d.templateId,
+        isProtected: mode === 'replace',
+        createdAt: toDate(d.createdAt),
+        updatedAt: toDate(d.updatedAt)
+      }
+    })
+    await chunkInsert(devices, vals)
+  }
+
+  if (payload.ports.length > 0) {
+    const vals = payload.ports.map((p: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(p.id, newId)
+      return {
+        ...p,
+        id: newId,
+        deviceId: getNewId(p.deviceId),
+        isProtected: mode === 'replace',
+        createdAt: toDate(p.createdAt)
+      }
+    })
+    await chunkInsert(ports, vals)
+  }
+
+  if (payload.cableLinks.length > 0) {
+    const vals = payload.cableLinks.map((l: any) => {
+      const newId = crypto.randomUUID()
+      idMap.set(l.id, newId)
+      return {
+        ...l,
+        id: newId,
+        portAId: getNewId(l.portAId),
+        portBId: getNewId(l.portBId),
+        isProtected: mode === 'replace',
+        createdAt: toDate(l.createdAt),
+        updatedAt: toDate(l.updatedAt)
+      }
+    })
+    await chunkInsert(cableLinks, vals)
   }
 }

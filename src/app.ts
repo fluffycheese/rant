@@ -39,7 +39,7 @@ export function createApp(platformInit: (app: Hono<AppEnv>) => void) {
     if (err.name === 'ZodError') {
       return c.json({ error: 'Validation error', details: JSON.parse(err.message) }, 422)
     }
-    return c.json({ error: err.message ?? 'Internal server error' }, 500)
+    return c.json({ error: err.message, cause: err.cause ? String(err.cause) : undefined }, 500)
   })
 
   // Apply authentication middleware to all /api/* routes (exempts /api/auth/login and /api/auth/setup)

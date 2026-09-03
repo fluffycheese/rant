@@ -28,25 +28,18 @@ In the Cloudflare Dashboard, go to your **Pages project -> Settings -> Environme
 - `DEMO_MODE` = `true`
 - `CRON_SECRET` = `your_secret_string`
 
-### 2. Deploy the Auto-Reset Companion Worker
-We have included a pre-configured companion worker in the `demo-cron-worker` directory that bundles your huge `demo-seed.json` directly into the code (bypassing Cloudflare's 5KB environment variable limits).
+**Important:** You must redeploy your project (or hit "Retry Deployment") for new environment variables to take effect!
 
-1. Navigate to the companion worker directory:
-   ```bash
-   cd demo-cron-worker
-   ```
-2. Edit `wrangler.toml` and update the `[vars]` block with your actual details:
-   ```toml
-   [vars]
-   TARGET_URL = "https://your-pages-project.pages.dev/api/demo/reset"
-   CRON_SECRET = "your_secret_string"
-   ```
-3. Deploy it to your Cloudflare account using Wrangler:
-   ```bash
-   npx wrangler deploy
-   ```
+### 2. Zero-Config Startup
+That's it! When you visit your deployed site for the first time, RANT will detect that it is in Demo Mode with an empty database and **automatically seed the environment** with the bundled demo topology. You will not see a setup screen, and you can immediately log in with `demo / demo`.
 
-*Note: The worker automatically triggers every 12 hours based on the `[triggers]` configuration in `wrangler.toml`.*
+### 3. Setting up the Auto-Reset Cron
+Because the reset endpoint no longer requires the heavy `demo-seed.json` payload, you can trigger a reset from absolutely anywhere (GitHub Actions, uptime monitors, simple systemd timers, or cron-job.org) using a simple `curl` command:
+
+```bash
+curl -X POST https://your-demo.pages.dev/api/demo/reset \
+     -H "Authorization: Bearer your_secret_string"
+```
 
 ---
 
@@ -73,12 +66,10 @@ services:
 
   rant-reset-cron:
     image: alpine:latest
-    volumes:
-      - ./demo-seed.json:/demo-seed.json
     command: >
       /bin/sh -c "
       apk add --no-cache curl &&
-      echo '0 */12 * * * curl -X POST http://rant-demo:3001/api/demo/reset -H \"Content-Type: application/json\" -H \"Authorization: Bearer my_super_secret_string\" -d @/demo-seed.json' | crontab - &&
+      echo '0 */12 * * * curl -X POST http://rant-demo:3001/api/demo/reset -H \"Authorization: Bearer my_super_secret_string\"' | crontab - &&
       crond -f -d 8
       "
     restart: unless-stopped
@@ -100,7 +91,6 @@ On NixOS, you run the main application as a systemd service, and use systemd tim
 
 let
   rant = import /path/to/rant { inherit pkgs; };
-  demoSeedPath = "/var/lib/rant/demo-seed.json";
   cronSecret = "my_super_secret_string";
 in {
   # 1. The main application
@@ -125,7 +115,7 @@ in {
     description = "Reset RANT Demo Topology";
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.curl}/bin/curl -X POST http://localhost:3001/api/demo/reset -H 'Content-Type: application/json' -H 'Authorization: Bearer ${cronSecret}' -d @${demoSeedPath}";
+      ExecStart = "${pkgs.curl}/bin/curl -X POST http://localhost:3001/api/demo/reset -H 'Authorization: Bearer ${cronSecret}'";
     };
   };
 
