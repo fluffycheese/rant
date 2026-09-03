@@ -9,6 +9,7 @@ import TemplatesPage from './pages/TemplatesPage.tsx'
 import AdminPage from './pages/AdminPage.tsx'
 import ProfileViewPage from './pages/ProfileViewPage.tsx'
 import SiteViewPage from './pages/SiteViewPage.tsx'
+import Dashboard from './components/Dashboard.tsx'
 
 export default function App() {
   return (
@@ -22,14 +23,14 @@ export default function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
-              <Route index element={<Navigate to="/templates" replace />} />
+              <Route index element={<Dashboard />} />
               <Route path="/racks/:rackId" element={<RackViewPage />} />
               <Route path="/sites/:siteId" element={<SiteViewPage />} />
               <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/profiles/:id" element={<ProfileViewPage />} />
               <Route path="/topology" element={<ProfileViewPage />} />
-              <Route path="*" element={<Navigate to="/templates" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Route>
         </Routes>

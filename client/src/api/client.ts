@@ -55,6 +55,16 @@ export type RackDevice = Device & {
   ports: Port[];
 }
 
+
+export type Stats = {
+  totalSites: number;
+  totalRacks: number;
+  totalDevices: number;
+  totalConnections: number;
+  crossRackLinks: number;
+  crossSiteLinks: number;
+}
+
 export type RackViewPayload = {
   rack: Rack;
   site: Site;
@@ -154,4 +164,7 @@ export const api = {
     changePassword: (id: string, password: string) =>
       request<{ ok: boolean }>(`/users/${id}/password`, { method: 'PUT', body: JSON.stringify({ password }) }),
   },
-}
+  stats: {
+    get: () => request<Stats>('/stats'),
+  },
+};

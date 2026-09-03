@@ -163,6 +163,7 @@ export default function Sidebar() {
 
         {/* Footer icons */}
         <div style={{ borderTop: border, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 0', gap: 4 }}>
+          <Link to="/" title="Dashboard" style={railItem}>📊</Link>
           <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} title="Global Topology" style={railItem}>🌍</Link>
           <Link to="/templates" title="Device Templates" style={railItem}>⚙</Link>
           <Link to="/admin" title="Users (Admin)" style={railItem}>👥</Link>
@@ -236,6 +237,7 @@ export default function Sidebar() {
       </div>
 
       <div style={s.footer}>
+        <Link to="/" style={s.footerLink}>📊 Dashboard</Link>
         <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} style={s.footerLink}>🌍 Global Topology</Link>
         <Link to="/templates" style={s.footerLink}>⚙ Device Templates</Link>
         <Link to="/admin" style={s.footerLink}>👥 Users (Admin)</Link>
