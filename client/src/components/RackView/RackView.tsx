@@ -103,20 +103,20 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
   const { rack, site, devices, internalLinks } = payload
   const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, setCrossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
   const navigate = useNavigate()
+
+  const isSplitActive = isManualSplitView || !!crossSiteTargetRackId || !!isSecondaryView
+
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [showEditRack, setShowEditRack] = useState(false)
-  const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [rightPanelOpen, setRightPanelOpen] = useState(!isSplitActive)
   const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints' | 'trace'>('connections')
   const [panelExpanded, setPanelExpanded] = useState(false)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
   // trace: portId + slot to trace from
   const [traceOrigin, setTraceOrigin] = useState<{ portId: string; slot: 'front' | 'back' } | null>(null)
-
-
-  const isSplitActive = isManualSplitView || !!crossSiteTargetRackId
 
   // Keep split-view context in sync
   useEffect(() => {
@@ -709,6 +709,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                         compact={!panelExpanded}
                         onEditDevice={setEditingDeviceId}
                         onDeleteDevice={handleDeleteDevice}
+                        onDeleteLink={handleDeleteLink}
                         onSelectPort={handleSelectPort}
                         onEditLink={(link) => {
                           const device = devices.find(d => d.ports.some(p => p.id === link.portAId))

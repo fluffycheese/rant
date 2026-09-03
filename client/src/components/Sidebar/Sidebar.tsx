@@ -86,8 +86,9 @@ function StripButton({
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
-  const { isManualSplitView } = usePatching()
-  const [collapsed, setCollapsed]               = useState(false)
+  const { isManualSplitView, crossSiteTargetRackId } = usePatching()
+  const isSplitActive                           = isManualSplitView || !!crossSiteTargetRackId
+  const [collapsed, setCollapsed]               = useState(isSplitActive)
   const [profiles, setProfiles]                 = useState<Profile[]>([])
   const [activeProfileId, setActiveProfileId]   = useState<string | null>(null)
   const [sites, setSites]                       = useState<Site[]>([])
@@ -98,8 +99,8 @@ export default function Sidebar() {
 
   // Auto-collapse sidebar when split view activates to maximise rack space
   useEffect(() => {
-    if (isManualSplitView) setCollapsed(true)
-  }, [isManualSplitView])
+    if (isSplitActive) setCollapsed(true)
+  }, [isSplitActive])
 
   useEffect(() => {
     api.profiles.list().then(async ps => {

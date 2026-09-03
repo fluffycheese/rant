@@ -11,6 +11,7 @@ type Props = {
   compact?: boolean
   onEditDevice?: (deviceId: string) => void
   onDeleteDevice?: (deviceId: string) => void
+  onDeleteLink?: (linkId: string) => void
   onSelectPort?: (info: SelectedPortInfo) => void
   onEditLink?: (link: CableLink) => void
   onTrace?: (portId: string, slot: 'front' | 'back') => void
@@ -32,12 +33,14 @@ export default function EndpointsTable({
   compact = false,
   onEditDevice,
   onDeleteDevice,
+  onDeleteLink,
   onSelectPort,
   onEditLink,
   onTrace,
 }: Props) {
   const [filter, setFilter] = useState('')
-  const { highlightedLinkId, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
+  const [hoveredEndpointId, setHoveredEndpointId] = useState<string | null>(null)
+  const { selectedPort, highlightedLinkId, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
   const tableRef = useRef<HTMLDivElement>(null)
 
   // Filter out only the endpoint devices in this rack
@@ -225,6 +228,14 @@ export default function EndpointsTable({
       color: '#3BB2F6',
       flexShrink: 0,
     },
+    slotBadge: {
+      fontSize: 9,
+      padding: '1px 3px',
+      borderRadius: 2,
+      background: '#334155',
+      color: '#94A3B8',
+      flexShrink: 0,
+    },
     cableBadge: {
       display: 'inline-flex',
       alignItems: 'center',
@@ -244,6 +255,15 @@ export default function EndpointsTable({
       display: 'inline-block',
       flexShrink: 0,
     },
+    actionBtn: {
+      background: 'none',
+      border: 'none',
+      color: '#64748B',
+      cursor: 'pointer',
+      fontSize: 12,
+      padding: '1px 4px',
+      borderRadius: 3,
+    },
     deleteBtn: {
       background: 'none',
       border: 'none',
@@ -260,6 +280,8 @@ export default function EndpointsTable({
       fontSize: 12,
     },
   }
+
+  const colCount = compact ? 2 : 4
 
   return (
     <div style={s.container}>
@@ -286,6 +308,14 @@ export default function EndpointsTable({
       {/* Table */}
       <div style={s.tableWrapper} ref={tableRef}>
         <table style={s.table}>
+          <colgroup>
+            {compact ? (
+              <>
+                <col style={{ width: '50%' }} />
+                <col style={{ width: '50%' }} />
+              </>
+            ) : null}
+          </colgroup>
           <thead>
             <tr>
               <th style={s.th}>Endpoint</th>
@@ -297,7 +327,7 @@ export default function EndpointsTable({
           <tbody>
             {filteredRows.length === 0 ? (
               <tr>
-                <td colSpan={compact ? 2 : 4} style={s.emptyRow}>
+                <td colSpan={colCount} style={s.emptyRow}>
                   {rows.length === 0 ? (
                     <div>
                       <div>No endpoint devices (WiFi APs, IP Cameras, Wall Panels) installed.</div>
@@ -317,6 +347,111 @@ export default function EndpointsTable({
                   targetData = portLookup.get(targetPortId)
                 }
 
+                const slot: 'front' | 'back' = row.link
+                  ? (row.link.portAId === row.portId ? row.link.portASlot : row.link.portBSlot)
+                  : 'front'
+                const targetSlot: 'front' | 'back' = row.link
+                  ? (row.link.portAId === row.portId ? row.link.portBSlot : row.link.portASlot)
+                  : 'front'
+
+                const isHovered = hoveredEndpointId === row.id
+                const isSelected = selectedPort?.port.id === row.portId
+                const isHighlighted = Boolean((linkId && highlightedLinkId === linkId) || isSelected)
+
+                const renderActions = (isCompactAction = false) => (
+                  <div style={{ display: 'flex', gap: 2, flexShrink: 0, justifyContent: isCompactAction ? 'flex-end' : 'center' }}>
+                    {row.link && onTrace && (
+                      <button
+                        type="button"
+                        style={{ ...s.actionBtn, color: '#0EA5E9' }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onTrace(row.portId, slot)
+                        }}
+                        title={isCompactAction ? 'Trace' : 'Trace connection'}
+                      >
+                        ↯
+                      </button>
+                    )}
+                    {(onEditLink || onSelectPort) && (
+                      <button
+                        type="button"
+                        style={s.actionBtn}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (row.link && onEditLink) {
+                            onEditLink(row.link)
+                          } else if (!row.link && onSelectPort) {
+                            onSelectPort({ port: row.port, slot: 'front', device: row.device })
+                          }
+                        }}
+                        title={row.link ? (isCompactAction ? 'Edit' : 'Edit connection') : (isCompactAction ? 'Patch' : 'Patch connection')}
+                      >
+                        🔗
+                      </button>
+                    )}
+                    {isCompactAction && (onDeleteDevice || (row.link && onDeleteLink)) && (
+                      <button
+                        type="button"
+                        style={{ ...s.actionBtn, color: '#F87171' }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onDeleteDevice) {
+                            if (confirm(`Remove "${row.device.name}"?`)) {
+                              onDeleteDevice(row.device.id)
+                            }
+                          } else if (row.link && onDeleteLink) {
+                            if (confirm('Delete this cable link?')) {
+                              onDeleteLink(row.link.id)
+                            }
+                          }
+                        }}
+                        title="Delete"
+                      >
+                        🗑
+                      </button>
+                    )}
+                    {!isCompactAction && row.device.ports[0]?.id === row.portId && (
+                      <>
+                        {onEditDevice && (
+                          <button
+                            type="button"
+                            style={s.actionBtn}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onEditDevice(row.device.id)
+                            }}
+                            title="Edit device"
+                          >
+                            ✎
+                          </button>
+                        )}
+                        {(onDeleteDevice || (row.link && onDeleteLink)) && (
+                          <button
+                            type="button"
+                            style={{ ...s.actionBtn, color: '#F87171' }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (onDeleteDevice) {
+                                if (confirm(`Remove "${row.device.name}"?`)) {
+                                  onDeleteDevice(row.device.id)
+                                }
+                              } else if (row.link && onDeleteLink) {
+                                if (confirm('Delete this cable link?')) {
+                                  onDeleteLink(row.link.id)
+                                }
+                              }
+                            }}
+                            title="Delete device"
+                          >
+                            🗑
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )
+
                 return (
                   <tr
                     key={row.id}
@@ -324,37 +459,73 @@ export default function EndpointsTable({
                     onClick={() => {
                       if (linkId) {
                         setPinnedLinkId(pinnedLinkId === linkId ? null : linkId)
+                      } else if (onSelectPort) {
+                        onSelectPort({ port: row.port, slot: 'front', device: row.device })
                       }
                     }}
                     onMouseEnter={() => {
                       if (linkId) setHighlightedLinkId(linkId)
+                      setHoveredEndpointId(row.id)
                     }}
                     onMouseLeave={() => {
                       if (linkId) setHighlightedLinkId(null)
+                      setHoveredEndpointId(null)
                     }}
                     style={{
-                      backgroundColor: (highlightedLinkId && linkId === highlightedLinkId) ? '#1f6feb33' : 'transparent',
-                      transition: 'background-color 0.2s',
-                      cursor: linkId ? 'pointer' : 'default',
+                      backgroundColor: isHighlighted ? '#0EA5E922' : 'transparent',
+                      transition: 'background-color 0.15s',
+                      cursor: 'pointer',
                     }}
                   >
                     {/* Endpoint */}
-                    <td style={s.td}>
+                    <td style={{ ...s.td, borderLeft: row.link ? `3px solid ${row.link.color || '#4a9eff'}` : '3px solid transparent' }}>
                       <div style={s.endpoint}>
                         <span style={{ fontSize: 14 }}>{CATEGORY_ICONS[row.device.category] || CATEGORY_ICONS.other}</span>
-                        <span style={s.deviceName}>{row.device.name}</span>
+                        <span style={s.deviceName} title={row.device.name}>{row.device.name}</span>
                         <span style={s.portBadge}>Port {row.portLabel}</span>
                       </div>
                     </td>
 
                     {/* Connected To */}
                     <td style={s.td}>
-                      {targetData ? (
+                      {compact ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, minWidth: 0 }}>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            {targetData ? (
+                              <div style={s.endpoint}>
+                                <span
+                                  style={s.deviceName}
+                                  title={targetData.device.rack.id !== currentRack.id
+                                    ? `${targetData.device.site?.name ?? ''} / ${targetData.device.rack?.name ?? ''} / ${targetData.device.name}`
+                                    : targetData.device.name}
+                                >
+                                  {targetData.device.rack.id !== currentRack.id
+                                    ? `${targetData.device.rack?.name ?? ''} / ${targetData.device.name}`
+                                    : targetData.device.name}
+                                </span>
+                                <span style={s.portBadge}>Port {targetData.portLabel}</span>
+                                <span style={s.slotBadge}>{targetSlot === 'front' ? 'F' : 'B'}</span>
+                              </div>
+                            ) : (
+                              <span style={{ color: '#475569', fontStyle: 'italic' }}>Unconnected</span>
+                            )}
+                          </div>
+                          {isHovered && renderActions(true)}
+                        </div>
+                      ) : targetData ? (
                         <div style={s.endpoint}>
-                          <span style={s.deviceName}>
-                            {targetData.device.rack.id !== currentRack.id ? `${targetData.device.site.name} / ${targetData.device.rack.name} / ${targetData.device.name}` : targetData.device.name}
+                          <span
+                            style={s.deviceName}
+                            title={targetData.device.rack.id !== currentRack.id
+                              ? `${targetData.device.site?.name ?? ''} / ${targetData.device.rack?.name ?? ''} / ${targetData.device.name}`
+                              : targetData.device.name}
+                          >
+                            {targetData.device.rack.id !== currentRack.id
+                              ? `${targetData.device.rack?.name ?? ''} / ${targetData.device.name}`
+                              : targetData.device.name}
                           </span>
                           <span style={s.portBadge}>Port {targetData.portLabel}</span>
+                          <span style={s.slotBadge}>{targetSlot === 'front' ? 'F' : 'B'}</span>
                         </div>
                       ) : (
                         <span style={{ color: '#475569', fontStyle: 'italic' }}>Unconnected</span>
@@ -363,87 +534,28 @@ export default function EndpointsTable({
 
                     {/* Cable */}
                     {!compact && (
-                    <td style={s.td}>
-                      {row.link ? (
-                        <span style={s.cableBadge}>
-                          <span
-                            style={{
-                              ...s.colorDot,
-                              background: row.link.color || '#4a9eff',
-                            }}
-                          />
-                          {row.link.cableType}
-                        </span>
-                      ) : (
-                        <span style={{ color: '#6e7681' }}>—</span>
-                      )}
-                    </td>
+                      <td style={s.td}>
+                        {row.link ? (
+                          <span style={s.cableBadge}>
+                            <span
+                              style={{
+                                ...s.colorDot,
+                                background: row.link.color || '#4a9eff',
+                              }}
+                            />
+                            {row.link.cableType}
+                          </span>
+                        ) : (
+                          <span style={{ color: '#6e7681' }}>—</span>
+                        )}
+                      </td>
                     )}
 
                     {/* Actions */}
                     {!compact && (
-                    <td style={{ ...s.td, textAlign: 'center' }}>
-                      {row.link && onTrace && (
-                        <button
-                          type="button"
-                          style={{ ...s.deleteBtn, color: '#0EA5E9' }}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            // Determine which slot this port is on
-                            const slot: 'front' | 'back' = row.link!.portAId === row.portId ? row.link!.portASlot : row.link!.portBSlot
-                            onTrace(row.portId, slot)
-                          }}
-                          title="Trace connection"
-                        >
-                          ↯
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        style={s.deleteBtn}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (row.link && onEditLink) {
-                            onEditLink(row.link);
-                          } else if (!row.link && onSelectPort) {
-                            onSelectPort({ port: row.port, slot: 'front', device: row.device });
-                          }
-                        }}
-                        title={row.link ? "Edit connection" : "Patch connection"}
-                      >
-                        🔗
-                      </button>
-                      {/* Only render actions on the first port of the device to avoid clutter */}
-                      {row.device.ports[0]?.id === row.portId && (
-                        <>
-                          {onEditDevice && (
-                            <button
-                              type="button"
-                              style={s.deleteBtn}
-                              onClick={(e) => { e.stopPropagation(); onEditDevice(row.device.id); }}
-                              title="Edit device"
-                            >
-                              ✎
-                            </button>
-                          )}
-                          {onDeleteDevice && (
-                            <button
-                              type="button"
-                              style={s.deleteBtn}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (confirm(`Remove "${row.device.name}"?`)) {
-                                  onDeleteDevice(row.device.id);
-                                }
-                              }}
-                              title="Delete device"
-                            >
-                              🗑
-                            </button>
-                          )}
-                        </>
-                      )}
-                    </td>
+                      <td style={{ ...s.td, textAlign: 'center' }}>
+                        {renderActions(false)}
+                      </td>
                     )}
                   </tr>
                 )
