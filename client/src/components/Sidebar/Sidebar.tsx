@@ -11,6 +11,78 @@ import RackFormModal from '../RackFormModal.tsx'
 // ---------------------------------------------------------------------------
 const EXPANDED_W = 260
 const RAIL_W = 56
+const STRIP_W = 20
+
+function TopHeaderLink({ href, title, icon }: { href: string; title: string; icon: string }) {
+  const [hover, setHover] = useState(false)
+  return (
+    <a
+      href={href}
+      title={title}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 32,
+        height: 32,
+        borderRadius: 6,
+        color: hover ? '#F1F5F9' : '#94A3B8',
+        background: hover ? '#334155' : 'transparent',
+        fontSize: 16,
+        textDecoration: 'none',
+        transition: 'color 0.15s, background 0.15s',
+      }}
+    >
+      {icon}
+    </a>
+  )
+}
+
+function StripButton({
+  collapsed,
+  onClick,
+}: {
+  collapsed: boolean
+  onClick: () => void
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      style={{
+        width: STRIP_W,
+        height: '100%',
+        background: hovered ? '#1E293B' : '#0F172A',
+        border: 'none',
+        borderLeft: '1px solid #334155',
+        borderRight: '1px solid #334155',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        cursor: 'pointer',
+        fontSize: 10,
+        fontWeight: 600,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        writingMode: 'vertical-rl',
+        letterSpacing: 1,
+        transition: 'background 0.15s, color 0.15s',
+        padding: 0,
+        outline: 'none',
+      }}
+    >
+      {collapsed ? '› Expand' : '‹ Collapse'}
+    </button>
+  )
+}
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
@@ -107,72 +179,109 @@ export default function Sidebar() {
     }
     return (
       <aside style={{
-        width: RAIL_W,
+        width: RAIL_W + STRIP_W,
         background: '#1E293B',
-        borderRight: border,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         flexShrink: 0,
         overflow: 'hidden',
         transition: 'width 0.2s ease',
+        height: '100%',
       }}>
-        {/* Logo icon */}
-        <div style={{ padding: '12px 0', display: 'flex', justifyContent: 'center', borderBottom: border, background: '#64748B' }}>
-          <img src="/icon.png" alt="RANT" style={{ width: 32, height: 32, objectFit: 'contain' }} />
-        </div>
-
-        {/* Expand toggle */}
-        <button
-          type="button"
-          onClick={() => setCollapsed(false)}
-          title="Expand sidebar"
-          style={{ ...railItem, borderBottom: border, fontSize: 16, color: mutedColor }}
-        >
-          ›
-        </button>
-
-        {/* Site initials */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-          {sites.map(site => {
-            const initials = site.name.slice(0, 2).toUpperCase()
-            const racks = racksBySite[site.id] ?? []
-            const isActive = racks.some(r => location.pathname === `/racks/${r.id}`)
-            return (
-              <div key={site.id} title={site.name} style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    background: isActive ? '#0EA5E9' : '#334155',
-                    color: isActive ? '#fff' : '#CBD5E1',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 11,
-                    fontWeight: 700,
-                    cursor: 'default',
-                  }}
-                >
-                  {initials}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Footer icons */}
-        <div style={{ borderTop: border, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 0', gap: 4 }}>
-          <Link to="/" title="Dashboard" style={railItem}>📊</Link>
-          <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} title="Global Topology" style={railItem}>🌍</Link>
-          <Link to="/templates" title="Device Templates" style={railItem}>⚙</Link>
-          <Link to="/admin" title="Users (Admin)" style={railItem}>👥</Link>
-          {user && (
-            <button type="button" title={`Log out ${user.username}`} style={railItem} onClick={handleLogout}>
-              👤
+        {/* Rail content column */}
+        <div style={{
+          width: RAIL_W,
+          display: 'flex',
+          flexDirection: 'column',
+          flexShrink: 0,
+          overflow: 'hidden',
+          height: '100%',
+        }}>
+          {/* Top Header Strip (Simulated Global Header) */}
+          <div style={{
+            height: 52,
+            padding: '0 8px',
+            borderBottom: border,
+            background: '#1E293B',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxSizing: 'border-box',
+          }}>
+            <button
+              type="button"
+              onClick={() => setCollapsed(false)}
+              title="Expand sidebar"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src="/icon.png"
+                alt="RANT"
+                style={{ width: 28, height: 28, objectFit: 'contain' }}
+              />
             </button>
-          )}
+          </div>
+
+          {/* Site initials */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+            {sites.map(site => {
+              const initials = site.name.slice(0, 2).toUpperCase()
+              const racks = racksBySite[site.id] ?? []
+              const isActive = racks.some(r => location.pathname === `/racks/${r.id}`)
+              return (
+                <div key={site.id} title={`${site.name} — Click to expand`} style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => setCollapsed(false)}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      background: isActive ? '#0EA5E9' : '#334155',
+                      color: isActive ? '#fff' : '#CBD5E1',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    {initials}
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Footer icons */}
+          <div style={{ borderTop: border, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 0', gap: 4 }}>
+            <Link to="/" title="Dashboard" style={railItem}>📊</Link>
+            <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} title="Global Topology" style={railItem}>🌍</Link>
+            <Link to="/templates" title="Device Templates" style={railItem}>⚙</Link>
+            <Link to="/admin" title="Users (Admin)" style={railItem}>👥</Link>
+            {user && (
+              <button type="button" title={`Log out ${user.username}`} style={railItem} onClick={handleLogout}>
+                👤
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Full-height expand strip on right edge */}
+        <StripButton collapsed={true} onClick={() => setCollapsed(false)} />
 
         {rackModalSiteId && (
           <RackFormModal
@@ -189,9 +298,8 @@ export default function Sidebar() {
   // EXPANDED SIDEBAR
   // ---------------------------------------------------------------------------
   const s: Record<string, CSSProperties> = {
-    sidebar:    { width: EXPANDED_W, background: '#1E293B', borderRight: border, display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden', transition: 'width 0.2s ease' },
-    header:     { padding: '16px 12px', borderBottom: border, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, background: '#64748B', position: 'relative' as const },
-    collapseBtn:{ background: 'none', border: 'none', color: '#0F172A', cursor: 'pointer', fontSize: 18, padding: '4px 6px', borderRadius: 4, lineHeight: 1, flexShrink: 0, position: 'absolute' as const, top: 8, right: 8 },
+    topHeader:  { height: 52, padding: '0 12px', borderBottom: border, display: 'flex', alignItems: 'center', justifyContent: 'space-around', background: '#1E293B', flexShrink: 0, boxSizing: 'border-box' },
+    header:     { padding: '16px 12px', borderBottom: border, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, background: '#64748B' },
     section:    { padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: mutedColor, textTransform: 'uppercase', letterSpacing: 0.8 },
     scroll:     { flex: 1, overflowY: 'auto' },
     footer:     { padding: '10px 16px', borderTop: border, display: 'flex', flexDirection: 'column', gap: 8 },
@@ -202,55 +310,77 @@ export default function Sidebar() {
   }
 
   return (
-    <aside style={s.sidebar}>
-      {/* Logo + collapse toggle */}
-      <div style={s.header}>
-        <img
-          src="/primary-stacked.png"
-          alt="RANT"
-          style={{ height: 140, objectFit: 'contain' }}
-        />
-        <button
-          type="button"
-          onClick={() => setCollapsed(true)}
-          title="Collapse sidebar"
-          style={s.collapseBtn}
-        >
-          ‹
-        </button>
-      </div>
+    <aside style={{
+      width: EXPANDED_W + STRIP_W,
+      background: '#1E293B',
+      display: 'flex',
+      flexDirection: 'row',
+      flexShrink: 0,
+      overflow: 'hidden',
+      transition: 'width 0.2s ease',
+      height: '100%',
+    }}>
+      {/* Expanded sidebar content */}
+      <div style={{
+        width: EXPANDED_W,
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        overflow: 'hidden',
+        height: '100%',
+      }}>
+        {/* Top Header Strip (Simulated Global Header) */}
+        <div style={s.topHeader}>
+          <TopHeaderLink href="https://github.com/fluffycheese/rant" title="GitHub Repository" icon="🐙" />
+          <TopHeaderLink href="https://github.com/fluffycheese/rant" title="Website" icon="🌐" />
+          <TopHeaderLink href="https://ko-fi.com" title="Support on Ko-fi" icon="☕" />
+          <TopHeaderLink href="https://github.com/fluffycheese/rant/blob/main/docs/USER-GUIDE.md" title="User Guide" icon="📖" />
+        </div>
 
-      <div style={s.scroll}>
-        {sites.map(site => (
-          <RackTree
-            key={site.id}
-            site={site}
-            racks={racksBySite[site.id] ?? []}
-            onAddRack={() => setRackModalSiteId(site.id)}
+        {/* Existing large RANT logo header directly beneath top strip */}
+        <div style={s.header}>
+          <img
+            src="/primary-stacked.png"
+            alt="RANT"
+            style={{ height: 140, objectFit: 'contain' }}
           />
-        ))}
-        {activeProfileId && (
-          <div style={{ padding: '4px 16px 8px' }}>
-            <button style={s.addBtn} onClick={handleAddSite}>+ New site</button>
-          </div>
-        )}
+        </div>
+
+        <div style={s.scroll}>
+          {sites.map(site => (
+            <RackTree
+              key={site.id}
+              site={site}
+              racks={racksBySite[site.id] ?? []}
+              onAddRack={() => setRackModalSiteId(site.id)}
+            />
+          ))}
+          {activeProfileId && (
+            <div style={{ padding: '4px 16px 8px' }}>
+              <button style={s.addBtn} onClick={handleAddSite}>+ New site</button>
+            </div>
+          )}
+        </div>
+
+        <div style={s.footer}>
+          <Link to="/" style={s.footerLink}>📊 Dashboard</Link>
+          <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} style={s.footerLink}>🌍 Global Topology</Link>
+          <Link to="/templates" style={s.footerLink}>⚙ Device Templates</Link>
+          <Link to="/admin" style={s.footerLink}>👥 Users (Admin)</Link>
+
+          {user && (
+            <div style={s.userRow}>
+              <span>👤 {user.username}</span>
+              <button type="button" style={s.logoutBtn} onClick={handleLogout}>
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div style={s.footer}>
-        <Link to="/" style={s.footerLink}>📊 Dashboard</Link>
-        <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} style={s.footerLink}>🌍 Global Topology</Link>
-        <Link to="/templates" style={s.footerLink}>⚙ Device Templates</Link>
-        <Link to="/admin" style={s.footerLink}>👥 Users (Admin)</Link>
-
-        {user && (
-          <div style={s.userRow}>
-            <span>👤 {user.username}</span>
-            <button type="button" style={s.logoutBtn} onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Full-height collapse strip on right edge */}
+      <StripButton collapsed={false} onClick={() => setCollapsed(true)} />
 
       {rackModalSiteId && (
         <RackFormModal
