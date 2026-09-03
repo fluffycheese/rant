@@ -12,6 +12,7 @@ import portsRoute     from './routes/ports.js'
 import linksRoute     from './routes/cableLinks.js'
 import usersRoute     from './routes/users.js'
 import templatesRoute from './routes/templates.js'
+import statsRoute     from './routes/stats.js'
 
 /**
  * Create the shared Hono application.
@@ -52,6 +53,7 @@ export function createApp(platformInit: (app: Hono<AppEnv>) => void) {
   api.route('/links',     linksRoute)
   api.route('/users',     usersRoute)
   api.route('/templates', templatesRoute)
+  api.route('/stats',     statsRoute)
 
   app.route('/api', api)
 

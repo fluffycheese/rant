@@ -128,9 +128,9 @@ export default function DeviceEditorModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '6px 8px',
     fontSize: 13,
@@ -139,7 +139,7 @@ export default function DeviceEditorModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
@@ -148,8 +148,8 @@ export default function DeviceEditorModal({
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
       <div style={{
-        background: '#161b22',
-        border: '1px solid #30363d',
+        background: '#1E293B',
+        border: '1px solid #334155',
         borderRadius: 10,
         padding: 24,
         width: '90%',
@@ -162,8 +162,8 @@ export default function DeviceEditorModal({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>Edit Device</div>
-            <div style={{ fontSize: 12, color: '#8b949e', marginTop: 2 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Edit Device</div>
+            <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
               {device.template ? `${device.template.manufacturer ? `${device.template.manufacturer} ` : ''}${device.template.model || device.template.name}` : device.category}
               {' · '}{ports.length} ports
               {' · '}{device.template?.uHeight || 1}U
@@ -172,14 +172,14 @@ export default function DeviceEditorModal({
           <button
             type="button"
             onClick={onClose}
-            style={{ background: 'none', border: 'none', color: '#8b949e', fontSize: 18, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
+            style={{ background: 'none', border: 'none', color: '#64748B', fontSize: 18, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
           >
             ✕
           </button>
         </div>
 
         {error && (
-          <div style={{ background: '#ff7b7222', border: '1px solid #ff7b72', color: '#ff7b72', padding: '8px 12px', borderRadius: 6, fontSize: 12 }}>
+          <div style={{ background: '#F8717122', border: '1px solid #F87171', color: '#F87171', padding: '8px 12px', borderRadius: 6, fontSize: 12 }}>
             {error}
           </div>
         )}
@@ -220,19 +220,19 @@ export default function DeviceEditorModal({
 
           {/* Ports Section */}
           <div style={{ marginTop: 4 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#c9d1d9', marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#CBD5E1', marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>Ports ({ports.length})</span>
             </div>
 
             {ports.length === 0 ? (
-              <div style={{ color: '#8b949e', fontSize: 12, fontStyle: 'italic', padding: '8px 0' }}>
+              <div style={{ color: '#64748B', fontSize: 12, fontStyle: 'italic', padding: '8px 0' }}>
                 No ports configured for this device.
               </div>
             ) : (
               <div style={{ maxHeight: 220, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6, paddingRight: 4 }}>
                 {ports.map((port, idx) => (
                   <div key={port.id} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 11, color: '#6e7681', width: 28, textAlign: 'right', flexShrink: 0 }}>
+                    <span style={{ fontSize: 11, color: '#475569', width: 28, textAlign: 'right', flexShrink: 0 }}>
                       #{idx + 1}
                     </span>
                     <input
@@ -253,7 +253,7 @@ export default function DeviceEditorModal({
                       ))}
                     </select>
                     {port.groupName && (
-                      <span style={{ fontSize: 10, color: '#8b949e', background: '#0d1117', border: '1px solid #30363d', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 10, color: '#64748B', background: '#0F172A', border: '1px solid #334155', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap' }}>
                         {port.groupName}
                       </span>
                     )}
@@ -270,8 +270,8 @@ export default function DeviceEditorModal({
               disabled={isSaving}
               style={{
                 background: 'none',
-                color: '#8b949e',
-                border: '1px solid #30363d',
+                color: '#64748B',
+                border: '1px solid #334155',
                 borderRadius: 6,
                 padding: '6px 16px',
                 cursor: 'pointer',
@@ -283,7 +283,7 @@ export default function DeviceEditorModal({
               type="submit"
               disabled={isSaving || !name.trim()}
               style={{
-                background: '#238636',
+                background: '#10B981',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 6,

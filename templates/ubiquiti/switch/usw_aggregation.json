@@ -1,0 +1,18 @@
+{
+  "name": "USW-Aggregation",
+  "category": "switch",
+  "manufacturer": "Ubiquiti",
+  "model": "USW-Aggregation",
+  "uHeight": 1,
+  "color": "#1a1a2e",
+  "portLayout": [
+    {"label": "1", "connectorType": "sfp+", "position": 0, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "2", "connectorType": "sfp+", "position": 1, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "3", "connectorType": "sfp+", "position": 2, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "4", "connectorType": "sfp+", "position": 3, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "5", "connectorType": "sfp+", "position": 4, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "6", "connectorType": "sfp+", "position": 5, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "7", "connectorType": "sfp+", "position": 6, "groupName": "10G", "groupLayout": "double_row"},
+    {"label": "8", "connectorType": "sfp+", "position": 7, "groupName": "10G", "groupLayout": "double_row"}
+  ]
+}

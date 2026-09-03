@@ -1,0 +1,80 @@
+{
+  "name": "USW-Flex-2.5G-8",
+  "category": "switch",
+  "manufacturer": "Ubiquiti",
+  "model": "USW-Flex-2.5G-8",
+  "uHeight": 1,
+  "color": "#1a1a2e",
+  "portLayout": [
+    {
+      "label": "1",
+      "connectorType": "rj45",
+      "position": 0,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "2",
+      "connectorType": "rj45",
+      "position": 1,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "3",
+      "connectorType": "rj45",
+      "position": 2,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "4",
+      "connectorType": "rj45",
+      "position": 3,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "5",
+      "connectorType": "rj45",
+      "position": 4,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "6",
+      "connectorType": "rj45",
+      "position": 5,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "7",
+      "connectorType": "rj45",
+      "position": 6,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "8",
+      "connectorType": "rj45",
+      "position": 7,
+      "groupName": "2.5G",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "9",
+      "connectorType": "rj45",
+      "position": 8,
+      "groupName": "Uplink",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "SFP",
+      "connectorType": "sfp+",
+      "position": 9,
+      "groupName": "Uplink",
+      "groupLayout": "single_row"
+    }
+  ]
+}

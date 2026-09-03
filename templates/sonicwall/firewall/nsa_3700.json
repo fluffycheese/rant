@@ -1,0 +1,263 @@
+{
+  "name": "SonicWall NSA 3700",
+  "category": "firewall",
+  "manufacturer": "SonicWall",
+  "model": "NSA 3700",
+  "uHeight": 1,
+  "color": "#f9a01b",
+  "portCount": 36,
+  "portLayout": [
+    {
+      "label": "MGMT",
+      "connectorType": "rj45",
+      "position": 0,
+      "groupName": "Management",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "CONS",
+      "connectorType": "rj45",
+      "position": 1,
+      "groupName": "Management",
+      "groupLayout": "single_row"
+    },
+    {
+      "label": "X32",
+      "connectorType": "sfp+",
+      "position": 2,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X33",
+      "connectorType": "sfp+",
+      "position": 3,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X30",
+      "connectorType": "sfp+",
+      "position": 4,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X31",
+      "connectorType": "sfp+",
+      "position": 5,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X28",
+      "connectorType": "sfp+",
+      "position": 6,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X29",
+      "connectorType": "sfp+",
+      "position": 7,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X26",
+      "connectorType": "sfp+",
+      "position": 8,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X27",
+      "connectorType": "sfp+",
+      "position": 9,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X24",
+      "connectorType": "sfp+",
+      "position": 10,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X25",
+      "connectorType": "sfp+",
+      "position": 11,
+      "groupName": "10GbE/5GbE SFP+",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X22",
+      "connectorType": "rj45",
+      "position": 12,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X23",
+      "connectorType": "rj45",
+      "position": 13,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X20",
+      "connectorType": "rj45",
+      "position": 14,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X21",
+      "connectorType": "rj45",
+      "position": 15,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X18",
+      "connectorType": "rj45",
+      "position": 16,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X19",
+      "connectorType": "rj45",
+      "position": 17,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X16",
+      "connectorType": "rj45",
+      "position": 18,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X17",
+      "connectorType": "rj45",
+      "position": 19,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X14",
+      "connectorType": "rj45",
+      "position": 20,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X15",
+      "connectorType": "rj45",
+      "position": 21,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X12",
+      "connectorType": "rj45",
+      "position": 22,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X13",
+      "connectorType": "rj45",
+      "position": 23,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X10",
+      "connectorType": "rj45",
+      "position": 24,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X11",
+      "connectorType": "rj45",
+      "position": 25,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X8",
+      "connectorType": "rj45",
+      "position": 26,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X9",
+      "connectorType": "rj45",
+      "position": 27,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X6",
+      "connectorType": "rj45",
+      "position": 28,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X7",
+      "connectorType": "rj45",
+      "position": 29,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X4",
+      "connectorType": "rj45",
+      "position": 30,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X5",
+      "connectorType": "rj45",
+      "position": 31,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X2",
+      "connectorType": "rj45",
+      "position": 32,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X3",
+      "connectorType": "rj45",
+      "position": 33,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X0",
+      "connectorType": "rj45",
+      "position": 34,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    },
+    {
+      "label": "X1",
+      "connectorType": "rj45",
+      "position": 35,
+      "groupName": "1GbE Copper",
+      "groupLayout": "double_row"
+    }
+  ]
+}

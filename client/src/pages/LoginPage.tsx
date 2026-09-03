@@ -52,40 +52,38 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#0f1117',
+      background: '#0F172A',
       padding: 16,
       fontFamily: 'system-ui, -apple-system, sans-serif',
     },
     card: {
-      background: '#161b22',
-      border: '1px solid #30363d',
+      background: '#64748B',
+      border: 'none',
       borderRadius: 12,
       padding: '36px 32px',
       width: '100%',
-      maxWidth: 400,
-      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+      maxWidth: 420,
+      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
       display: 'flex',
       flexDirection: 'column',
       gap: 20,
     },
     header: {
       textAlign: 'center',
-    },
-    logo: {
-      fontSize: 24,
-      fontWeight: 800,
-      color: '#58a6ff',
-      letterSpacing: 1,
-      marginBottom: 6,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 10,
     },
     subtitle: {
       fontSize: 13,
-      color: '#8b949e',
+      color: '#0F172A',
+      fontWeight: 600,
     },
     errorAlert: {
-      background: 'rgba(248, 81, 73, 0.15)',
-      border: '1px solid #f85149',
-      color: '#ff7b72',
+      background: 'rgba(0,0,0,0.25)',
+      border: '1px solid #F87171',
+      color: '#fff',
       borderRadius: 6,
       padding: '10px 12px',
       fontSize: 13,
@@ -97,14 +95,14 @@ export default function LoginPage() {
     },
     label: {
       fontSize: 12,
-      fontWeight: 600,
-      color: '#c9d1d9',
+      fontWeight: 700,
+      color: '#0F172A',
     },
     input: {
       width: '100%',
-      background: '#0d1117',
-      color: '#e2e8f0',
-      border: '1px solid #30363d',
+      background: '#475569',
+      color: '#F8FAFC',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: '8px 12px',
       fontSize: 14,
@@ -112,18 +110,18 @@ export default function LoginPage() {
       boxSizing: 'border-box',
     },
     button: {
-      background: '#238636',
-      color: '#ffffff',
+      background: '#0F172A',
+      color: '#F8FAFC',
       border: 'none',
       borderRadius: 6,
       padding: '10px 16px',
       fontSize: 14,
-      fontWeight: 600,
+      fontWeight: 700,
       cursor: 'pointer',
       width: '100%',
       marginTop: 6,
       opacity: submitting || !username.trim() || !password ? 0.6 : 1,
-      transition: 'background-color 0.2s',
+      transition: 'opacity 0.2s',
     },
   }
 
@@ -133,9 +131,13 @@ export default function LoginPage() {
     <div style={s.container}>
       <div style={s.card}>
         <div style={s.header}>
-          <div style={s.logo}>RANT</div>
+          <img
+            src="/primary-horizontal.png"
+            alt="RANT — Rack And Networking Tool"
+            style={{ width: 240, display: 'block' }}
+          />
           <div style={s.subtitle}>
-            {needsSetup ? 'Create first admin user' : 'Rack And Networking Tool'}
+            {needsSetup ? 'Create first admin user' : 'Sign in to continue'}
           </div>
         </div>
 

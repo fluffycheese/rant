@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import ColorPicker from '../components/ColorPicker.tsx'
 import { api, type DeviceTemplate } from '../api/client.ts'
 
-const CATEGORIES = ['switch', 'patch_panel', 'router', 'server', 'wall_panel', 'wifi_ap', 'ip_camera', 'other']
+const CATEGORIES = ['switch', 'patch_panel', 'router', 'firewall', 'server', 'wall_panel', 'wifi_ap', 'ip_camera', 'other']
 const CONNECTORS = ['rj45', 'sfp', 'sfp+', 'qsfp', 'lc', 'sc', 'other']
 
 const CAT_ICONS: Record<string, string> = {
-  switch: '🔀', patch_panel: '🔌', router: '📡', server: '🖥', wall_panel: '🧱', wifi_ap: '📶', ip_camera: '📹', other: '📦'
+  switch: '🔀', patch_panel: '🔌', router: '📡', firewall: '🛡️', server: '🖥', wall_panel: '🧱', wifi_ap: '📶', ip_camera: '📹', other: '📦'
 }
 
 type PortDef = { label: string; connectorType: string; position: number; groupName?: string | null; groupLayout?: 'single_row' | 'double_row' | null }
@@ -92,11 +92,11 @@ export default function TemplatesPage() {
   const s: Record<string, React.CSSProperties> = {
     page:   { padding: 32, maxWidth: 900, margin: '0 auto' },
     header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-    title:  { fontSize: 22, fontWeight: 700, color: '#e2e8f0' },
-    addBtn: { background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', cursor: 'pointer', fontSize: 14, fontWeight: 600 },
-    card:   { background: '#161b22', border: '1px solid #30363d', borderRadius: 8, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 },
-    badge:  { background: '#0d1117', borderRadius: 5, padding: '2px 8px', fontSize: 11, color: '#8b949e', border: '1px solid #30363d' },
-    iconBtn:{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, padding: '4px 8px', color: '#8b949e' },
+    title:  { fontSize: 22, fontWeight: 700, color: '#F1F5F9' },
+    addBtn: { background: '#10B981', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', cursor: 'pointer', fontSize: 14, fontWeight: 600 },
+    card:   { background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 },
+    badge:  { background: '#0F172A', borderRadius: 5, padding: '2px 8px', fontSize: 11, color: '#64748B', border: '1px solid #334155' },
+    iconBtn:{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, padding: '4px 8px', color: '#64748B' },
   }
 
   return (
@@ -104,13 +104,13 @@ export default function TemplatesPage() {
       <div style={s.header}>
         <div style={s.title}>Device Templates</div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button style={{ ...s.addBtn, background: '#21262d', border: '1px solid #30363d' }} onClick={handleImport}>📥 Import JSON</button>
+          <button style={{ ...s.addBtn, background: '#1E293B', border: '1px solid #334155' }} onClick={handleImport}>📥 Import JSON</button>
           <button style={s.addBtn} onClick={handleNew}>+ New template</button>
         </div>
       </div>
 
       {templates.length === 0 && (
-        <div style={{ color: '#8b949e', textAlign: 'center', marginTop: 60, fontSize: 15 }}>
+        <div style={{ color: '#64748B', textAlign: 'center', marginTop: 60, fontSize: 15 }}>
           No templates yet. Create one to start adding devices to racks.
         </div>
       )}
@@ -120,9 +120,9 @@ export default function TemplatesPage() {
           <div style={{ fontSize: 22 }}>{CAT_ICONS[t.category] ?? '📦'}</div>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, color: '#e2e8f0', fontSize: 14 }}>{t.name}</div>
+            <div style={{ fontWeight: 600, color: '#F1F5F9', fontSize: 14 }}>{t.name}</div>
             {(t.manufacturer || t.model) && (
-              <div style={{ fontSize: 12, color: '#8b949e' }}>{t.manufacturer} {t.model}</div>
+              <div style={{ fontSize: 12, color: '#64748B' }}>{t.manufacturer} {t.model}</div>
             )}
           </div>
           <span style={s.badge}>{t.portCount} ports</span>
@@ -184,19 +184,19 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#0d1117', color: '#e2e8f0',
-    border: '1px solid #30363d', borderRadius: 6, padding: '6px 8px', fontSize: 13,
+    width: '100%', background: '#0F172A', color: '#F1F5F9',
+    border: '1px solid #334155', borderRadius: 6, padding: '6px 8px', fontSize: 13,
   }
-  const labelStyle: React.CSSProperties = { fontSize: 12, color: '#8b949e', display: 'flex', flexDirection: 'column', gap: 4 }
+  const labelStyle: React.CSSProperties = { fontSize: 12, color: '#64748B', display: 'flex', flexDirection: 'column', gap: 4 }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#0009', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
       <div style={{
-        background: '#161b22', border: '1px solid #30363d', borderRadius: 10,
+        background: '#1E293B', border: '1px solid #334155', borderRadius: 10,
         padding: 28, width: '90%', maxWidth: 680, maxHeight: '90vh', overflowY: 'auto',
         display: 'flex', flexDirection: 'column', gap: 16,
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
           {isEdit ? 'Edit Template' : 'New Template'}
         </div>
 
@@ -240,15 +240,15 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#c9d1d9' }}>Ports</div>
-              <label style={{ fontSize: 12, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#CBD5E1' }}>Ports</div>
+              <label style={{ fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6 }}>
                 Count:
                 <input type="number" min={1} max={256} value={form.portLayout.length}
                   onChange={e => setPortCount(Number(e.target.value))}
                   style={{ ...inputStyle, width: 70 }} />
               </label>
               {!advancedMode && (
-                <label style={{ fontSize: 12, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <label style={{ fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6 }}>
                   Layout:
                   <select
                     value={form.portLayout[0]?.groupLayout || ''}
@@ -263,7 +263,7 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
               )}
             </div>
             
-            <label style={{ fontSize: 12, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+            <label style={{ fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
               <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} />
               Advanced Groups
             </label>
@@ -297,13 +297,13 @@ function TemplateEditor({ form, onChange, onSave, onCancel, isEdit }: {
         </div>
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-          <button onClick={onCancel} style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>
+          <button onClick={onCancel} style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>
             Cancel
           </button>
           <button
             disabled={!form.name.trim()}
             onClick={() => onSave(form)}
-            style={{ background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600, opacity: !form.name.trim() ? 0.5 : 1 }}
+            style={{ background: '#10B981', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600, opacity: !form.name.trim() ? 0.5 : 1 }}
           >
             {isEdit ? 'Save changes' : 'Create template'}
           </button>

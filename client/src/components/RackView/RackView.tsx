@@ -4,10 +4,12 @@ import { api } from '../../api/client.ts'
 import RackGrid from './RackGrid.tsx'
 import ConnectionsTable from './ConnectionsTable.tsx'
 import EndpointsTable from './EndpointsTable.tsx'
+import TracePanel from './TracePanel.tsx'
 import type { SelectedPortInfo } from './DeviceCard.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 import DeviceEditorModal from './DeviceEditorModal.tsx'
 import ColorPicker from '../ColorPicker.tsx'
+import { useNavigate } from 'react-router-dom'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 type Props = {
@@ -19,29 +21,116 @@ type Props = {
   onCloseSplitView?: () => void
 }
 
+function RightPanelStripButton({
+  label,
+  title,
+  onClick,
+  borderSide,
+}: {
+  label: string
+  title: string
+  onClick: (e: React.MouseEvent) => void
+  borderSide?: 'left' | 'right'
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title={title}
+      style={{
+        width: 20,
+        height: '100%',
+        background: hovered ? '#1E293B' : '#0F172A',
+        border: 'none',
+        borderLeft: borderSide === 'left' ? '1px solid #334155' : 'none',
+        borderRight: borderSide === 'right' ? '1px solid #334155' : 'none',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        cursor: 'pointer',
+        fontSize: 10,
+        fontWeight: 600,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        writingMode: 'vertical-rl',
+        letterSpacing: 1,
+        transition: 'background 0.15s, color 0.15s',
+        padding: 0,
+        outline: 'none',
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ClosePanelButton({ onClick }: { onClick: () => void }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title="Collapse panel"
+      style={{
+        background: hovered ? '#1E293B' : 'transparent',
+        border: 'none',
+        borderLeft: '1px solid #334155',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        padding: '0 12px',
+        cursor: 'pointer',
+        fontSize: 11,
+        fontWeight: 600,
+        lineHeight: 1,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
+        transition: 'background 0.15s, color 0.15s',
+        marginLeft: 'auto',
+      }}
+    >
+      › Collapse
+    </button>
+  )
+}
+
 export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
-  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
+  const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, setCrossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
+  const navigate = useNavigate()
+
+  const isSplitActive = isManualSplitView || !!crossSiteTargetRackId || !!isSecondaryView
+
   const [showAddDevice, setShowAddDevice] = useState(false)
   const [targetUPosition, setTargetUPosition] = useState<number | undefined>(undefined)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [showEditRack, setShowEditRack] = useState(false)
-  const [activeTab, setActiveTab] = useState<'both' | 'grid' | 'connections' | 'split'>(isSecondaryView ? 'grid' : 'both')
+  const [rightPanelOpen, setRightPanelOpen] = useState(!isSplitActive)
+  const [rightPanelTab, setRightPanelTab] = useState<'connections' | 'endpoints' | 'trace'>('connections')
+  const [panelExpanded, setPanelExpanded] = useState(false)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
+  // trace: portId + slot to trace from
+  const [traceOrigin, setTraceOrigin] = useState<{ portId: string; slot: 'front' | 'back' } | null>(null)
 
-  const isSplitActive = isManualSplitView || !!crossSiteTargetRackId
-
+  // Keep split-view context in sync
   useEffect(() => {
     if (isSecondaryView) return
-    if (isSplitActive && activeTab === 'both') {
-      setActiveTab('split')
-      setIsManualSplitView(true)
-    } else if (!isSplitActive && (activeTab === 'split' || activeTab === 'grid')) {
-      setActiveTab('both')
-      setIsManualSplitView(false)
+    if (!isSplitActive) setIsManualSplitView(false)
+  }, [isSplitActive, isSecondaryView, setIsManualSplitView])
+
+  // When split view activates, collapse the right panel to maximise rack space
+  useEffect(() => {
+    if (isSplitActive) {
+      setRightPanelOpen(false)
+      setPanelExpanded(false)
     }
-  }, [isSplitActive, isSecondaryView, activeTab, setIsManualSplitView])
+  }, [isSplitActive])
 
   // Connection dialog state
   const [linkForm, setLinkForm] = useState<{
@@ -240,15 +329,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       flexDirection: 'column',
       height: '100%',
       overflow: 'hidden',
-      background: '#0f1117',
+      background: '#0F172A',
     },
     toolbar: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '10px 16px',
-      borderBottom: '1px solid #30363d',
-      background: '#161b22',
+      borderBottom: '1px solid #334155',
+      background: '#1E293B',
       flexShrink: 0,
       gap: 12,
     },
@@ -259,11 +348,11 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       fontSize: 14,
     },
     siteName: {
-      color: '#8b949e',
+      color: '#64748B',
       fontWeight: 500,
     },
     rackName: {
-      color: '#e2e8f0',
+      color: '#F1F5F9',
       fontWeight: 700,
       fontSize: 15,
     },
@@ -271,9 +360,9 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       fontSize: 11,
       padding: '2px 6px',
       borderRadius: 4,
-      background: '#0d1117',
-      border: '1px solid #30363d',
-      color: '#8b949e',
+      background: '#0F172A',
+      border: '1px solid #334155',
+      color: '#64748B',
     },
     btnGroup: {
       display: 'flex',
@@ -283,15 +372,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     tabGroup: {
       display: 'flex',
       alignItems: 'center',
-      background: '#0d1117',
-      border: '1px solid #30363d',
+      background: '#0F172A',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: 2,
     },
     tabBtn: {
       background: 'none',
       border: 'none',
-      color: '#8b949e',
+      color: '#64748B',
       padding: '4px 10px',
       fontSize: 12,
       fontWeight: 500,
@@ -299,12 +388,12 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       cursor: 'pointer',
     },
     activeTabBtn: {
-      background: '#21262d',
-      color: '#e2e8f0',
+      background: '#1E293B',
+      color: '#F1F5F9',
       fontWeight: 600,
     },
     primaryBtn: {
-      background: '#238636',
+      background: '#10B981',
       color: '#fff',
       border: 'none',
       borderRadius: 6,
@@ -315,58 +404,116 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
     },
     secondaryBtn: {
       background: 'none',
-      color: '#8b949e',
-      border: '1px solid #30363d',
+      color: '#64748B',
+      border: '1px solid #334155',
       borderRadius: 6,
       padding: '6px 12px',
       fontSize: 13,
       cursor: 'pointer',
     },
     patchingBanner: {
-      background: '#1f6feb22',
-      borderBottom: '1px solid #1f6feb66',
+      background: '#0EA5E922',
+      borderBottom: '1px solid #0EA5E966',
       padding: '8px 16px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      color: '#58a6ff',
+      color: '#3BB2F6',
       fontSize: 12,
       fontWeight: 500,
     },
     contentArea: {
       flex: 1,
-      overflow: 'auto',
+      overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'row',
+      position: 'relative' as const,
+    },
+    rackSection: {
+      flex: 1,
+      overflowY: 'auto' as const,
       padding: 16,
-      gap: 20,
+      minWidth: 0,
+    },
+    rightPanel: panelExpanded ? {
+      position: 'absolute' as const,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: 680,
+      background: '#1E293B',
+      borderLeft: '1px solid #334155',
+      display: 'flex',
+      flexDirection: 'column' as const,
+      overflow: 'hidden',
+      zIndex: 20,
+      boxShadow: '-4px 0 20px rgba(0,0,0,0.5)',
+    } : {
+      width: rightPanelOpen ? 360 : 20,
+      minWidth: rightPanelOpen ? 360 : 20,
+      borderLeft: '1px solid #334155',
+      background: '#1E293B',
+      display: 'flex',
+      flexDirection: 'column' as const,
+      overflow: 'hidden',
+      transition: 'width 0.2s ease, min-width 0.2s ease',
+      flexShrink: 0,
+    },
+    panelTabBar: {
+      display: 'flex',
+      borderBottom: '1px solid #334155',
+      background: '#0F172A',
+      flexShrink: 0,
+    },
+    panelTab: {
+      flex: 1,
+      background: 'none',
+      border: 'none',
+      borderBottom: '2px solid transparent',
+      color: '#64748B',
+      padding: '10px 8px',
+      fontSize: 12,
+      fontWeight: 600,
+      cursor: 'pointer',
+      transition: 'color 0.15s, border-color 0.15s',
+    },
+    panelTabActive: {
+      color: '#3BB2F6',
+      borderBottom: '2px solid #3BB2F6',
+    },
+    panelBody: {
+      flex: 1,
+      overflowY: 'auto' as const,
+    },
+    collapseHandle: {
+      position: 'absolute' as const,
+      left: rightPanelOpen ? -14 : -28,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      background: '#1E293B',
+      border: '1px solid #334155',
+      borderRadius: '50%',
+      width: 24,
+      height: 24,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      fontSize: 12,
+      color: '#64748B',
+      zIndex: 10,
+      boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
     },
     // twoColumnLayout moved to css class
   }
 
   return (
     <div style={s.container}>
-      <style>{`
-        .two-column-layout {
-          display: grid;
-          grid-template-columns: minmax(400px, 1fr) minmax(360px, 500px);
-          gap: 20px;
-          align-items: start;
-          max-width: 1400px;
-          margin: 0 auto;
-          width: 100%;
-        }
-        @media (max-width: 1200px) {
-          .two-column-layout {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
       {/* Top Toolbar */}
       <div style={s.toolbar}>
         <div style={s.breadcrumb}>
           <span style={s.siteName}>{site.name}</span>
-          <span style={{ color: '#6e7681' }}>/</span>
+          <span style={{ color: '#475569' }}>/</span>
           <span style={s.rackName}>{rack.name}</span>
           <span style={s.uBadge}>{rack.uHeight}U</span>
           <button
@@ -392,7 +539,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 onCloseSplitView()
                 setIsManualSplitView(false)
               }}
-              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#ff7b72', borderColor: '#ff7b72' }}
+              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8, display: 'flex', alignItems: 'center', gap: 4, color: '#F87171', borderColor: '#F87171' }}
             >
               ❌ Close
             </button>
@@ -400,24 +547,6 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
         </div>
 
         <div style={s.btnGroup}>
-          <select
-            value={activeTab}
-            onChange={(e) => {
-              const val = e.target.value as 'both' | 'grid' | 'connections' | 'split'
-              setActiveTab(val)
-              setIsManualSplitView(val === 'split')
-            }}
-            style={{
-              background: '#0d1117', color: '#e2e8f0', border: '1px solid #30363d',
-              borderRadius: 6, padding: '4px 8px', fontSize: 13, outline: 'none', cursor: 'pointer'
-            }}
-          >
-            <option value="both">View: Hybrid</option>
-            <option value="grid">View: Rack Elevation</option>
-            <option value="connections">View: Connections Table</option>
-            <option value="split">View: Split (Compare)</option>
-          </select>
-
           <button
             type="button"
             onClick={() => {
@@ -446,9 +575,9 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                 value={selectedPort.slot}
                 onChange={(e) => setSelectedPort({ ...selectedPort, slot: e.target.value as 'front' | 'back' })}
                 style={{
-                  background: '#0d1117',
-                  color: '#58a6ff',
-                  border: '1px solid #1f6feb66',
+                  background: '#0F172A',
+                  color: '#3BB2F6',
+                  border: '1px solid #0EA5E966',
                   borderRadius: 4,
                   padding: '2px 4px',
                   fontSize: 12,
@@ -467,8 +596,8 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             onClick={() => setSelectedPort(null)}
             style={{
               background: 'none',
-              border: '1px solid #1f6feb',
-              color: '#58a6ff',
+              border: '1px solid #0EA5E9',
+              color: '#3BB2F6',
               borderRadius: 4,
               padding: '2px 8px',
               fontSize: 11,
@@ -480,71 +609,10 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
         </div>
       )}
 
-      {/* Main View Area */}
+      {/* Main Body: Rack grid + collapsible right panel */}
       <div style={s.contentArea}>
-        {activeTab === 'both' ? (
-          <div className="two-column-layout">
-            <div>
-              <RackGrid
-                rack={rack}
-                devices={devices}
-                links={internalLinks}
-                selectedPort={selectedPort}
-                onSelectPort={handleSelectPort}
-                onDeleteDevice={handleDeleteDevice}
-                onUpdateDevicePosition={handleUpdateDevicePosition}
-                onEditDevice={setEditingDeviceId}
-                onAddDevice={(u) => {
-                  setTargetUPosition(u)
-                  setShowAddDevice(true)
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <ConnectionsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onDeleteLink={handleDeleteLink}
-                onAddLink={() => {
-                  setEditingLinkId(null)
-                  setLinkForm({
-                    portAId: devices[0]?.ports[0]?.id ?? '',
-                    portASlot: 'front',
-                    portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
-                    portBSlot: 'front',
-                    cableType: 'cat6',
-                    color: '#4a9eff',
-                    label: '',
-                  })
-                  setShowLinkDialog(true)
-                }}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-              <EndpointsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onEditDevice={setEditingDeviceId}
-                onDeleteDevice={handleDeleteDevice}
-                onSelectPort={handleSelectPort}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-            </div>
-          </div>
-        ) : (activeTab === 'grid' || activeTab === 'split') ? (
+        {/* Rack section */}
+        <div style={s.rackSection}>
           <RackGrid
             rack={rack}
             devices={devices}
@@ -554,58 +622,142 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             onDeleteDevice={handleDeleteDevice}
             onUpdateDevicePosition={handleUpdateDevicePosition}
             onEditDevice={setEditingDeviceId}
+            onTrace={(portId, slot) => {
+              setTraceOrigin({ portId, slot })
+              setRightPanelOpen(true)
+              setRightPanelTab('trace')
+            }}
             onAddDevice={(u) => {
               setTargetUPosition(u)
               setShowAddDevice(true)
             }}
           />
-        ) : (
-          <div style={{ maxWidth: 900, margin: '0 auto', width: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <ConnectionsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onDeleteLink={handleDeleteLink}
-                onAddLink={() => {
-                  setEditingLinkId(null)
-                  setLinkForm({
-                    portAId: devices[0]?.ports[0]?.id ?? '',
-                    portASlot: 'front',
-                    portBId: devices[1]?.ports[0]?.id ?? devices[0]?.ports[1]?.id ?? '',
-                    portBSlot: 'front',
-                    cableType: 'cat6',
-                    color: '#4a9eff',
-                    label: '',
-                  })
-                  setShowLinkDialog(true)
-                }}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-              <EndpointsTable
-                currentRack={rack}
-                links={internalLinks}
-                devices={devices}
-                onEditDevice={setEditingDeviceId}
-                onDeleteDevice={handleDeleteDevice}
-                onSelectPort={handleSelectPort}
-                onEditLink={(link) => {
-                  const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                  const port = device?.ports.find(p => p.id === link.portAId)
-                  if (device && port) {
-                    setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
-                  }
-                }}
-              />
-            </div>
-          </div>
-        )}
+        </div>
+
+        {/* Right panel */}
+        <div style={s.rightPanel}>
+          {rightPanelOpen ? (
+            <>
+              {/* Full-height layout: [expand strip] [tab bar + body] */}
+              <div style={{ display: 'flex', flexDirection: 'row', flex: 1, overflow: 'hidden' }}>
+
+                {/* Full-height expand/collapse strip on the left edge */}
+                <RightPanelStripButton
+                  label={panelExpanded ? '› Collapse' : '‹ Expand'}
+                  title={panelExpanded ? 'Collapse to normal' : 'Expand to full view'}
+                  onClick={(e) => { e.stopPropagation(); setPanelExpanded(x => !x) }}
+                  borderSide="right"
+                />
+
+                {/* Tab bar + body */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                  {/* Tab bar */}
+                  <div style={s.panelTabBar}>
+                    <button
+                      type="button"
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'connections' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('connections')}
+                    >
+                      Connections ({internalLinks.length})
+                    </button>
+                    <button
+                      type="button"
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'endpoints' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('endpoints')}
+                    >
+                      Endpoints
+                    </button>
+                    <button
+                      type="button"
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'trace' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('trace')}
+                    >
+                      ↯ Trace
+                    </button>
+                  </div>
+
+                  {/* Panel body */}
+                  <div style={s.panelBody}>
+                    {rightPanelTab === 'connections' && (
+                      <ConnectionsTable
+                        currentRack={rack}
+                        links={internalLinks}
+                        devices={devices}
+                        compact={!panelExpanded}
+                        onDeleteLink={handleDeleteLink}
+                        onEditLink={(link) => {
+                          const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                          const port = device?.ports.find(p => p.id === link.portAId)
+                          if (device && port) {
+                            setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                          }
+                        }}
+                        onTrace={(portId, slot) => {
+                          setTraceOrigin({ portId, slot })
+                          setRightPanelOpen(true)
+                          setRightPanelTab('trace')
+                        }}
+                      />
+                    )}
+                    {rightPanelTab === 'endpoints' && (
+                      <EndpointsTable
+                        currentRack={rack}
+                        links={internalLinks}
+                        devices={devices}
+                        compact={!panelExpanded}
+                        onEditDevice={setEditingDeviceId}
+                        onDeleteDevice={handleDeleteDevice}
+                        onDeleteLink={handleDeleteLink}
+                        onSelectPort={handleSelectPort}
+                        onEditLink={(link) => {
+                          const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
+                          const port = device?.ports.find(p => p.id === link.portAId)
+                          if (device && port) {
+                            setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                          }
+                        }}
+                        onTrace={(portId, slot) => {
+                          setTraceOrigin({ portId, slot })
+                          setRightPanelOpen(true)
+                          setRightPanelTab('trace')
+                        }}
+                      />
+                    )}
+                    {rightPanelTab === 'trace' && (
+                      <TracePanel
+                        originPortId={traceOrigin?.portId ?? null}
+                        originSlot={traceOrigin?.slot ?? null}
+                        currentPayload={payload}
+                        onNavigateToRack={(rackId, linkId) => {
+                          navigate(`/racks/${rackId}`, { state: { highlightLinkId: linkId } })
+                        }}
+                        onOpenSplitView={(rackId, _linkId) => {
+                          setIsManualSplitView(true)
+                          setCrossSiteTargetRackId(rackId)
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Full-height close strip on the right edge */}
+                <RightPanelStripButton
+                  label="› Close"
+                  title="Close panel completely"
+                  onClick={(e) => { e.stopPropagation(); setRightPanelOpen(false); setPanelExpanded(false) }}
+                  borderSide="left"
+                />
+              </div>
+            </>
+          ) : (
+            /* Collapsed state — 20px vertical strip */
+            <RightPanelStripButton
+              label="‹ Expand"
+              title="Expand panel"
+              onClick={() => setRightPanelOpen(true)}
+            />
+          )}
+        </div>
       </div>
 
       {/* Edit Device Dialog */}
@@ -720,9 +872,9 @@ function AddDeviceModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '7px 10px',
     fontSize: 13,
@@ -731,7 +883,7 @@ function AddDeviceModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 5,
@@ -739,12 +891,12 @@ function AddDeviceModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>Mount Device in Rack</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 440, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Mount Device in Rack</div>
 
         {templates.length === 0 ? (
-          <div style={{ color: '#8b949e', fontSize: 13 }}>
-            No templates configured yet. <a href="/templates" style={{ color: '#58a6ff' }}>Create a template first →</a>
+          <div style={{ color: '#64748B', fontSize: 13 }}>
+            No templates configured yet. <a href="/templates" style={{ color: '#3BB2F6' }}>Create a template first →</a>
           </div>
         ) : (
           <>
@@ -760,7 +912,7 @@ function AddDeviceModal({
             </label>
 
             {selected && (
-              <div style={{ background: '#0d1117', borderRadius: 6, padding: '8px 12px', fontSize: 12, color: '#8b949e' }}>
+              <div style={{ background: '#0F172A', borderRadius: 6, padding: '8px 12px', fontSize: 12, color: '#64748B' }}>
                 {selected.manufacturer && <div>{selected.manufacturer} {selected.model}</div>}
                 <div>{selected.portCount} ports · {selected.category} · {selected.uHeight}U</div>
               </div>
@@ -795,7 +947,7 @@ function AddDeviceModal({
               <button
                 type="button"
                 onClick={onCancel}
-                style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+                style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -804,7 +956,7 @@ function AddDeviceModal({
                 disabled={!templateId || !name.trim()}
                 onClick={() => onConfirm(templateId, name.trim(), typeof positionU === 'number' ? positionU : undefined)}
                 style={{
-                  background: '#238636',
+                  background: '#10B981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -859,9 +1011,9 @@ function LinkModal({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    background: '#0d1117',
-    color: '#e2e8f0',
-    border: '1px solid #30363d',
+    background: '#0F172A',
+    color: '#F1F5F9',
+    border: '1px solid #334155',
     borderRadius: 6,
     padding: '6px 8px',
     fontSize: 13,
@@ -870,7 +1022,7 @@ function LinkModal({
 
   const labelStyle: CSSProperties = {
     fontSize: 12,
-    color: '#8b949e',
+    color: '#64748B',
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
@@ -878,8 +1030,8 @@ function LinkModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>{isEditing ? 'Edit Cable Link' : 'Connect Ports (Cable Link)'}</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>{isEditing ? 'Edit Cable Link' : 'Connect Ports (Cable Link)'}</div>
 
         {/* Endpoint A */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: 8 }}>
@@ -977,14 +1129,14 @@ function LinkModal({
           <button
             type="button"
             onClick={onCancel}
-            style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
+            style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            style={{ background: '#238636', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600 }}
+            style={{ background: '#10B981', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', cursor: 'pointer', fontWeight: 600 }}
           >
             {isEditing ? 'Save Changes' : 'Connect'}
           </button>
@@ -1033,24 +1185,24 @@ function PortDetailsModal({
   }
 
   const renderSlot = (slotName: 'front' | 'back', link?: CableLink) => (
-    <div style={{ background: '#0d1117', padding: 12, borderRadius: 6, border: '1px solid #30363d' }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', marginBottom: 8, textTransform: 'capitalize' }}>
+    <div style={{ background: '#0F172A', padding: 12, borderRadius: 6, border: '1px solid #334155' }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', marginBottom: 8, textTransform: 'capitalize' }}>
         {slotName} Slot
       </div>
       {link ? (
-        <div style={{ fontSize: 12, color: '#c9d1d9', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ fontSize: 12, color: '#CBD5E1', display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div><strong>Connected to:</strong> {getTargetDesc(link, slotName)}</div>
           <div><strong>Cable:</strong> {link.cableType} <span style={{display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: link.color || '#4a9eff'}}></span></div>
           {link.label && <div><strong>Label:</strong> {link.label}</div>}
           <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-            <button type="button" onClick={() => onEditLink(link)} style={{ background: 'none', border: '1px solid #8b949e', color: '#8b949e', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>✎ Edit</button>
-            <button type="button" onClick={() => { if(confirm('Delete connection?')) onDeleteLink(link.id) }} style={{ background: 'none', border: '1px solid #f85149', color: '#f85149', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>Disconnect</button>
+            <button type="button" onClick={() => onEditLink(link)} style={{ background: 'none', border: '1px solid #64748B', color: '#64748B', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>✎ Edit</button>
+            <button type="button" onClick={() => { if(confirm('Delete connection?')) onDeleteLink(link.id) }} style={{ background: 'none', border: '1px solid #F87171', color: '#F87171', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer' }}>Disconnect</button>
           </div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
-          <span style={{ fontSize: 12, color: '#8b949e' }}>Empty</span>
-          <button type="button" onClick={() => onAddLink(slotName)} style={{ background: '#238636', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>+ Add Connection</button>
+          <span style={{ fontSize: 12, color: '#64748B' }}>Empty</span>
+          <button type="button" onClick={() => onAddLink(slotName)} style={{ background: '#10B981', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>+ Add Connection</button>
         </div>
       )}
     </div>
@@ -1058,14 +1210,14 @@ function PortDetailsModal({
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0' }}>Port Connections - {info.device.name} / Port {info.port.label}</div>
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 10, padding: 24, minWidth: 380, maxWidth: 460, width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Port Connections - {info.device.name} / Port {info.port.label}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {renderSlot('front', frontLink)}
           {renderSlot('back', backLink)}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-          <button type="button" onClick={onClose} style={{ background: 'none', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>Close</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>Close</button>
         </div>
       </div>
     </div>

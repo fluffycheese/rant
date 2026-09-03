@@ -3,7 +3,7 @@ import Sidebar from './Sidebar/Sidebar.tsx'
 
 const styles: Record<string, React.CSSProperties> = {
   shell: { display: 'flex', height: '100vh', overflow: 'hidden' },
-  main:  { flex: 1, overflow: 'auto', background: '#0f1117' },
+  main:  { flex: 1, overflow: 'auto', background: '#0F172A' },
 }
 
 export default function Layout() {

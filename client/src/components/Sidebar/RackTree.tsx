@@ -4,10 +4,10 @@ import type { Site, Rack } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
 
 const s: Record<string, React.CSSProperties> = {
-  siteRow:  { padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none', color: '#c9d1d9', fontSize: 13, fontWeight: 600 },
-  toggle:   { fontSize: 9, color: '#8b949e', width: 12 },
-  rackRow:  { padding: '5px 16px 5px 36px', fontSize: 13, cursor: 'pointer', borderRadius: 4, color: '#8b949e', display: 'block', textDecoration: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
-  addBtn:   { display: 'block', padding: '3px 16px 3px 36px', fontSize: 12, color: '#58a6ff', cursor: 'pointer', background: 'none', border: 'none', textAlign: 'left' },
+  siteRow:  { padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none', color: '#CBD5E1', fontSize: 13, fontWeight: 600 },
+  toggle:   { fontSize: 9, color: '#64748B', width: 12 },
+  rackRow:  { padding: '5px 16px 5px 36px', fontSize: 13, cursor: 'pointer', borderRadius: 4, color: '#64748B', display: 'block', textDecoration: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+  addBtn:   { display: 'block', padding: '3px 16px 3px 36px', fontSize: 12, color: '#3BB2F6', cursor: 'pointer', background: 'none', border: 'none', textAlign: 'left' },
 }
 
 type Props = { site: Site; racks: Rack[]; onAddRack: () => void }
@@ -43,7 +43,7 @@ export default function RackTree({ site, racks, onAddRack }: Props) {
             style={{
               ...s.rackRow,
               background: window.location.pathname === `/sites/${site.id}` ? '#1f2937' : 'transparent',
-              color: window.location.pathname === `/sites/${site.id}` ? '#58a6ff' : '#8b949e',
+              color: window.location.pathname === `/sites/${site.id}` ? '#3BB2F6' : '#64748B',
             }}
           >
             🕸️ Topology
@@ -55,7 +55,7 @@ export default function RackTree({ site, racks, onAddRack }: Props) {
               style={{
                 ...s.rackRow,
                 background: rack.id === activeRackId ? '#1f2937' : 'transparent',
-                color: rack.id === activeRackId ? '#58a6ff' : '#8b949e',
+                color: rack.id === activeRackId ? '#3BB2F6' : '#64748B',
               }}
             >
               🗄 {rack.name}

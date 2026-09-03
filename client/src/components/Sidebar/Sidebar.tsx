@@ -1,31 +1,106 @@
 import { useEffect, useState, type CSSProperties } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { api, type Profile, type Site, type Rack } from '../../api/client.ts'
 import { useAuth } from '../../auth/AuthContext.tsx'
+import { usePatching } from '../../contexts/PatchingContext.tsx'
 import RackTree from './RackTree.tsx'
 import RackFormModal from '../RackFormModal.tsx'
 
-const s: Record<string, CSSProperties> = {
-  sidebar:    { width: 260, background: '#161b22', borderRight: '1px solid #30363d', display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden' },
-  header:     { padding: '14px 16px', borderBottom: '1px solid #30363d', fontSize: 15, fontWeight: 700, color: '#58a6ff', letterSpacing: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-  section:    { padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: '#8b949e', textTransform: 'uppercase', letterSpacing: 0.8 },
-  scroll:     { flex: 1, overflowY: 'auto' },
-  footer:     { padding: '10px 16px', borderTop: '1px solid #30363d', display: 'flex', flexDirection: 'column', gap: 8 },
-  footerLink: { color: '#8b949e', fontSize: 12, textDecoration: 'none', display: 'block', padding: '2px 0' },
-  userRow:    { display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#c9d1d9', paddingTop: 6, borderTop: '1px solid #21262d' },
-  logoutBtn:  { background: 'none', border: 'none', color: '#ff7b72', cursor: 'pointer', fontSize: 11, padding: '2px 4px', borderRadius: 4 },
-  select:     { width: '100%', background: '#0d1117', color: '#e2e8f0', border: '1px solid #30363d', borderRadius: 6, padding: '6px 8px', fontSize: 13, marginTop: 4 },
-  addBtn:     { background: 'none', border: '1px dashed #30363d', color: '#8b949e', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer', width: '100%', marginTop: 8 },
+// ---------------------------------------------------------------------------
+// Collapsed rail width / expanded width
+// ---------------------------------------------------------------------------
+const EXPANDED_W = 260
+const RAIL_W = 56
+const STRIP_W = 20
+
+function TopHeaderLink({ href, title, icon }: { href: string; title: string; icon: React.ReactNode }) {
+  const [hover, setHover] = useState(false)
+  return (
+    <a
+      href={href}
+      title={title}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 32,
+        height: 32,
+        borderRadius: 6,
+        color: hover ? '#F1F5F9' : '#94A3B8',
+        background: hover ? '#334155' : 'transparent',
+        fontSize: 16,
+        textDecoration: 'none',
+        transition: 'color 0.15s, background 0.15s',
+      }}
+    >
+      {icon}
+    </a>
+  )
+}
+
+function StripButton({
+  collapsed,
+  onClick,
+}: {
+  collapsed: boolean
+  onClick: () => void
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      style={{
+        width: STRIP_W,
+        height: '100%',
+        background: hovered ? '#1E293B' : '#0F172A',
+        border: 'none',
+        borderLeft: '1px solid #334155',
+        borderRight: '1px solid #334155',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        cursor: 'pointer',
+        fontSize: 10,
+        fontWeight: 600,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        writingMode: 'vertical-rl',
+        letterSpacing: 1,
+        transition: 'background 0.15s, color 0.15s',
+        padding: 0,
+        outline: 'none',
+      }}
+    >
+      {collapsed ? '› Expand' : '‹ Collapse'}
+    </button>
+  )
 }
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
+  const { isManualSplitView, crossSiteTargetRackId } = usePatching()
+  const isSplitActive                           = isManualSplitView || !!crossSiteTargetRackId
+  const [collapsed, setCollapsed]               = useState(isSplitActive)
   const [profiles, setProfiles]                 = useState<Profile[]>([])
   const [activeProfileId, setActiveProfileId]   = useState<string | null>(null)
   const [sites, setSites]                       = useState<Site[]>([])
   const [racksBySite, setRacksBySite]           = useState<Record<string, Rack[]>>({})
   const [rackModalSiteId, setRackModalSiteId]   = useState<string | null>(null)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Auto-collapse sidebar when split view activates to maximise rack space
+  useEffect(() => {
+    if (isSplitActive) setCollapsed(true)
+  }, [isSplitActive])
 
   useEffect(() => {
     api.profiles.list().then(async ps => {
@@ -59,14 +134,6 @@ export default function Sidebar() {
       .catch(console.error)
   }, [sites])
 
-  const handleAddProfile = async () => {
-    const name = prompt('New profile name:')
-    if (!name) return
-    const p = await api.profiles.create({ name })
-    setProfiles(prev => [...prev, p])
-    setActiveProfileId(p.id)
-  }
-
   const handleAddSite = async () => {
     if (!activeProfileId) return
     const name = prompt('New site name:')
@@ -89,44 +156,236 @@ export default function Sidebar() {
     navigate('/login')
   }
 
-  return (
-    <aside style={s.sidebar}>
-      <div style={s.header}>
-        <span>RANT</span>
-      </div>
+  // Shared style tokens
+  const border = '1px solid #334155'
+  const mutedColor = '#64748B'
+  const textColor = '#F1F5F9'
 
-
-
-      <div style={s.scroll}>
-        {sites.map(site => (
-          <RackTree
-            key={site.id}
-            site={site}
-            racks={racksBySite[site.id] ?? []}
-            onAddRack={() => setRackModalSiteId(site.id)}
-          />
-        ))}
-        {activeProfileId && (
-          <div style={{ padding: '4px 16px 8px' }}>
-            <button style={s.addBtn} onClick={handleAddSite}>+ New site</button>
-          </div>
-        )}
-      </div>
-
-      <div style={s.footer}>
-        <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} style={s.footerLink}>🌍 Global Topology</Link>
-        <Link to="/templates" style={s.footerLink}>⚙ Device Templates</Link>
-        <Link to="/admin" style={s.footerLink}>👥 Users (Admin)</Link>
-
-        {user && (
-          <div style={s.userRow}>
-            <span>👤 {user.username}</span>
-            <button type="button" style={s.logoutBtn} onClick={handleLogout}>
-              Log out
+  // ---------------------------------------------------------------------------
+  // COLLAPSED RAIL
+  // ---------------------------------------------------------------------------
+  if (collapsed) {
+    const railItem: CSSProperties = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      padding: '8px 0',
+      cursor: 'pointer',
+      color: mutedColor,
+      fontSize: 18,
+      textDecoration: 'none',
+      border: 'none',
+      background: 'none',
+    }
+    return (
+      <aside style={{
+        width: RAIL_W + STRIP_W,
+        background: '#1E293B',
+        display: 'flex',
+        flexDirection: 'row',
+        flexShrink: 0,
+        overflow: 'hidden',
+        transition: 'width 0.2s ease',
+        height: '100%',
+      }}>
+        {/* Rail content column */}
+        <div style={{
+          width: RAIL_W,
+          display: 'flex',
+          flexDirection: 'column',
+          flexShrink: 0,
+          overflow: 'hidden',
+          height: '100%',
+        }}>
+          {/* Top Header Strip (Simulated Global Header) */}
+          <div style={{
+            height: 52,
+            padding: '0 8px',
+            borderBottom: border,
+            background: '#1E293B',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxSizing: 'border-box',
+          }}>
+            <button
+              type="button"
+              onClick={() => setCollapsed(false)}
+              title="Expand sidebar"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src="/icon.png"
+                alt="RANT"
+                style={{ width: 28, height: 28, objectFit: 'contain' }}
+              />
             </button>
           </div>
+
+          {/* Site initials */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+            {sites.map(site => {
+              const initials = site.name.slice(0, 2).toUpperCase()
+              const racks = racksBySite[site.id] ?? []
+              const isActive = racks.some(r => location.pathname === `/racks/${r.id}`)
+              return (
+                <div key={site.id} title={`${site.name} — Click to expand`} style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => setCollapsed(false)}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      background: isActive ? '#0EA5E9' : '#334155',
+                      color: isActive ? '#fff' : '#CBD5E1',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    {initials}
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Footer icons */}
+          <div style={{ borderTop: border, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 0', gap: 4 }}>
+            <Link to="/" title="Dashboard" style={railItem}>📊</Link>
+            <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} title="Global Topology" style={railItem}>🌍</Link>
+            <Link to="/templates" title="Device Templates" style={railItem}>⚙</Link>
+            <Link to="/admin" title="Users (Admin)" style={railItem}>👥</Link>
+            {user && (
+              <button type="button" title={`Log out ${user.username}`} style={railItem} onClick={handleLogout}>
+                👤
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Full-height expand strip on right edge */}
+        <StripButton collapsed={true} onClick={() => setCollapsed(false)} />
+
+        {rackModalSiteId && (
+          <RackFormModal
+            mode="create"
+            onConfirm={handleAddRack}
+            onCancel={() => setRackModalSiteId(null)}
+          />
         )}
+      </aside>
+    )
+  }
+
+  // ---------------------------------------------------------------------------
+  // EXPANDED SIDEBAR
+  // ---------------------------------------------------------------------------
+  const s: Record<string, CSSProperties> = {
+    topHeader:  { height: 52, padding: '0 12px', borderBottom: border, display: 'flex', alignItems: 'center', justifyContent: 'space-around', background: '#1E293B', flexShrink: 0, boxSizing: 'border-box' },
+    header:     { padding: '16px 12px', borderBottom: border, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, background: '#64748B' },
+    section:    { padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: mutedColor, textTransform: 'uppercase', letterSpacing: 0.8 },
+    scroll:     { flex: 1, overflowY: 'auto' },
+    footer:     { padding: '10px 16px', borderTop: border, display: 'flex', flexDirection: 'column', gap: 8 },
+    footerLink: { color: mutedColor, fontSize: 12, textDecoration: 'none', display: 'block', padding: '2px 0' },
+    userRow:    { display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#CBD5E1', paddingTop: 6, borderTop: '1px solid #334155' },
+    logoutBtn:  { background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontSize: 11, padding: '2px 4px', borderRadius: 4 },
+    addBtn:     { background: 'none', border: '1px dashed #334155', color: mutedColor, borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer', width: '100%', marginTop: 8 },
+  }
+
+  return (
+    <aside style={{
+      width: EXPANDED_W + STRIP_W,
+      background: '#1E293B',
+      display: 'flex',
+      flexDirection: 'row',
+      flexShrink: 0,
+      overflow: 'hidden',
+      transition: 'width 0.2s ease',
+      height: '100%',
+    }}>
+      {/* Expanded sidebar content */}
+      <div style={{
+        width: EXPANDED_W,
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        overflow: 'hidden',
+        height: '100%',
+      }}>
+        {/* Top Header Strip (Simulated Global Header) */}
+        <div style={s.topHeader}>
+          <TopHeaderLink href="https://github.com/fluffycheese/rant" title="GitHub Repository" icon={
+            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+          } />
+          <TopHeaderLink href="https://github.com/fluffycheese/rant" title="Website" icon="🌐" />
+          <TopHeaderLink href="https://ko-fi.com" title="Support on Ko-fi" icon="☕" />
+          <TopHeaderLink href="https://github.com/fluffycheese/rant/blob/main/docs/USER-GUIDE.md" title="User Guide" icon="📖" />
+        </div>
+
+        {/* Existing large RANT logo header directly beneath top strip */}
+        <div style={s.header}>
+          <img
+            src="/primary-stacked.png"
+            alt="RANT"
+            style={{ height: 140, objectFit: 'contain' }}
+          />
+        </div>
+
+        <div style={s.scroll}>
+          {sites.map(site => (
+            <RackTree
+              key={site.id}
+              site={site}
+              racks={racksBySite[site.id] ?? []}
+              onAddRack={() => setRackModalSiteId(site.id)}
+            />
+          ))}
+          {activeProfileId && (
+            <div style={{ padding: '4px 16px 8px' }}>
+              <button style={s.addBtn} onClick={handleAddSite}>+ New site</button>
+            </div>
+          )}
+        </div>
+
+        <div style={s.footer}>
+          <Link to="/" style={s.footerLink}>📊 Dashboard</Link>
+          <Link to={activeProfileId ? `/profiles/${activeProfileId}` : '/topology'} style={s.footerLink}>🌍 Global Topology</Link>
+          <Link to="/templates" style={s.footerLink}>⚙ Device Templates</Link>
+          <Link to="/admin" style={s.footerLink}>👥 Users (Admin)</Link>
+
+          {user && (
+            <div style={s.userRow}>
+              <span>👤 {user.username}</span>
+              <button type="button" style={s.logoutBtn} onClick={handleLogout}>
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Full-height collapse strip on right edge */}
+      <StripButton collapsed={false} onClick={() => setCollapsed(true)} />
 
       {rackModalSiteId && (
         <RackFormModal
@@ -138,4 +397,3 @@ export default function Sidebar() {
     </aside>
   )
 }
-

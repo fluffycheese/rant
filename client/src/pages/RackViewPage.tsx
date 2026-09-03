@@ -62,10 +62,10 @@ export default function RackViewPage() {
 
   if (!rackId) return null
 
-  if (loading && !payload) {
+  if (loading || targetLoading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#8b949e', fontSize: 14 }}>
-        Loading rack…
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748B', fontSize: 14 }}>
+        Loading racks…
       </div>
     )
   }
@@ -73,11 +73,11 @@ export default function RackViewPage() {
   if (error && !payload) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-        <div style={{ color: '#ff7b72', fontSize: 14 }}>Error: {error}</div>
+        <div style={{ color: '#F87171', fontSize: 14 }}>Error: {error}</div>
         <button
           type="button"
           onClick={load}
-          style={{ background: '#21262d', color: '#c9d1d9', border: '1px solid #30363d', borderRadius: 6, padding: '6px 14px', cursor: 'pointer' }}
+          style={{ background: '#1E293B', color: '#CBD5E1', border: '1px solid #334155', borderRadius: 6, padding: '6px 14px', cursor: 'pointer' }}
         >
           Try again
         </button>
@@ -96,7 +96,7 @@ export default function RackViewPage() {
 
   return (
     <div style={{ display: 'flex', height: '100%', width: '100%' }}>
-      <div style={{ flex: 1, borderRight: (targetPayload || isManualSplitView) ? '1px solid #30363d' : 'none', overflow: 'hidden' }}>
+      <div style={{ flex: 1, borderRight: (targetPayload || isManualSplitView) ? '1px solid #334155' : 'none', overflow: 'hidden' }}>
         <RackView
           payload={payload}
           templates={templates}
@@ -117,7 +117,7 @@ export default function RackViewPage() {
           />
         </div>
       ) : isManualSplitView ? (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e', fontSize: 14 }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', fontSize: 14 }}>
           Select a rack from the left menu to compare
         </div>
       ) : null}

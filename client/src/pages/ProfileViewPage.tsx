@@ -40,7 +40,7 @@ export default function ProfileViewPage() {
     load()
   }, [id])
 
-  if (loading) return <div style={{ padding: 24, color: '#c9d1d9' }}>Loading...</div>
+  if (loading) return <div style={{ padding: 24, color: '#CBD5E1' }}>Loading...</div>
 
   return <TopologyView title="Global Topology (Cross-Site Links)" mermaidData={mermaidData} links={links} />
 }
