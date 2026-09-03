@@ -641,6 +641,14 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
               {/* Full-height layout: [expand strip] [tab bar + body] */}
               <div style={{ display: 'flex', flexDirection: 'row', flex: 1, overflow: 'hidden' }}>
 
+                {/* Full-height close strip on the left edge */}
+                <RightPanelStripButton
+                  label="› Close"
+                  title="Close panel completely"
+                  onClick={(e) => { e.stopPropagation(); setRightPanelOpen(false); setPanelExpanded(false) }}
+                  borderSide="right"
+                />
+
                 {/* Full-height expand/collapse strip on the left edge */}
                 <RightPanelStripButton
                   label={panelExpanded ? '› Collapse' : '‹ Expand'}
@@ -674,8 +682,6 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                     >
                       ↯ Trace
                     </button>
-                    {/* Collapse toggle */}
-                    <ClosePanelButton onClick={() => { setRightPanelOpen(false); setPanelExpanded(false) }} />
                   </div>
 
                   {/* Panel body */}
