@@ -1,3 +1,5 @@
+try { process.loadEnvFile() } catch (e) {}
+
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { createApp } from './app.js'

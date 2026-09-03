@@ -16,7 +16,8 @@ export const authMiddleware: MiddlewareHandler<AppEnv> = async (c, next) => {
   const path = c.req.path
   if (path === '/api/auth/login' || path === '/auth/login' || path.endsWith('/auth/login') ||
       path.startsWith('/api/auth/setup') || path.includes('/auth/setup') ||
-      path === '/api/config') {
+      path === '/api/config' ||
+      path === '/api/demo/reset') {
     return next()
   }
 
