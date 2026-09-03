@@ -62,10 +62,10 @@ export default function RackViewPage() {
 
   if (!rackId) return null
 
-  if (loading && !payload) {
+  if (loading || targetLoading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748B', fontSize: 14 }}>
-        Loading rack…
+        Loading racks…
       </div>
     )
   }
@@ -98,6 +98,7 @@ export default function RackViewPage() {
     <div style={{ display: 'flex', height: '100%', width: '100%' }}>
       <div style={{ flex: 1, borderRight: (targetPayload || isManualSplitView) ? '1px solid #334155' : 'none', overflow: 'hidden' }}>
         <RackView
+          key={`primary-${payload.rack.id}-${isManualSplitView || !!targetPayload}`}
           payload={payload}
           templates={templates}
           onReload={handleReloadBoth}
