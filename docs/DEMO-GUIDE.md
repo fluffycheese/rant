@@ -9,32 +9,67 @@ This guide explains how to deploy the demo on all three supported platforms.
 
 ---
 
-## Prerequisites
+## 1. Preparing the "Gold State" (Implementation)
 
-You need a clean seed JSON file representing the "gold state" of your demo.
-1. Run a normal RANT instance locally.
-2. Build your perfect demo topology (Sites, Racks, Devices, Cables).
-3. Go to **Admin > System Data** and click **Export JSON**.
-4. Rename this file to `demo-seed.json`.
+The demo topology is natively bundled into the RANT backend at build time. To create or update this baseline:
+
+1. Run a standard, non-demo RANT instance locally (`npm run dev:server` and `npm run dev:client`).
+2. Build your perfect demo environment: create Sites, populate Racks with Devices, and connect Ports.
+3. In the UI, navigate to **Admin > System Data** and click **Export JSON**.
+4. **CRITICAL:** Save and overwrite the exported file directly to `src/db/demo-seed.json` in your repository.
+
+Because this file is bundled via esbuild during compilation (bypassing Cloudflare environment variable limits), any changes to `demo-seed.json` **require a full recompilation and redeployment** of your code.
 
 ---
 
-## ☁️ Cloudflare Pages + D1
+## 2. Redeploying the Demo (Updates)
 
-Cloudflare Pages Functions do not natively support built-in Cron Triggers. The cleanest solution is to use a tiny **companion Cloudflare Worker** that runs on a schedule and hits your Pages project over the public internet.
+Whenever you update `src/db/demo-seed.json` or update the database schema, you must redeploy and manually trigger the reset. The live database will **never** automatically overwrite itself if it already contains data.
 
-### 1. Set Environment Variables on your Pages Project
+### Cloudflare Pages + D1 Workflow
+
+1. **Apply Schema Migrations:** If you changed `schema.ts`, you must explicitly apply migrations to production. Cloudflare does not do this automatically on deploy.
+   ```bash
+   npx wrangler d1 migrations apply <YOUR_DB_NAME> --remote
+   ```
+2. **Recompile the Backend:** The backend must be rebuilt so the new `demo-seed.json` is bundled into `_worker.js`.
+   ```bash
+   npm run build:cf
+   ```
+3. **Deploy the Code:**
+   ```bash
+   wrangler pages deploy dist/public
+   ```
+4. **Force the Reset:** See step 3 below to force the live database to wipe and absorb the new bundled seed.
+
+### Docker Workflow
+1. Rebuild your Docker image to bundle the new `demo-seed.json`:
+   ```bash
+   docker build -t rant:latest .
+   ```
+2. Restart your containers (`docker compose up -d`).
+3. Force the reset (Step 3).
+
+---
+
+## 3. Triggering the Demo Reset
+
+## ☁️ Cloudflare Pages (Auto-Reset Cron)
+
+Cloudflare Pages Functions do not natively support built-in Cron Triggers. However, you can trigger a reset from absolutely anywhere (GitHub Actions, uptime monitors, simple systemd timers, or cron-job.org) using a simple `curl` command.
+
+### 1. Set Environment Variables
 In the Cloudflare Dashboard, go to your **Pages project -> Settings -> Environment Variables**. Add:
 - `DEMO_MODE` = `true`
 - `CRON_SECRET` = `your_secret_string`
 
 **Important:** You must redeploy your project (or hit "Retry Deployment") for new environment variables to take effect!
 
-### 2. Zero-Config Startup
-That's it! When you visit your deployed site for the first time, RANT will detect that it is in Demo Mode with an empty database and **automatically seed the environment** with the bundled demo topology. You will not see a setup screen, and you can immediately log in with `demo / demo`.
+### 2. Zero-Config First Startup
+When you visit your freshly deployed site for the very first time (when the database is completely empty), RANT will detect `DEMO_MODE=true` and **automatically seed the environment** with the bundled topology. You can immediately log in with `demo / demo`.
 
-### 3. Setting up the Auto-Reset Cron
-Because the reset endpoint no longer requires the heavy `demo-seed.json` payload, you can trigger a reset from absolutely anywhere (GitHub Actions, uptime monitors, simple systemd timers, or cron-job.org) using a simple `curl` command:
+### 3. The Reset Command
+To trigger a periodic reset of a populated database (e.g. via a Cron service), run:
 
 ```bash
 curl -X POST https://your-demo.pages.dev/api/demo/reset \
@@ -145,11 +180,8 @@ If you are contributing to RANT and want to test the Demo Mode locally:
    npm run dev:server
    npm run dev:client
    ```
-3. To trigger the reset, you can use `curl` from a separate terminal:
+3. To test the reset functionality locally, run:
    ```bash
    curl -X POST http://localhost:3001/api/demo/reset \
-     -H "Content-Type: application/json" \
-     -H "Authorization: Bearer local_test_secret" \
-     -d @demo-seed.json
+     -H "Authorization: Bearer local_test_secret"
    ```
-```
