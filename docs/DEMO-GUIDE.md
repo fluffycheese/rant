@@ -28,37 +28,25 @@ In the Cloudflare Dashboard, go to your **Pages project -> Settings -> Environme
 - `DEMO_MODE` = `true`
 - `CRON_SECRET` = `your_secret_string`
 
-### 2. Create the Auto-Reset Companion Worker
-In the Cloudflare Dashboard, go to **Workers & Pages -> Create Application -> Create Worker**. Name it `rant-demo-cron`.
+### 2. Deploy the Auto-Reset Companion Worker
+We have included a pre-configured companion worker in the `demo-cron-worker` directory that bundles your huge `demo-seed.json` directly into the code (bypassing Cloudflare's 5KB environment variable limits).
 
-This Worker doesn't need any special bindings or backend linking to your Pages project; it simply makes a standard HTTP POST request to your Pages domain.
+1. Navigate to the companion worker directory:
+   ```bash
+   cd demo-cron-worker
+   ```
+2. Edit `wrangler.toml` and update the `[vars]` block with your actual details:
+   ```toml
+   [vars]
+   TARGET_URL = "https://your-pages-project.pages.dev/api/demo/reset"
+   CRON_SECRET = "your_secret_string"
+   ```
+3. Deploy it to your Cloudflare account using Wrangler:
+   ```bash
+   npx wrangler deploy
+   ```
 
-Edit the Worker code to the following:
-```javascript
-export default {
-  async scheduled(event, env, ctx) {
-    // 1. Paste your demo-seed.json content here
-    const seedPayload = { ... }; 
-
-    // 2. The target URL is injected via environment variables
-    await fetch(env.TARGET_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${env.CRON_SECRET}`
-      },
-      body: JSON.stringify(seedPayload)
-    });
-  }
-}
-```
-
-### 3. Configure the Companion Worker
-On the newly created `rant-demo-cron` Worker's dashboard page:
-1. Go to **Settings -> Variables and Secrets** and add:
-   - `CRON_SECRET`: The exact same secret you used for the Pages project.
-   - `TARGET_URL`: The full URL to your demo endpoint (e.g., `https://my-rant-demo.pages.dev/api/demo/reset`).
-2. Go to **Triggers -> Cron Triggers** and add a new trigger (e.g., `0 */12 * * *` to run every 12 hours).
+*Note: The worker automatically triggers every 12 hours based on the `[triggers]` configuration in `wrangler.toml`.*
 
 ---
 
