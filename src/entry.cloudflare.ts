@@ -14,6 +14,8 @@ import type { AppDatabase } from './platform/types.js'
 type CloudflareBindings = {
   DB: D1Database
   PROXY_AUTH?: string
+  DEMO_MODE?: string
+  CRON_SECRET?: string
 }
 
 const app = createApp((app) => {
@@ -24,6 +26,8 @@ const app = createApp((app) => {
     c.set('config', {
       proxyAuth: env.PROXY_AUTH === 'true',
       isProduction: true,
+      demoMode: env.DEMO_MODE === 'true',
+      cronSecret: env.CRON_SECRET,
     })
     return next()
   })

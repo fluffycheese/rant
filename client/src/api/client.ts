@@ -167,4 +167,8 @@ export const api = {
   stats: {
     get: () => request<Stats>('/stats'),
   },
+  system: {
+    export: () => request<any>('/export'),
+    import: (payload: any, mode: 'append' | 'replace') => request<{ ok: boolean }>(`/import?mode=${mode}`, { method: 'POST', body: JSON.stringify(payload) }),
+  }
 };

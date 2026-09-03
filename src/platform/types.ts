@@ -13,6 +13,8 @@ export type AppDatabase = BetterSQLite3Database<typeof schema>
 export type AppConfig = {
   proxyAuth: boolean
   isProduction: boolean
+  demoMode: boolean
+  cronSecret?: string
 }
 
 export type AppEnv = {

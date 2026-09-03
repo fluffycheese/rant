@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { api, type User } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 
@@ -8,6 +8,8 @@ export default function AdminPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [importing, setImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const load = () => api.users.list().then(setUsers).catch(console.error)
 
@@ -63,6 +65,48 @@ export default function AdminPage() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      const data = await api.system.export()
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `rant-export-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      alert(`Export failed: ${err.message}`)
+    }
+  }
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const mode = confirm('Do you want to completely REPLACE your existing topology? \n\nClick OK to replace all data.\nClick Cancel to just APPEND the imported data alongside existing data.') ? 'replace' : 'append'
+    
+    setImporting(true)
+    try {
+      const text = await file.text()
+      const payload = JSON.parse(text)
+      await api.system.import(payload, mode)
+      alert('Import successful! Refreshing page...')
+      window.location.reload()
+    } catch (err: any) {
+      alert(`Import failed: ${err.message}`)
+    } finally {
+      setImporting(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
   const s = {
     page: { padding: 32, maxWidth: 600, margin: '0 auto' },
     title: { fontSize: 22, fontWeight: 700, color: '#F1F5F9', marginBottom: 24 },
@@ -115,6 +159,32 @@ export default function AdminPage() {
           </div>
         ))}
         {users.length === 0 && <div style={{ color: '#64748B', fontSize: 13 }}>No users found.</div>}
+      </div>
+
+      <div style={s.card}>
+        <h3 style={{ marginTop: 0, marginBottom: 16, color: '#CBD5E1', fontSize: 16 }}>System Data</h3>
+        <p style={{ color: '#64748B', fontSize: 14, marginBottom: 16 }}>
+          Export or import your complete physical topology (Profiles, Sites, Racks, Devices, Ports, Cables). User accounts are not exported.
+        </p>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button style={s.btn} onClick={handleExport}>
+            Export JSON
+          </button>
+          <button 
+            style={{ ...s.btn, background: 'transparent', border: '1px solid #334155', color: '#CBD5E1' }} 
+            onClick={handleImportClick}
+            disabled={importing}
+          >
+            {importing ? 'Importing...' : 'Import JSON'}
+          </button>
+          <input 
+            type="file" 
+            accept=".json" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            style={{ display: 'none' }} 
+          />
+        </div>
       </div>
     </div>
   )

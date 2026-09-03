@@ -17,6 +17,8 @@ const app = createApp((app) => {
     c.set('config', {
       proxyAuth: process.env.PROXY_AUTH === 'true',
       isProduction: process.env.NODE_ENV === 'production',
+      demoMode: process.env.DEMO_MODE === 'true',
+      cronSecret: process.env.CRON_SECRET,
     })
     return next()
   })

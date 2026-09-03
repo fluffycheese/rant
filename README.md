@@ -47,6 +47,7 @@ Built for homelabbers, small IT teams, and anyone who needs to know which cable 
 | **Multi-site topology** | ✅ Site → Rack → Device hierarchy, Mermaid diagrams | ❌ Single-page, no hierarchy | ❌ Single rack at a time | ✅ Full multi-tenancy | ✅ Locations | ✅ Data centres |
 | **Shared database** | ✅ SQLite (team access via server) | ❌ Browser localStorage only | ⚠️ Optional backend | ✅ PostgreSQL | ✅ MySQL | ✅ MySQL |
 | **IPAM / VLANs** | ❌ Out of scope | ❌ | ❌ | ✅ Full IPAM | ⚠️ Basic | ❌ |
+| **Portable Topology** | ✅ Export/Import JSON snapshot | ❌ | ❌ | ✅ Export JSON | ❌ | ❌ |
 | **Automation API** | ✅ REST API | ❌ | ❌ | ✅ REST + GraphQL + webhooks | ⚠️ Basic | ⚠️ Basic |
 
 #### Deployment
