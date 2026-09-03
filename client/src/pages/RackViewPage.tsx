@@ -62,10 +62,10 @@ export default function RackViewPage() {
 
   if (!rackId) return null
 
-  if (loading || targetLoading) {
+  if (loading && !payload) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748B', fontSize: 14 }}>
-        Loading racks…
+        Loading rack…
       </div>
     )
   }
