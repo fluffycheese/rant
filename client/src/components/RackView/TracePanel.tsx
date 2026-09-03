@@ -67,8 +67,8 @@ function resolvePort(portId: string, portLookups: Map<string, Map<string, { devi
 // ── Component ─────────────────────────────────────────────────────────────────
 
 type Props = {
-  originPortId: string
-  originSlot: 'front' | 'back'
+  originPortId?: string | null
+  originSlot?: ('front' | 'back') | null
   currentPayload: RackViewPayload
   onNavigateToRack?: (rackId: string, highlightLinkId: string) => void
   onOpenSplitView?: (rackId: string, highlightLinkId: string) => void
@@ -90,6 +90,10 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
   useEffect(() => { rackCache.set(currentPayload.rack.id, currentPayload) }, [currentPayload, rackCache])
 
   const runTrace = useCallback(async () => {
+    if (!originPortId || !originSlot) {
+      setTrace(null)
+      return
+    }
     setLoading(true)
     setError(null)
     setSelectedHopIndex(null)
@@ -240,8 +244,17 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
     return (
       <div style={s.hopRow}>
         <div style={s.barCol}>
-          <div style={{ width: 6, flex: role === 'origin' ? undefined : 1, height: role === 'origin' ? '50%' : undefined, background: 'transparent' }} />
-          <div style={{ width: 6, flex: role === 'origin' ? 1 : undefined, height: role === 'terminus' ? '50%' : undefined, background: color, borderRadius: role === 'origin' ? '3px 3px 0 0' : '0 0 3px 3px' }} />
+          {role === 'origin' ? (
+            <>
+              <div style={{ width: 6, height: '50%', background: 'transparent' }} />
+              <div style={{ width: 6, flex: 1, background: color, borderRadius: '3px 3px 0 0' }} />
+            </>
+          ) : (
+            <>
+              <div style={{ width: 6, height: '50%', background: color, borderRadius: '0 0 3px 3px' }} />
+              <div style={{ width: 6, flex: 1, background: 'transparent' }} />
+            </>
+          )}
         </div>
         <div style={{ ...s.card, borderLeft: `3px solid ${color}`, cursor: 'default' }}>
           <div style={s.sectionLabel}>{role === 'origin' ? '⬤ Origin' : '⬤ Terminus'}</div>
@@ -315,7 +328,27 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
     </div>
   )
 
-  if (!trace) return null
+  if (!trace || !originPortId || !originSlot) {
+    return (
+      <div style={s.container}>
+        <div style={s.header}><span style={s.headerTitle}>↯ Trace</span></div>
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 32,
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 28, marginBottom: 12, color: '#64748B' }}>↯</div>
+          <div style={{ color: '#64748B', fontSize: 13, lineHeight: 1.5, maxWidth: 260 }}>
+            Click the <span style={{ color: '#94A3B8', fontWeight: 600 }}>↯ Trace</span> button on any port or connection to view its full physical path.
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const { hops, origin, terminus } = trace
   const originColor = hops[0]?.link.color ?? '#10B981'

@@ -21,6 +21,84 @@ type Props = {
   onCloseSplitView?: () => void
 }
 
+function RightPanelStripButton({
+  label,
+  title,
+  onClick,
+  borderSide,
+}: {
+  label: string
+  title: string
+  onClick: (e: React.MouseEvent) => void
+  borderSide?: 'left' | 'right'
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title={title}
+      style={{
+        width: 20,
+        height: '100%',
+        background: hovered ? '#1E293B' : '#0F172A',
+        border: 'none',
+        borderLeft: borderSide === 'left' ? '1px solid #334155' : 'none',
+        borderRight: borderSide === 'right' ? '1px solid #334155' : 'none',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        cursor: 'pointer',
+        fontSize: 10,
+        fontWeight: 600,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        writingMode: 'vertical-rl',
+        letterSpacing: 1,
+        transition: 'background 0.15s, color 0.15s',
+        padding: 0,
+        outline: 'none',
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ClosePanelButton({ onClick }: { onClick: () => void }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title="Collapse panel"
+      style={{
+        background: hovered ? '#1E293B' : 'transparent',
+        border: 'none',
+        borderLeft: '1px solid #334155',
+        color: hovered ? '#3BB2F6' : '#64748B',
+        padding: '0 12px',
+        cursor: 'pointer',
+        fontSize: 11,
+        fontWeight: 600,
+        lineHeight: 1,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
+        transition: 'background 0.15s, color 0.15s',
+        marginLeft: 'auto',
+      }}
+    >
+      › Collapse
+    </button>
+  )
+}
+
 export default function RackView({ payload, templates, onReload, isSecondaryView, onMakePrimary, onCloseSplitView }: Props) {
   const { rack, site, devices, internalLinks } = payload
   const { selectedPort, setSelectedPort, setIsManualSplitView, crossSiteTargetRackId, setCrossSiteTargetRackId, isManualSplitView, setHighlightedLinkId, pinnedLinkId, setPinnedLinkId } = usePatching()
@@ -371,8 +449,8 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       zIndex: 20,
       boxShadow: '-4px 0 20px rgba(0,0,0,0.5)',
     } : {
-      width: rightPanelOpen ? 360 : 28,
-      minWidth: rightPanelOpen ? 360 : 28,
+      width: rightPanelOpen ? 360 : 20,
+      minWidth: rightPanelOpen ? 360 : 20,
       borderLeft: '1px solid #334155',
       background: '#1E293B',
       display: 'flex',
@@ -533,11 +611,8 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
 
       {/* Main Body: Rack grid + collapsible right panel */}
       <div style={s.contentArea}>
-        {/* Rack section — click collapses expanded overlay */}
-        <div
-          style={s.rackSection}
-          onClick={() => { if (panelExpanded) setPanelExpanded(false) }}
-        >
+        {/* Rack section */}
+        <div style={s.rackSection}>
           <RackGrid
             rack={rack}
             devices={devices}
@@ -567,30 +642,12 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
               <div style={{ display: 'flex', flexDirection: 'row', flex: 1, overflow: 'hidden' }}>
 
                 {/* Full-height expand/collapse strip on the left edge */}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setPanelExpanded(x => !x) }}
+                <RightPanelStripButton
+                  label={panelExpanded ? '› Collapse' : '‹ Expand'}
                   title={panelExpanded ? 'Collapse to normal' : 'Expand to full view'}
-                  style={{
-                    background: panelExpanded ? '#0EA5E9' : '#0F172A',
-                    border: 'none',
-                    borderRight: '1px solid #334155',
-                    color: panelExpanded ? '#fff' : '#64748B',
-                    padding: '0 6px',
-                    cursor: 'pointer',
-                    fontSize: 10,
-                    flexShrink: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    writingMode: 'vertical-rl' as const,
-                    letterSpacing: 1,
-                    transition: 'background 0.15s, color 0.15s',
-                    width: 20,
-                  }}
-                >
-                  {panelExpanded ? '↙ collapse' : '↗ expand'}
-                </button>
+                  onClick={(e) => { e.stopPropagation(); setPanelExpanded(x => !x) }}
+                  borderSide="right"
+                />
 
                 {/* Tab bar + body */}
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
@@ -610,34 +667,15 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                     >
                       Endpoints
                     </button>
-                    {traceOrigin && (
-                      <button
-                        type="button"
-                        style={{ ...s.panelTab, ...(rightPanelTab === 'trace' ? s.panelTabActive : {}), color: rightPanelTab === 'trace' ? '#3BB2F6' : '#94A3B8' }}
-                        onClick={() => setRightPanelTab('trace')}
-                      >
-                        ↯ Trace
-                      </button>
-                    )}
-                    {/* Collapse toggle */}
                     <button
                       type="button"
-                      onClick={() => { setRightPanelOpen(false); setPanelExpanded(false) }}
-                      title="Collapse panel"
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        borderLeft: '1px solid #334155',
-                        color: '#64748B',
-                        padding: '0 12px',
-                        cursor: 'pointer',
-                        fontSize: 14,
-                        lineHeight: 1,
-                        flexShrink: 0,
-                      }}
+                      style={{ ...s.panelTab, ...(rightPanelTab === 'trace' ? s.panelTabActive : {}) }}
+                      onClick={() => setRightPanelTab('trace')}
                     >
-                      ›
+                      ↯ Trace
                     </button>
+                    {/* Collapse toggle */}
+                    <ClosePanelButton onClick={() => { setRightPanelOpen(false); setPanelExpanded(false) }} />
                   </div>
 
                   {/* Panel body */}
@@ -686,10 +724,10 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                         }}
                       />
                     )}
-                    {rightPanelTab === 'trace' && traceOrigin && (
+                    {rightPanelTab === 'trace' && (
                       <TracePanel
-                        originPortId={traceOrigin.portId}
-                        originSlot={traceOrigin.slot}
+                        originPortId={traceOrigin?.portId ?? null}
+                        originSlot={traceOrigin?.slot ?? null}
                         currentPayload={payload}
                         onNavigateToRack={(rackId, linkId) => {
                           navigate(`/racks/${rackId}`, { state: { highlightLinkId: linkId } })
@@ -706,30 +744,12 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
               </div>
             </>
           ) : (
-            /* Collapsed state — slim expand strip */
-            <button
-              type="button"
-              onClick={() => setRightPanelOpen(true)}
+            /* Collapsed state — 20px vertical strip */
+            <RightPanelStripButton
+              label="‹ Expand"
               title="Expand panel"
-              style={{
-                width: '100%',
-                height: '100%',
-                background: 'none',
-                border: 'none',
-                borderLeft: '1px solid #334155',
-                color: '#64748B',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 14,
-                writingMode: 'vertical-rl',
-                gap: 8,
-                padding: '16px 4px',
-              }}
-            >
-              ‹ Connections
-            </button>
+              onClick={() => setRightPanelOpen(true)}
+            />
           )}
         </div>
       </div>
