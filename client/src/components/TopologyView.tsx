@@ -35,9 +35,10 @@ type Props = {
   mermaidData: string | null
   links: LinkData[]
   siteId?: string
+  isProtected?: boolean
 }
 
-export default function TopologyView({ title, mermaidData, links, siteId }: Props) {
+export default function TopologyView({ title, mermaidData, links, siteId, isProtected }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { setCrossSiteTargetRackId, setIsManualSplitView, setPinnedLinkId } = usePatching()
@@ -312,30 +313,35 @@ export default function TopologyView({ title, mermaidData, links, siteId }: Prop
           <span style={s.countBadge}>{links.length} Links</span>
         </div>
         {siteId && (
-          <button
-            type="button"
-            onClick={async () => {
-              if (confirm('Are you sure you want to delete this site and ALL its racks? This cannot be undone.')) {
-                try {
-                  await api.sites.delete(siteId)
-                  window.location.href = '/'
-                } catch (err: any) {
-                  alert(`Failed to delete site: ${err.message}`)
+          <div title={isProtected ? 'This is a core demo site and cannot be deleted.' : 'Delete site'}>
+            <button
+              type="button"
+              disabled={isProtected}
+              onClick={async () => {
+                if (isProtected) return
+                if (confirm('Are you sure you want to delete this site and ALL its racks? This cannot be undone.')) {
+                  try {
+                    await api.sites.delete(siteId)
+                    window.location.href = '/'
+                  } catch (err: any) {
+                    alert(`Failed to delete site: ${err.message}`)
+                  }
                 }
-              }
-            }}
-            style={{
-              background: 'none',
-              color: '#F87171',
-              border: '1px solid #F87171',
-              borderRadius: 6,
-              padding: '6px 12px',
-              fontSize: 13,
-              cursor: 'pointer',
-            }}
-          >
-            Delete Site
-          </button>
+              }}
+              style={{
+                background: 'none',
+                color: isProtected ? '#94A3B8' : '#F87171',
+                border: `1px solid ${isProtected ? '#475569' : '#F87171'}`,
+                borderRadius: 6,
+                padding: '6px 12px',
+                fontSize: 13,
+                cursor: isProtected ? 'not-allowed' : 'pointer',
+                opacity: isProtected ? 0.5 : 1,
+              }}
+            >
+              Delete Site
+            </button>
+          </div>
         )}
       </div>
 

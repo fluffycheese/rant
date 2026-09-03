@@ -49,8 +49,11 @@ app.put('/:id', async (c) => {
 
 app.delete('/:id', async (c) => {
   const db = c.get('db')
-  const [row] = await db.delete(racks).where(eq(racks.id, c.req.param('id'))).returning()
-  if (!row) return c.json({ error: 'Not found' }, 404)
+  const [existing] = await db.select({ isProtected: racks.isProtected }).from(racks).where(eq(racks.id, c.req.param('id')))
+  if (!existing) return c.json({ error: 'Not found' }, 404)
+  if (existing.isProtected) return c.json({ error: 'Protected demo resources cannot be deleted' }, 403)
+
+  await db.delete(racks).where(eq(racks.id, c.req.param('id')))
   return c.json({ ok: true })
 })
 

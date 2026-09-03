@@ -20,6 +20,11 @@ export default function LoginPage() {
     api.auth.setupStatus()
       .then(res => setNeedsSetup(res.needsSetup))
       .catch(() => setNeedsSetup(false))
+      
+    if (window.appConfig?.demoMode) {
+      setUsername('demo')
+      setPassword('demo')
+    }
   }, [])
 
   if (!isLoading && isAuthenticated) {
@@ -142,6 +147,13 @@ export default function LoginPage() {
         </div>
 
         {error && <div style={s.errorAlert}>{error}</div>}
+
+        {window.appConfig?.demoMode && (
+          <div style={{ background: 'rgba(234, 179, 8, 0.2)', border: '1px solid #eab308', color: '#fef08a', padding: '12px', borderRadius: 6, fontSize: 14, textAlign: 'center', lineHeight: 1.5 }}>
+            <strong>Demo Mode Active</strong><br/>
+            Log in with <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: 4 }}>demo</code> / <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: 4 }}>demo</code>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={s.field}>

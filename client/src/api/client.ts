@@ -3,20 +3,24 @@
 export type User = {
   id: string;
   username: string;
+  isProtected?: boolean;
 }
 
 export type Profile = {
   id: string; name: string; description: string | null;
+  isProtected?: boolean;
   createdAt: number; updatedAt: number;
 }
 
 export type Site = {
   id: string; profileId: string; name: string; description: string | null;
+  isProtected?: boolean;
   createdAt: number; updatedAt: number;
 }
 
 export type Rack = {
   id: string; siteId: string; name: string; description: string | null;
+  isProtected?: boolean;
   uHeight: number; createdAt: number; updatedAt: number;
 }
 
@@ -24,12 +28,14 @@ export type DeviceTemplate = {
   id: string; name: string; category: string; manufacturer: string | null;
   model: string | null; portCount: number;
   portLayout: Array<{ label: string; connectorType: string; position: number; groupName?: string | null; groupLayout?: 'single_row' | 'double_row' | null }>;
+  isProtected?: boolean;
   uHeight: number; color: string; createdAt: number; updatedAt: number;
 }
 
 export type Device = {
   id: string; rackId: string; templateId: string | null; name: string;
   category: string; positionU: number | null;
+  isProtected?: boolean;
   color: string; notes: string | null; createdAt: number; updatedAt: number;
 }
 

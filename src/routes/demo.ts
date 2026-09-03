@@ -1,6 +1,8 @@
 import { Hono } from 'hono'
 import type { AppEnv } from '../platform/types.js'
 import { ImportPayloadSchema, executeImport } from '../services/importService.js'
+import { users, sessions } from '../db/schema.js'
+import { hashPassword } from '../platform/crypto.js'
 
 const app = new Hono<AppEnv>()
 
@@ -34,6 +36,34 @@ app.post('/reset', async (c) => {
   const db = c.get('db')
   const body = await c.req.json()
   const payload = ImportPayloadSchema.parse(body)
+
+  // Wipe all existing sessions and users
+  await db.delete(sessions)
+  await db.delete(users)
+
+  // Create admin user
+  const adminPass = crypto.randomUUID().slice(0, 16).replace(/-/g, '')
+  const adminHash = await hashPassword(adminPass)
+  await db.insert(users).values({
+    username: 'admin',
+    passwordHash: adminHash,
+    isProtected: true,
+  })
+
+  // Create demo user
+  const demoHash = await hashPassword('demo')
+  await db.insert(users).values({
+    username: 'demo',
+    passwordHash: demoHash,
+    isProtected: true,
+  })
+
+  console.log(`\n=== DEMO RESET ===`)
+  console.log(`Admin Username: admin`)
+  console.log(`Admin Password: ${adminPass}`)
+  console.log(`Demo Username: demo`)
+  console.log(`Demo Password: demo`)
+  console.log(`==================\n`)
 
   // Force replace mode for demo reset
   await executeImport(db, payload, 'replace')

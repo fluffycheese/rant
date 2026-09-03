@@ -434,18 +434,21 @@ export default function DeviceCard({
           )}
 
           {onDeleteDevice && (
-            <button
-              type="button"
-              style={s.deleteBtn}
-              onClick={() => {
-                if (confirm(`Remove "${device.name}" from this rack?`)) {
-                  onDeleteDevice(device.id)
-                }
-              }}
-              title="Delete device"
-            >
-              🗑
-            </button>
+            <div title={device.isProtected ? 'This is a core demo device and cannot be deleted.' : 'Delete device'}>
+              <button
+                type="button"
+                style={{...s.deleteBtn, cursor: device.isProtected ? 'not-allowed' : 'pointer', opacity: device.isProtected ? 0.4 : 1}}
+                disabled={device.isProtected}
+                onClick={() => {
+                  if (device.isProtected) return
+                  if (confirm(`Remove "${device.name}" from this rack?`)) {
+                    onDeleteDevice(device.id)
+                  }
+                }}
+              >
+                🗑
+              </button>
+            </div>
           )}
         </div>
       </div>

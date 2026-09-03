@@ -39,5 +39,5 @@ export default function SiteViewPage() {
 
   const title = site ? `${site.name} - Topology` : 'Site Topology'
 
-  return <TopologyView title={title} mermaidData={mermaidData} links={links} siteId={site?.id} />
+  return <TopologyView title={title} mermaidData={mermaidData} links={links} siteId={site?.id} isProtected={site?.isProtected} />
 }

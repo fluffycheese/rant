@@ -30,6 +30,7 @@ app.get('/', async (c) => {
   const rows = await db.select({
     id: users.id,
     username: users.username,
+    isProtected: users.isProtected,
   }).from(users)
   return c.json(rows)
 })
@@ -68,8 +69,11 @@ app.delete('/:id', async (c) => {
     return c.json({ error: 'Cannot delete the last remaining user' }, 400)
   }
 
-  const [row] = await db.delete(users).where(eq(users.id, id)).returning()
-  if (!row) return c.json({ error: 'Not found' }, 404)
+  const [existing] = await db.select({ isProtected: users.isProtected }).from(users).where(eq(users.id, id))
+  if (!existing) return c.json({ error: 'Not found' }, 404)
+  if (existing.isProtected) return c.json({ error: 'Protected demo resources cannot be deleted' }, 403)
+
+  await db.delete(users).where(eq(users.id, id))
 
   return c.json({ ok: true })
 })

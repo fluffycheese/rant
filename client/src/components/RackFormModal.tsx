@@ -84,17 +84,29 @@ export default function RackFormModal({
         <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between', marginTop: 6 }}>
           <div>
             {mode === 'edit' && onDelete && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Are you sure you want to delete this rack? This cannot be undone.')) {
-                    onDelete()
-                  }
-                }}
-                style={{ background: 'none', color: '#F87171', border: '1px solid #F87171', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}
-              >
-                Delete Rack
-              </button>
+              <div title={initialRack?.isProtected ? 'This is a core demo rack and cannot be deleted.' : 'Delete Rack'}>
+                <button
+                  type="button"
+                  disabled={initialRack?.isProtected}
+                  onClick={() => {
+                    if (initialRack?.isProtected) return
+                    if (confirm('Are you sure you want to delete this rack? This cannot be undone.')) {
+                      onDelete()
+                    }
+                  }}
+                  style={{ 
+                    background: 'none', 
+                    color: initialRack?.isProtected ? '#94A3B8' : '#F87171', 
+                    border: `1px solid ${initialRack?.isProtected ? '#475569' : '#F87171'}`, 
+                    borderRadius: 6, 
+                    padding: '6px 16px', 
+                    cursor: initialRack?.isProtected ? 'not-allowed' : 'pointer',
+                    opacity: initialRack?.isProtected ? 0.5 : 1
+                  }}
+                >
+                  Delete Rack
+                </button>
+              </div>
             )}
           </div>
           <div style={{ display: 'flex', gap: 10 }}>

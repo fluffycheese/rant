@@ -150,4 +150,28 @@ in {
     };
   };
 }
+
+---
+
+## 💻 Local Development
+
+If you are contributing to RANT and want to test the Demo Mode locally:
+
+1. Create a `.env` file in the project root:
+   ```env
+   DEMO_MODE=true
+   CRON_SECRET=local_test_secret
+   ```
+2. Start the development servers as usual:
+   ```bash
+   npm run dev:server
+   npm run dev:client
+   ```
+3. To trigger the reset, you can use `curl` from a separate terminal:
+   ```bash
+   curl -X POST http://localhost:3001/api/demo/reset \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer local_test_secret" \
+     -d @demo-seed.json
+   ```
 ```

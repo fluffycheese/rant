@@ -15,7 +15,8 @@ export const authMiddleware: MiddlewareHandler<AppEnv> = async (c, next) => {
   // Exempt login and setup endpoints from session validation
   const path = c.req.path
   if (path === '/api/auth/login' || path === '/auth/login' || path.endsWith('/auth/login') ||
-      path.startsWith('/api/auth/setup') || path.includes('/auth/setup')) {
+      path.startsWith('/api/auth/setup') || path.includes('/auth/setup') ||
+      path === '/api/config') {
     return next()
   }
 

@@ -41,25 +41,25 @@ export async function executeImport(db: AppDatabase, payload: ImportPayload, mod
   for (const p of payload.profiles) {
     const newId = crypto.randomUUID()
     idMap.set(p.id, newId)
-    await db.insert(profiles).values({ ...p, id: newId, createdAt: toDate(p.createdAt), updatedAt: toDate(p.updatedAt) })
+    await db.insert(profiles).values({ ...p, id: newId, isProtected: mode === 'replace', createdAt: toDate(p.createdAt), updatedAt: toDate(p.updatedAt) })
   }
 
   for (const s of payload.sites) {
     const newId = crypto.randomUUID()
     idMap.set(s.id, newId)
-    await db.insert(sites).values({ ...s, id: newId, profileId: getNewId(s.profileId), createdAt: toDate(s.createdAt), updatedAt: toDate(s.updatedAt) })
+    await db.insert(sites).values({ ...s, id: newId, profileId: getNewId(s.profileId), isProtected: mode === 'replace', createdAt: toDate(s.createdAt), updatedAt: toDate(s.updatedAt) })
   }
 
   for (const r of payload.racks) {
     const newId = crypto.randomUUID()
     idMap.set(r.id, newId)
-    await db.insert(racks).values({ ...r, id: newId, siteId: getNewId(r.siteId), createdAt: toDate(r.createdAt), updatedAt: toDate(r.updatedAt) })
+    await db.insert(racks).values({ ...r, id: newId, siteId: getNewId(r.siteId), isProtected: mode === 'replace', createdAt: toDate(r.createdAt), updatedAt: toDate(r.updatedAt) })
   }
 
   for (const dt of payload.deviceTemplates) {
     const newId = crypto.randomUUID()
     idMap.set(dt.id, newId)
-    await db.insert(deviceTemplates).values({ ...dt, id: newId, createdAt: toDate(dt.createdAt), updatedAt: toDate(dt.updatedAt) })
+    await db.insert(deviceTemplates).values({ ...dt, id: newId, isProtected: mode === 'replace', createdAt: toDate(dt.createdAt), updatedAt: toDate(dt.updatedAt) })
   }
 
   for (const d of payload.devices) {
@@ -71,6 +71,7 @@ export async function executeImport(db: AppDatabase, payload: ImportPayload, mod
       siteId: getNewId(d.siteId),
       rackId: getNewId(d.rackId),
       templateId: getNewId(d.templateId) || d.templateId,
+      isProtected: mode === 'replace',
       createdAt: toDate(d.createdAt),
       updatedAt: toDate(d.updatedAt)
     })
@@ -83,6 +84,7 @@ export async function executeImport(db: AppDatabase, payload: ImportPayload, mod
       ...p,
       id: newId,
       deviceId: getNewId(p.deviceId),
+      isProtected: mode === 'replace',
       createdAt: toDate(p.createdAt)
     })
   }
@@ -95,6 +97,7 @@ export async function executeImport(db: AppDatabase, payload: ImportPayload, mod
       id: newId,
       portAId: getNewId(l.portAId),
       portBId: getNewId(l.portBId),
+      isProtected: mode === 'replace',
       createdAt: toDate(l.createdAt),
       updatedAt: toDate(l.updatedAt)
     })

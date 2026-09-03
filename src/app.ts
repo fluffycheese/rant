@@ -60,6 +60,10 @@ export function createApp(platformInit: (app: Hono<AppEnv>) => void) {
   api.route('/export',    exportRoute)
   api.route('/import',    importRoute)
   api.route('/demo',      demoRoute)
+  
+  app.get('/api/config', (c) => {
+    return c.json(c.get('config'))
+  })
 
   app.route('/api', api)
 

@@ -12,6 +12,7 @@ export const users = sqliteTable('users', {
   id:           text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   username:     text('username').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  isProtected:  integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -28,6 +29,7 @@ export const profiles = sqliteTable('profiles', {
   id:          text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   name:        text('name').notNull(),
   description: text('description'),
+  isProtected: integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -37,6 +39,7 @@ export const sites = sqliteTable('sites', {
   profileId:   text('profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   name:        text('name').notNull(),
   description: text('description'),
+  isProtected: integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -47,6 +50,7 @@ export const racks = sqliteTable('racks', {
   name:        text('name').notNull(),
   description: text('description'),
   uHeight:     integer('u_height').notNull().default(42),
+  isProtected: integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -62,6 +66,7 @@ export const deviceTemplates = sqliteTable('device_templates', {
   portLayout:   text('port_layout', { mode: 'json' }).notNull().$type<PortDef[]>(),
   uHeight:      integer('u_height').notNull().default(1),
   color:        text('color').notNull().default('#4a9eff'),
+  isProtected:  integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -76,6 +81,7 @@ export const devices = sqliteTable('devices', {
   positionU:  integer('position_u'),
   color:      text('color').notNull().default('#4a9eff'),
   notes:      text('notes'),
+  isProtected: integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 
@@ -90,6 +96,7 @@ export const ports = sqliteTable('ports', {
   groupName:     text('group_name'),
   groupLayout:   text('group_layout'),
   notes:         text('notes'),
+  isProtected:   integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   createdAt:     integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
 
@@ -107,6 +114,7 @@ export const cableLinks = sqliteTable('cable_links', {
   color:     text('color'),
   label:     text('label'),
   notes:     text('notes'),
+  isProtected: integer('is_protected', { mode: 'boolean' }).notNull().default(false),
   ...timestamps,
 })
 

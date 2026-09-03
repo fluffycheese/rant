@@ -10,14 +10,16 @@ import AdminPage from './pages/AdminPage.tsx'
 import ProfileViewPage from './pages/ProfileViewPage.tsx'
 import SiteViewPage from './pages/SiteViewPage.tsx'
 import Dashboard from './components/Dashboard.tsx'
+import { DemoBanner } from './components/DemoBanner.tsx'
 
 export default function App() {
   return (
     <AuthProvider>
       <PatchingProvider>
         <BrowserRouter>
-        <Routes>
-          {/* Public Authentication Route */}
+          <DemoBanner />
+          <Routes>
+            {/* Public Authentication Route */}
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected Routes */}

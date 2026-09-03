@@ -154,7 +154,14 @@ export default function AdminPage() {
             <span style={{ color: '#F1F5F9', fontWeight: 600 }}>{u.username}</span>
             <div style={{ display: 'flex', gap: 8 }}>
               <button style={s.pwBtn} onClick={() => handlePasswordChange(u.id, u.username)}>Change Password</button>
-              <button style={s.delBtn} onClick={() => handleDelete(u.id, u.username)}>Delete</button>
+              <button 
+                style={{...s.delBtn, opacity: u.isProtected ? 0.4 : 1, cursor: u.isProtected ? 'not-allowed' : 'pointer'}} 
+                onClick={() => !u.isProtected && handleDelete(u.id, u.username)}
+                disabled={u.isProtected}
+                title={u.isProtected ? 'This is a core demo user and cannot be deleted.' : 'Delete user'}
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
@@ -170,13 +177,22 @@ export default function AdminPage() {
           <button style={s.btn} onClick={handleExport}>
             Export JSON
           </button>
-          <button 
-            style={{ ...s.btn, background: 'transparent', border: '1px solid #334155', color: '#CBD5E1' }} 
-            onClick={handleImportClick}
-            disabled={importing}
-          >
-            {importing ? 'Importing...' : 'Import JSON'}
-          </button>
+          
+          <div title={window.appConfig?.demoMode ? "Import is disabled in the public demo." : "Import topology from JSON"}>
+            <button 
+              style={{ 
+                ...s.btn, 
+                background: 'transparent', 
+                border: '1px solid #334155', 
+                color: window.appConfig?.demoMode ? '#475569' : '#CBD5E1',
+                cursor: window.appConfig?.demoMode ? 'not-allowed' : 'pointer'
+              }} 
+              onClick={handleImportClick}
+              disabled={importing || window.appConfig?.demoMode}
+            >
+              {importing ? 'Importing...' : 'Import JSON'}
+            </button>
+          </div>
           <input 
             type="file" 
             accept=".json" 
