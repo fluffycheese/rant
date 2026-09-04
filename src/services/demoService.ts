@@ -2,7 +2,7 @@ import { executeImport, ImportPayloadSchema } from './importService.js'
 import { users, sessions } from '../db/schema.js'
 import { hashPassword } from '../platform/crypto.js'
 import type { AppDatabase } from '../platform/types.js'
-import defaultDemoSeed from '../db/demo-seed.json'
+import defaultDemoSeed from '../db/demo-seed.json' with { type: 'json' }
 
 export async function resetDemoEnvironment(db: AppDatabase) {
   // Parse the bundled seed payload just to be safe with validation
