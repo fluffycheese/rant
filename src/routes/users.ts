@@ -88,6 +88,14 @@ app.put('/:id/password', async (c) => {
   const body = await c.req.json()
   const input = ChangePasswordSchema.parse(body)
 
+  const config = c.get('config')
+  const [existing] = await db.select({ username: users.username }).from(users).where(eq(users.id, id))
+  if (!existing) return c.json({ error: 'Not found' }, 404)
+
+  if (config.demoMode && (existing.username === 'admin' || existing.username === 'demo')) {
+    return c.json({ error: 'Cannot change password for core demo users' }, 403)
+  }
+
   const passwordHash = await hashPassword(input.password)
 
   const [row] = await db

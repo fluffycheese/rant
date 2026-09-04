@@ -149,22 +149,32 @@ export default function AdminPage() {
 
       <div style={s.card}>
         <h3 style={{ marginTop: 0, marginBottom: 16, color: '#CBD5E1', fontSize: 16 }}>Existing Users</h3>
-        {users.map(u => (
-          <div key={u.id} style={s.row}>
-            <span style={{ color: '#F1F5F9', fontWeight: 600 }}>{u.username}</span>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button style={s.pwBtn} onClick={() => handlePasswordChange(u.id, u.username)}>Change Password</button>
-              <button 
-                style={{...s.delBtn, opacity: u.isProtected ? 0.4 : 1, cursor: u.isProtected ? 'not-allowed' : 'pointer'}} 
-                onClick={() => !u.isProtected && handleDelete(u.id, u.username)}
-                disabled={u.isProtected}
-                title={u.isProtected ? 'This is a core demo user and cannot be deleted.' : 'Delete user'}
-              >
-                Delete
-              </button>
+        {users.map(u => {
+          const isCoreDemoUser = window.appConfig?.demoMode && (u.username === 'admin' || u.username === 'demo');
+          return (
+            <div key={u.id} style={s.row}>
+              <span style={{ color: '#F1F5F9', fontWeight: 600 }}>{u.username}</span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button 
+                  style={{...s.pwBtn, opacity: isCoreDemoUser ? 0.4 : 1, cursor: isCoreDemoUser ? 'not-allowed' : 'pointer'}} 
+                  onClick={() => !isCoreDemoUser && handlePasswordChange(u.id, u.username)}
+                  disabled={isCoreDemoUser}
+                  title={isCoreDemoUser ? 'Cannot change password for core demo users.' : 'Change password'}
+                >
+                  Change Password
+                </button>
+                <button 
+                  style={{...s.delBtn, opacity: u.isProtected ? 0.4 : 1, cursor: u.isProtected ? 'not-allowed' : 'pointer'}} 
+                  onClick={() => !u.isProtected && handleDelete(u.id, u.username)}
+                  disabled={u.isProtected}
+                  title={u.isProtected ? 'This is a core demo user and cannot be deleted.' : 'Delete user'}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
         {users.length === 0 && <div style={{ color: '#64748B', fontSize: 13 }}>No users found.</div>}
       </div>
 
