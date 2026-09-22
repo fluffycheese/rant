@@ -1153,6 +1153,8 @@ function LinkModal({
 }
 
 
+const PASSTHROUGH_CATEGORIES = ['patch_panel', 'wall_panel']
+
 function PortDetailsModal({
   currentRack,
   info,
@@ -1220,7 +1222,9 @@ function PortDetailsModal({
         <div style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>Port Connections - {info.device.name} / Port {info.port.label}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {renderSlot('front', frontLink)}
-          {renderSlot('back', backLink)}
+          {PASSTHROUGH_CATEGORIES.includes(info.device.category) && (
+            renderSlot('back', backLink)
+          )}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
           <button type="button" onClick={onClose} style={{ background: 'none', color: '#64748B', border: '1px solid #334155', borderRadius: 6, padding: '6px 16px', cursor: 'pointer' }}>Close</button>
