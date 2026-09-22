@@ -75,8 +75,6 @@ export default function RackGrid({
     return { uSlotMap: map, unplacedDevices: unplaced }
   }, [devices, totalU])
 
-  const PX_PER_U = 44
-
   const s: Record<string, CSSProperties> = {
     rackContainer: {
       display: 'flex',
@@ -141,7 +139,7 @@ export default function RackGrid({
       padding: 12,
       display: 'flex',
       flexDirection: 'column',
-      gap: 0,
+      gap: 8,
       background: '#0a0e14',
       minWidth: 0,
     },
@@ -168,7 +166,7 @@ export default function RackGrid({
       fontSize: 9,
       color: '#475569',
       fontFamily: 'monospace',
-      height: PX_PER_U,
+      height: 48,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -187,12 +185,9 @@ export default function RackGrid({
     },
   }
 
-  // Render rack elevation when explicit positions are used.
-  // PX_PER_U governs all row heights: empty slots are exactly PX_PER_U tall,
-  // device wrappers use minHeight = uHeight * PX_PER_U so multi-U devices
-  // fill their allocated rack space. Side rail markers use the same constant.
+  // Render rack elevation when explicit positions are used
   const renderPositionalElevation = () => {
-    const rows: React.ReactNode[] = []
+    const rows = []
     const renderedDeviceIds = new Set<string>()
 
     for (let u = totalU; u >= 1; u--) {
@@ -201,18 +196,11 @@ export default function RackGrid({
       if (slot) {
         if (slot.isStart && !renderedDeviceIds.has(slot.device.id)) {
           renderedDeviceIds.add(slot.device.id)
-          const uH = slot.device.template?.uHeight || 1
           rows.push(
-            <div
-              key={`u-${u}`}
-              style={{
-                minHeight: uH * PX_PER_U,
-                boxSizing: 'border-box',
-              }}
-            >
+            <div key={`u-${u}`} style={{ position: 'relative' }}>
               <DeviceCard
-                onEditDevice={onEditDevice}
-                onTrace={onTrace}
+  onEditDevice={onEditDevice}
+              onTrace={onTrace}
                 device={slot.device}
                 links={links}
                 allDevices={devices}
@@ -224,14 +212,12 @@ export default function RackGrid({
             </div>
           )
         }
-        // Non-start slots are spanned by the device wrapper above — render nothing
       } else {
         rows.push(
           <div
             key={`empty-u-${u}`}
             style={{
-              height: PX_PER_U,
-              boxSizing: 'border-box',
+              height: 36,
               border: '1px dashed #334155',
               borderRadius: 4,
               display: 'flex',
@@ -241,7 +227,6 @@ export default function RackGrid({
               fontSize: 11,
               color: '#484f58',
               userSelect: 'none',
-              flexShrink: 0,
             }}
           >
             <span>U{u} — Empty</span>
@@ -332,30 +317,26 @@ export default function RackGrid({
                 )}
               </>
             ) : (
-              /* Sequential Vertical Stack — no explicit positions, devices stacked in order */
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {devices.filter(d => d.rackId === rack.id && !['wall_panel', 'wifi_ap', 'ip_camera'].includes(d.category)).map((device, idx) => (
-                  <div key={device.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#475569' }}>
-                      <span>Slot {idx + 1}</span>
-                      <span>{device.template?.uHeight || 1}U</span>
-                    </div>
-                    <div style={{ minHeight: (device.template?.uHeight || 1) * PX_PER_U, boxSizing: 'border-box' }}>
-                      <DeviceCard
-                        onEditDevice={onEditDevice}
-                        onTrace={onTrace}
-                        device={device}
-                        links={links}
-                        allDevices={devices}
-                        selectedPort={selectedPort}
-                        onSelectPort={onSelectPort}
-                        onDeleteDevice={onDeleteDevice}
-                        onUpdateDevicePosition={onUpdateDevicePosition}
-                      />
-                    </div>
+              /* Sequential Vertical Stack */
+              devices.filter(d => d.rackId === rack.id && !['wall_panel', 'wifi_ap', 'ip_camera'].includes(d.category)).map((device, idx) => (
+                <div key={device.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', fontSize: 10, color: '#475569' }}>
+                    <span>Slot {idx + 1}</span>
+                    <span>{device.template?.uHeight || 1}U</span>
                   </div>
-                ))}
-              </div>
+                  <DeviceCard
+  onEditDevice={onEditDevice}
+              onTrace={onTrace}
+                    device={device}
+                    links={links}
+                    allDevices={devices}
+                    selectedPort={selectedPort}
+                    onSelectPort={onSelectPort}
+                    onDeleteDevice={onDeleteDevice}
+                    onUpdateDevicePosition={onUpdateDevicePosition}
+                  />
+                </div>
+              ))
             )}
           </div>
 
