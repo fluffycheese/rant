@@ -871,6 +871,8 @@ function AddDeviceModal({
   const [positionU, setPositionU] = useState<number | ''>(initialU ?? '')
 
   const selected = templates.find(t => t.id === templateId)
+  const ENDPOINT_CATEGORIES = ['wifi_ap', 'ip_camera', 'wall_panel']
+  const isEndpoint = selected ? ENDPOINT_CATEGORIES.includes(selected.category) : false
 
   const inputStyle: CSSProperties = {
     width: '100%',
@@ -932,18 +934,20 @@ function AddDeviceModal({
               />
             </label>
 
-            <label style={labelStyle}>
-              Rack Unit Position (Optional)
-              <input
-                type="number"
-                min={1}
-                max={100}
-                value={positionU}
-                onChange={e => setPositionU(e.target.value ? Number(e.target.value) : '')}
-                placeholder="e.g. 12 (starts at U12)"
-                style={inputStyle}
-              />
-            </label>
+            {!isEndpoint && (
+              <label style={labelStyle}>
+                Rack Unit Position (Optional)
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={positionU}
+                  onChange={e => setPositionU(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="e.g. 12 (starts at U12)"
+                  style={inputStyle}
+                />
+              </label>
+            )}
 
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
               <button
@@ -956,7 +960,7 @@ function AddDeviceModal({
               <button
                 type="button"
                 disabled={!templateId || !name.trim()}
-                onClick={() => onConfirm(templateId, name.trim(), typeof positionU === 'number' ? positionU : undefined)}
+                onClick={() => onConfirm(templateId, name.trim(), isEndpoint ? undefined : (typeof positionU === 'number' ? positionU : undefined))}
                 style={{
                   background: '#10B981',
                   color: '#fff',
