@@ -13,7 +13,7 @@ type Props = {
   onDeleteDevice?: (deviceId: string) => void
   onDeleteLink?: (linkId: string) => void
   onSelectPort?: (info: SelectedPortInfo) => void
-  onEditLink?: (link: CableLink) => void
+  onEditLink?: (link: CableLink, endpointPortId: string) => void
   onTrace?: (portId: string, slot: 'front' | 'back') => void
 }
 
@@ -48,7 +48,9 @@ export default function EndpointsTable({
     return devices.filter(d => d.rackId === currentRack.id && ENDPOINT_CATEGORIES.includes(d.category))
   }, [devices, currentRack.id])
 
-  // Flatten endpoints into one row per port
+  // Flatten endpoints into one row per port per slot.
+  // Back-slot rows are only generated for wall_panel devices (the only endpoint
+  // category that has meaningful rear connections — e.g. back → patch panel).
   const rows = useMemo(() => {
     const arr: {
       id: string
@@ -57,23 +59,45 @@ export default function EndpointsTable({
       portType: string
       portId: string
       port: any // passing raw port for onSelectPort
+      slot: 'front' | 'back'
       link: CableLink | undefined
     }[] = []
 
     for (const dev of endpoints) {
       for (const p of dev.ports) {
-        // Find the front or back link for this port
-        const link = links.find(l => l.portAId === p.id || l.portBId === p.id)
-        
+        const showBackSlot = dev.category === 'wall_panel'
+
+        const frontLink = links.find(l =>
+          (l.portAId === p.id && l.portASlot === 'front') ||
+          (l.portBId === p.id && l.portBSlot === 'front')
+        )
         arr.push({
-          id: `${dev.id}-${p.id}`,
+          id: `${dev.id}-${p.id}-front`,
           device: dev,
           portLabel: p.label,
           portType: p.connectorType,
           portId: p.id,
           port: p,
-          link,
+          slot: 'front',
+          link: frontLink,
         })
+
+        if (showBackSlot) {
+          const backLink = links.find(l =>
+            (l.portAId === p.id && l.portASlot === 'back') ||
+            (l.portBId === p.id && l.portBSlot === 'back')
+          )
+          arr.push({
+            id: `${dev.id}-${p.id}-back`,
+            device: dev,
+            portLabel: p.label,
+            portType: p.connectorType,
+            portId: p.id,
+            port: p,
+            slot: 'back',
+            link: backLink,
+          })
+        }
       }
     }
     return arr
@@ -341,21 +365,20 @@ export default function EndpointsTable({
               filteredRows.map((row) => {
                 const linkId = row.link?.id
                 let targetData = null
-                
+
                 if (row.link) {
                   const targetPortId = row.link.portAId === row.portId ? row.link.portBId : row.link.portAId
                   targetData = portLookup.get(targetPortId)
                 }
 
-                const slot: 'front' | 'back' = row.link
-                  ? (row.link.portAId === row.portId ? row.link.portASlot : row.link.portBSlot)
-                  : 'front'
+                // slot is now always known from the row itself (set during row generation)
+                const slot = row.slot
                 const targetSlot: 'front' | 'back' = row.link
                   ? (row.link.portAId === row.portId ? row.link.portBSlot : row.link.portASlot)
                   : 'front'
 
                 const isHovered = hoveredEndpointId === row.id
-                const isSelected = selectedPort?.port.id === row.portId
+                const isSelected = selectedPort?.port.id === row.portId && selectedPort?.slot === row.slot
                 const isHighlighted = Boolean((linkId && highlightedLinkId === linkId) || isSelected)
 
                 const renderActions = (isCompactAction = false) => (
@@ -380,9 +403,11 @@ export default function EndpointsTable({
                         onClick={(e) => {
                           e.stopPropagation()
                           if (row.link && onEditLink) {
-                            onEditLink(row.link)
+                            // Pass endpointPortId so RackView resolves the correct device modal
+                            onEditLink(row.link, row.portId)
                           } else if (!row.link && onSelectPort) {
-                            onSelectPort({ port: row.port, slot: 'front', device: row.device })
+                            // Use row.slot — not hardcoded 'front' — so back-slot rows patch correctly
+                            onSelectPort({ port: row.port, slot: row.slot, device: row.device })
                           }
                         }}
                         title={row.link ? (isCompactAction ? 'Edit' : 'Edit connection') : (isCompactAction ? 'Patch' : 'Patch connection')}
@@ -411,7 +436,8 @@ export default function EndpointsTable({
                         🗑
                       </button>
                     )}
-                    {!isCompactAction && row.device.ports[0]?.id === row.portId && (
+                    {/* ✎ and 🗑 device-level actions: only on front-slot row of the first port */}
+                    {!isCompactAction && row.device.ports[0]?.id === row.portId && row.slot === 'front' && (
                       <>
                         {onEditDevice && (
                           <button
@@ -460,7 +486,7 @@ export default function EndpointsTable({
                       if (linkId) {
                         setPinnedLinkId(pinnedLinkId === linkId ? null : linkId)
                       } else if (onSelectPort) {
-                        onSelectPort({ port: row.port, slot: 'front', device: row.device })
+                        onSelectPort({ port: row.port, slot: row.slot, device: row.device })
                       }
                     }}
                     onMouseEnter={() => {
@@ -477,12 +503,13 @@ export default function EndpointsTable({
                       cursor: 'pointer',
                     }}
                   >
-                    {/* Endpoint */}
+                    {/* Endpoint — slot badge (F/B) shows which slot this row represents */}
                     <td style={{ ...s.td, borderLeft: row.link ? `3px solid ${row.link.color || '#4a9eff'}` : '3px solid transparent' }}>
                       <div style={s.endpoint}>
                         <span style={{ fontSize: 14 }}>{CATEGORY_ICONS[row.device.category] || CATEGORY_ICONS.other}</span>
                         <span style={s.deviceName} title={row.device.name}>{row.device.name}</span>
                         <span style={s.portBadge}>Port {row.portLabel}</span>
+                        <span style={s.slotBadge}>{row.slot === 'front' ? 'F' : 'B'}</span>
                       </div>
                     </td>
 

@@ -709,11 +709,13 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
                         onDeleteDevice={handleDeleteDevice}
                         onDeleteLink={handleDeleteLink}
                         onSelectPort={handleSelectPort}
-                        onEditLink={(link) => {
-                          const device = devices.find(d => d.ports.some(p => p.id === link.portAId))
-                          const port = device?.ports.find(p => p.id === link.portAId)
+                        onEditLink={(link, endpointPortId) => {
+                          // Use endpointPortId — NOT link.portAId — to find the correct device.
+                          // link.portAId may be the patch panel end, not the endpoint (wall panel/AP/camera).
+                          const device = devices.find(d => d.ports.some(p => p.id === endpointPortId))
+                          const port = device?.ports.find(p => p.id === endpointPortId)
                           if (device && port) {
-                            setDetailsPortInfo({ device, port, slot: link.portASlot as 'front' | 'back' })
+                            setDetailsPortInfo({ device, port, slot: 'front' })
                           }
                         }}
                         onTrace={(portId, slot) => {
