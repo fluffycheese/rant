@@ -157,8 +157,11 @@ export default function DeviceCard({
     const { front, back } = getPortLinks(port.id)
     const isFrontSelected = selectedPort?.port.id === port.id && selectedPort.slot === 'front'
     const isBackSelected = selectedPort?.port.id === port.id && selectedPort.slot === 'back'
+    const isSelected = isFrontSelected || isBackSelected
     const isFrontHighlighted = highlightedLinkId && front?.id === highlightedLinkId
     const isBackHighlighted = highlightedLinkId && back?.id === highlightedLinkId
+    const isHighlighted = Boolean(isFrontHighlighted || isBackHighlighted)
+    const hasLink = Boolean(front || back)
     const isHovered = hoverBox?.portId === port.id
 
     const frontColor = front?.color || '#10B981'
@@ -186,18 +189,18 @@ export default function DeviceCard({
             minWidth: 36,
             height: compact ? 26 : 32,
             padding: '2px 4px',
-            background: isFrontSelected
+            background: isSelected
               ? '#0EA5E922'
-              : front
-              ? (isFrontHighlighted ? '#10B98122' : '#1E293B')
+              : hasLink
+              ? (isHighlighted ? '#10B98122' : '#1E293B')
               : '#0F172A',
-            border: isFrontSelected
+            border: isSelected
               ? '2px solid #3BB2F6'
-              : front
-              ? (isFrontHighlighted ? `2px solid #fff` : `1px solid ${frontColor}`)
+              : hasLink
+              ? (isHighlighted ? `2px solid #fff` : `1px solid ${frontColor}`)
               : '1px solid #334155',
             borderRadius: 4,
-            color: isFrontSelected ? '#3BB2F6' : (front && isFrontHighlighted) ? '#fff' : front ? '#F1F5F9' : '#64748B',
+            color: isSelected ? '#3BB2F6' : (hasLink && isHighlighted) ? '#fff' : hasLink ? '#F1F5F9' : '#64748B',
             fontSize: 10,
             fontWeight: 600,
             cursor: 'pointer',
@@ -207,8 +210,8 @@ export default function DeviceCard({
             justifyContent: 'space-between',
             transition: 'all 0.15s ease',
             outline: 'none',
-            boxShadow: isFrontSelected ? '0 0 8px rgba(59, 178, 246, 0.4)' : (isFrontHighlighted ? `0 0 8px ${frontColor}` : 'none'),
-            zIndex: (isFrontHighlighted || isFrontSelected) ? 2 : 1,
+            boxShadow: isSelected ? '0 0 8px rgba(59, 178, 246, 0.4)' : (isHighlighted ? `0 0 8px ${frontColor}` : 'none'),
+            zIndex: (isHighlighted || isSelected) ? 2 : 1,
           }}
         >
           <div style={{ display: 'flex', width: '100%', height: 3, borderRadius: 1, background: back ? backColor : '#334155' }} />

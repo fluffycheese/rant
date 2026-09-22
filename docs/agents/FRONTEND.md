@@ -93,6 +93,7 @@ These rules exist because of specific, hard-won bugs. Do not deviate.
 1. **No `title=` on port `<button>` elements.** The native OS tooltip competes with the styled portal popup and must be suppressed.
 2. **120ms debounce on hover popup.** The popup uses `useRef<ReturnType<typeof setTimeout>>` (`scheduleHide` / `cancelHide`). Do NOT simplify to `setHoverBox(null)` on `onMouseLeave` — doing so makes the `↯ Trace` button in the popup unreachable because the mouse must leave the port button to reach it.
 3. **Smart slot detection:** `clickSlot = (!front && back) ? 'back' : 'front'`. Do not hardcode `slot: 'front'`.
+4. **Port button highlight condition:** Highlight/connected state applies when `front || back` is present (not `front` only). Back-only connections (`!front && back`) share the identical highlight visual style so connected back-ports are not rendered as empty/unconnected.
 
 ---
 
