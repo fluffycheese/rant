@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, type RackViewPayload, type DeviceTemplate } from '../api/client.ts'
 import RackView from '../components/RackView/RackView.tsx'
@@ -17,15 +17,25 @@ export default function RackViewPage() {
   const [targetLoading, setTargetLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const hasLoadedRef = useRef(false)
+  const prevRackIdRef = useRef<string | undefined>(undefined)
+  const hasLoadedTargetRef = useRef(false)
+  const prevTargetRackIdRef = useRef<string | null>(null)
+
   const load = useCallback(async () => {
     if (!rackId) return
-    setLoading(true)
+    if (prevRackIdRef.current !== rackId) {
+      hasLoadedRef.current = false
+      prevRackIdRef.current = rackId
+    }
+    if (!hasLoadedRef.current) setLoading(true)
     setError(null)
     try {
       const [p, t] = await Promise.all([
         api.racks.view(rackId),
         api.templates.list(),
       ])
+      hasLoadedRef.current = true
       setPayload(p)
       setTemplates(t)
     } catch (e: any) {
@@ -41,9 +51,14 @@ export default function RackViewPage() {
 
   const loadTarget = useCallback(async () => {
     if (!crossSiteTargetRackId) return
-    setTargetLoading(true)
+    if (prevTargetRackIdRef.current !== crossSiteTargetRackId) {
+      hasLoadedTargetRef.current = false
+      prevTargetRackIdRef.current = crossSiteTargetRackId
+    }
+    if (!hasLoadedTargetRef.current) setTargetLoading(true)
     try {
       const p = await api.racks.view(crossSiteTargetRackId)
+      hasLoadedTargetRef.current = true
       setTargetPayload(p)
     } catch (e: any) {
       console.error('Failed to load target rack', e)
@@ -55,6 +70,8 @@ export default function RackViewPage() {
   useEffect(() => {
     if (!crossSiteTargetRackId) {
       setTargetPayload(null)
+      hasLoadedTargetRef.current = false
+      prevTargetRackIdRef.current = null
       return
     }
     loadTarget()
