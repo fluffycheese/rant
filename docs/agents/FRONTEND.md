@@ -73,6 +73,8 @@ Three right-panel states controlled by two booleans in `RackView.tsx`:
 
 **Split View Auto-Collapse:** When `isSplitActive` (`isManualSplitView || !!crossSiteTargetRackId`) becomes `true`, both the right panel (`setRightPanelOpen(false)`) and the sidebar (`setCollapsed(true)`) auto-collapse. This is intentional — do NOT remove these `useEffect` hooks.
 
+**Cross-rack patching and `isManualSplitView`:** When the user clicks a rack in the sidebar during patching mode, `RackTree` sets BOTH `isManualSplitView(true)` AND `setCrossSiteTargetRackId(rackId)`. The `isManualSplitView=true` flag prevents `PatchingContext` from auto-clearing `crossSiteTargetRackId` when `selectedPort` becomes null after the link is created. Without this, a race condition causes a zombie secondary pane that cannot be closed. The split view stays open after link creation so the user can see both racks updated; they close it explicitly with ❌ Close.
+
 ---
 
 ## RackGrid & Device Placement

@@ -113,6 +113,10 @@ export default function RackViewPage() {
             onMakePrimary={() => navigate(`/racks/${targetPayload.rack.id}`)}
             onCloseSplitView={() => {
               setCrossSiteTargetRackId(null)
+              // Also explicitly clear targetPayload so the secondary pane
+              // always closes — even if crossSiteTargetRackId was already null
+              // (e.g. after a cross-site link creation race).
+              setTargetPayload(null)
             }}
           />
         </div>

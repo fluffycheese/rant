@@ -16,11 +16,15 @@ export default function RackTree({ site, racks, onAddRack }: Props) {
   const [open, setOpen] = useState(true)
   const { rackId: activeRackId } = useParams()
   const navigate = useNavigate()
-  const { isPatching, isManualSplitView, setCrossSiteTargetRackId } = usePatching()
+  const { isPatching, isManualSplitView, setCrossSiteTargetRackId, setIsManualSplitView } = usePatching()
 
   const handleRackClick = (e: React.MouseEvent, rackId: string) => {
     if (isPatching || isManualSplitView) {
       if (rackId !== activeRackId) {
+        // Mark as manual split view so PatchingContext does NOT auto-clear
+        // crossSiteTargetRackId when selectedPort becomes null after link creation.
+        // This prevents a zombie secondary pane from appearing post-patching.
+        setIsManualSplitView(true)
         setCrossSiteTargetRackId(rackId)
       }
       e.preventDefault()
