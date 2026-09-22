@@ -318,10 +318,25 @@ export default function ConnectionsTable({
                 const b = portLookup.get(link.portBId)
                 const aIsLocal = a?.device.rack.id === currentRack.id
                 const bIsLocal = b?.device.rack.id === currentRack.id
-                const displayA = (!aIsLocal && bIsLocal) ? b : a
-                const displayASlot = (!aIsLocal && bIsLocal) ? link.portBSlot : link.portASlot
-                const displayB = (!aIsLocal && bIsLocal) ? a : b
-                const displayBSlot = (!aIsLocal && bIsLocal) ? link.portASlot : link.portBSlot
+
+                // Step 1: cross-rack normalisation — local device is always Endpoint A
+                const crossRackSwap = !aIsLocal && bIsLocal
+                let displayA = crossRackSwap ? b : a
+                let displayASlot: 'front' | 'back' = crossRackSwap ? link.portBSlot : link.portASlot
+                let displayB = crossRackSwap ? a : b
+                let displayBSlot: 'front' | 'back' = crossRackSwap ? link.portASlot : link.portBSlot
+
+                // Step 2: within-rack priority normalisation — higher-priority category is always
+                // Endpoint A. Only applies when both devices are in the same rack (cross-rack
+                // normalisation from Step 1 takes precedence for remote links).
+                if (!crossRackSwap) {
+                  const priorityA = CATEGORY_PRIORITY[displayA?.device.category ?? ''] ?? 0
+                  const priorityB = CATEGORY_PRIORITY[displayB?.device.category ?? ''] ?? 0
+                  if (priorityB > priorityA) {
+                    ;[displayA, displayB] = [displayB, displayA]
+                    ;[displayASlot, displayBSlot] = [displayBSlot, displayASlot]
+                  }
+                }
                 const isHovered = hoveredLinkId === link.id
                 const isHighlighted = highlightedLinkId === link.id
 
