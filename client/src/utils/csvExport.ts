@@ -63,3 +63,55 @@ export function connectionsToCsv(
   ]
   return rows.join('\n')
 }
+
+/** Generate connections and ports CSV for a single device */
+export function singleDeviceConnectionsToCsv(
+  device: RackDevice,
+  links: CableLink[],
+  portLookup: Map<string, { device: RackDevice; port: { id: string; label: string } }>
+): string {
+  const rows = [
+    ['Local Port', 'Slot', 'Remote Device', 'Remote Port', 'Remote Rack', 'Remote Site', 'Cable Type', 'Colour', 'Cable Label'].map(esc).join(',')
+  ]
+
+  // For every port on this device, check if it has a front/back link
+  const devicePorts = device.ports || []
+  
+  for (const port of devicePorts) {
+    const frontLink = links.find(l => (l.portAId === port.id && l.portASlot === 'front') || (l.portBId === port.id && l.portBSlot === 'front'))
+    const backLink = links.find(l => (l.portAId === port.id && l.portASlot === 'back') || (l.portBId === port.id && l.portBSlot === 'back'))
+
+    const addRow = (slot: string, link: CableLink | undefined) => {
+      if (!link) {
+        // Output empty row for unpatched port slots (optional, but good for schedules)
+        rows.push([port.label, slot, '', '', '', '', '', '', ''].map(esc).join(','))
+        return
+      }
+      const isA = link.portAId === port.id
+      const remotePortId = isA ? link.portBId : link.portAId
+      const remoteInfo = portLookup.get(remotePortId)
+      
+      rows.push([
+        port.label,
+        slot,
+        remoteInfo?.device.name ?? 'Unknown',
+        remoteInfo?.port.label ?? 'Unknown',
+        remoteInfo?.device.rack?.name ?? '',
+        remoteInfo?.device.site?.name ?? '',
+        link.cableType,
+        link.color ?? '',
+        link.label ?? ''
+      ].map(esc).join(','))
+    }
+
+    // Standard devices just have front links, passthrough have front and back
+    const isPassthrough = ['patch_panel', 'wall_panel'].includes(device.category)
+    addRow('front', frontLink)
+    if (isPassthrough) {
+      addRow('back', backLink)
+    }
+  }
+
+  return rows.join('\n')
+}
+

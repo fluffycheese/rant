@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import type { RackDevice, Port, CableLink } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
+import { singleDeviceConnectionsToCsv, downloadCsv } from '../../utils/csvExport.ts'
+
 
 const CATEGORY_ICONS: Record<string, string> = {
   switch:      '🔀',
@@ -453,6 +455,26 @@ export default function DeviceCard({
               </button>
             </div>
           )}
+
+          {/* CSV Export Button */}
+          <button
+            type="button"
+            style={s.deleteBtn}
+            onClick={() => {
+              // We need portLookup to resolve remote devices. We can build it locally since we have allDevices.
+              const lookup = new Map<string, { device: RackDevice; port: { id: string; label: string } }>()
+              for (const dev of allDevices) {
+                for (const p of (dev.ports || [])) {
+                  lookup.set(p.id, { device: dev, port: { id: p.id, label: p.label } })
+                }
+              }
+              const csv = singleDeviceConnectionsToCsv(device, links, lookup)
+              downloadCsv(`device-${device.name}-ports.csv`, csv)
+            }}
+            title="Export ports and connections"
+          >
+            ⬇️
+          </button>
         </div>
       </div>
 
