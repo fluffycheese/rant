@@ -83,6 +83,7 @@ Three right-panel states controlled by two booleans in `RackView.tsx`:
 - Collision detection is **frontend-only** in `RackView.tsx` (`handleUpdateDevicePosition`, `handleInstantiateDevice`). The backend does NOT enforce it.
 - Out-of-bounds or overlapping devices are rendered in an `unplacedDevices` bucket in `RackGrid.tsx`. Handle them gracefully — do NOT force rigid pixel heights on `DeviceCard` wrappers.
 - Endpoint categories (`wifi_ap`, `ip_camera`, `wall_panel`) are filtered OUT of the rack grid and rendered only in `<EndpointsTable>`.
+- `PX_PER_U = 44` (defined in `RackGrid.tsx`) governs all row heights: empty slots are exactly `PX_PER_U` tall, device wrappers use `minHeight = uHeight * PX_PER_U`, and side rail U-markers use the same value. Adjust this single constant to rescale the entire rack elevation.
 
 ---
 
