@@ -64,7 +64,10 @@ export default function RackGrid({
         } else {
           for (let i = 0; i < uH; i++) {
             const u = dev.positionU + i
-            map.set(u, { device: dev, isStart: i === 0 })
+            // isStart marks the TOPMOST slot (highest U number = first encountered
+            // in the top-to-bottom rendering loop). DeviceCard is rendered here
+            // and its height extends downward to cover all slots.
+            map.set(u, { device: dev, isStart: i === uH - 1 })
           }
         }
       } else {
@@ -202,12 +205,14 @@ export default function RackGrid({
         if (slot.isStart && !renderedDeviceIds.has(slot.device.id)) {
           renderedDeviceIds.add(slot.device.id)
           const uH = slot.device.template?.uHeight || 1
+          const allocatedPx = uH * PX_PER_U
           rows.push(
             <div
               key={`u-${u}`}
               style={{
-                minHeight: uH * PX_PER_U,
+                height: allocatedPx,
                 boxSizing: 'border-box',
+                flexShrink: 0,
               }}
             >
               <DeviceCard
@@ -220,6 +225,7 @@ export default function RackGrid({
                 onSelectPort={onSelectPort}
                 onDeleteDevice={onDeleteDevice}
                 onUpdateDevicePosition={onUpdateDevicePosition}
+                allocatedHeight={allocatedPx}
               />
             </div>
           )
