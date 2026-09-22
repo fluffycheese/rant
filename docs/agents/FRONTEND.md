@@ -29,6 +29,8 @@ client/src/
 │       ├── EndpointsTable.tsx
 │       ├── TracePanel.tsx     ← Bidirectional cable trace
 │       └── DeviceEditorModal.tsx
+├── utils/
+│   └── csvExport.ts           ← Client-side Blob download and CSV formatters
 └── pages/
     ├── RackViewPage.tsx       ← Loads primary + split-view rack data
     ├── SiteViewPage.tsx
@@ -75,6 +77,8 @@ Three right-panel states controlled by two booleans in `RackView.tsx`:
 
 **Cross-rack patching and `isManualSplitView`:** When the user clicks a rack in the sidebar during patching mode, `RackTree` sets BOTH `isManualSplitView(true)` AND `setCrossSiteTargetRackId(rackId)`. The `isManualSplitView=true` flag prevents `PatchingContext` from auto-clearing `crossSiteTargetRackId` when `selectedPort` becomes null after the link is created. Without this, a race condition causes a zombie secondary pane that cannot be closed. The split view stays open after link creation so the user can see both racks updated; they close it explicitly with ❌ Close.
 
+**Right Panel State Persistence:** `RackViewPage` uses refs (`hasLoadedRef` and `hasLoadedTargetRef`) to skip `setLoading(true)` on subsequent background reloads for the same rack. This prevents `RackView` from fully unmounting and losing its local UI state (like `rightPanelTab`).
+
 ---
 
 ## RackGrid & Device Placement
@@ -94,6 +98,7 @@ These rules exist because of specific, hard-won bugs. Do not deviate.
 2. **120ms debounce on hover popup.** The popup uses `useRef<ReturnType<typeof setTimeout>>` (`scheduleHide` / `cancelHide`). Do NOT simplify to `setHoverBox(null)` on `onMouseLeave` — doing so makes the `↯ Trace` button in the popup unreachable because the mouse must leave the port button to reach it.
 3. **Smart slot detection:** `clickSlot = (!front && back) ? 'back' : 'front'`. Do not hardcode `slot: 'front'`.
 4. **Port button highlight condition:** Highlight/connected state applies when `front || back` is present (not `front` only). Back-only connections (`!front && back`) share the identical highlight visual style so connected back-ports are not rendered as empty/unconnected.
+5. **Back-slot gate:** The back-slot section in `PortDetailsModal` is gated to only show for passthrough devices (`patch_panel`, `wall_panel`).
 
 ---
 
@@ -122,7 +127,18 @@ Two-level sort applied in `ConnectionsTable.tsx`:
 1. **Category priority (descending):** `patch_panel: 100 → switch: 80 → firewall: 70 → router: 60 → server: 50 → wifi_ap: 40 → ip_camera: 30 → wall_panel: 20`
 2. **Tiebreak:** device name, then port label — both with `localeCompare(x, undefined, { numeric: true })` so "Port 2" sorts before "Port 10".
 
-Direction is normalised so the local rack's device is always Endpoint A.
+**Endpoint Normalisation (Render loop):**
+- Step 1 (Cross-rack): The local device is always assigned to Endpoint A.
+- Step 2 (Within-rack): If both devices are in the local rack, the higher category priority is assigned to Endpoint A.
+
+---
+
+## CSV Export
+
+- Defined in `client/src/utils/csvExport.ts`.
+- Pure client-side generation and Blob download.
+- Includes functions for full rack devices, full rack connections, and single device ports/connections.
+- Button locations: Rack Toolbar (`⬇ Devices`), Connections Table (`⬇ Connections`), DeviceCard (`⬇️`).
 
 ---
 
