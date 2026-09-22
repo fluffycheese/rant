@@ -154,8 +154,9 @@ export default function TracePanel({ originPortId, originSlot, currentPayload, o
             to: { ...otherEntry, slot: otherSide.slot },
           })
 
-          // Passthrough patch panels; stop at any other device
-          if (otherEntry.device.category === 'patch_panel') {
+          // Passthrough patch panels and wall panels (both have front+back connections);
+          // stop at any other device (wifi_ap, ip_camera, switch, etc. are terminal)
+          if (otherEntry.device.category === 'patch_panel' || otherEntry.device.category === 'wall_panel') {
             currentPortId = otherSide.portId
             currentSlot = passthroughSlot(otherSide.slot)
           } else {

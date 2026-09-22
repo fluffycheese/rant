@@ -106,7 +106,7 @@ result = [...backwardHops.reverse(), ...forwardHops]
 
 This ensures the full chain is shown regardless of where in the chain tracing is triggered. **Do NOT simplify to a single forward walk** — it breaks mid-chain tracing (e.g. tracing from a patch panel port shows only half the chain).
 
-- Patch panels auto-passthrough: arriving on `front` exits on `back` and vice versa.
+- Patch panels AND wall panels auto-passthrough: arriving on `front` exits on `back` and vice versa. Both categories have meaningful front+back connections and must be treated identically in the trace walk.
 - Cross-rack payloads are lazy-fetched via `api.racks.view(rackId)` and cached in a `Map<string, RackViewPayload>`.
 - Entry points: port hover popup `↯ Trace` button; `↯` button in Connections and Endpoints table rows.
 
