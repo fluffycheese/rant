@@ -32,7 +32,6 @@ type Props = {
   onUpdateDevicePosition?: (deviceId: string, u: number | null) => Promise<void> | void
   onTrace?: (portId: string, slot: 'front' | 'back') => void
   compact?: boolean
-  allocatedHeight?: number
 }
 
 export default function DeviceCard({
@@ -46,7 +45,6 @@ export default function DeviceCard({
   onUpdateDevicePosition,
   onTrace,
   compact = false,
-  allocatedHeight,
 }: Props) {
   const [hoveredPortId, setHoveredPortId] = useState<string | null>(null)
   const [hoverBox, setHoverBox] = useState<{ portId: string, rect: DOMRect } | null>(null)
@@ -383,7 +381,7 @@ export default function DeviceCard({
   }
 
   return (
-    <div style={{ ...s.card, height: allocatedHeight ?? 'auto' }}>
+    <div style={s.card}>
       {/* Device Header */}
       <div style={s.header}>
         <span style={{ fontSize: 14 }}>{CATEGORY_ICONS[device.category] ?? '📦'}</span>
