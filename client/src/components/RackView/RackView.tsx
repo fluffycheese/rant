@@ -11,6 +11,7 @@ import DeviceEditorModal from './DeviceEditorModal.tsx'
 import ColorPicker from '../ColorPicker.tsx'
 import { useNavigate } from 'react-router-dom'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
+import { devicesToCsv, downloadCsv } from '../../utils/csvExport.ts'
 
 type Props = {
   payload: RackViewPayload
@@ -523,6 +524,19 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
           >
             ✎ Edit
           </button>
+          {devices.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                const csv = devicesToCsv(devices, rack.name, site.name)
+                downloadCsv(`devices-${rack.name}.csv`, csv)
+              }}
+              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8 }}
+              title="Export devices CSV"
+            >
+              ⬇ Devices
+            </button>
+          )}
           {isSecondaryView && onMakePrimary && (
             <button
               type="button"

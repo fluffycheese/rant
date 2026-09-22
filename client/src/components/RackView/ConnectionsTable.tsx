@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect, type CSSProperties } from 'react'
 import type { CableLink, RackDevice, Rack } from '../../api/client.ts'
 import { usePatching } from '../../contexts/PatchingContext.tsx'
+import { connectionsToCsv, downloadCsv } from '../../utils/csvExport.ts'
 
 type Props = {
   currentRack: Rack
@@ -43,13 +44,14 @@ export default function ConnectionsTable({
 
   // Build quick lookup for portId -> { device, port }
   const portLookup = useMemo(() => {
-    const map = new Map<string, { device: RackDevice; portLabel: string; portType: string }>()
+    const map = new Map<string, { device: RackDevice; portLabel: string; portType: string; port: { id: string; label: string } }>()
     for (const dev of devices) {
       for (const p of dev.ports) {
         map.set(p.id, {
           device: dev,
           portLabel: p.label,
           portType: p.connectorType,
+          port: { id: p.id, label: p.label },
         })
       }
     }
@@ -264,6 +266,31 @@ export default function ConnectionsTable({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {sortedLinks.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                const csv = connectionsToCsv(links, portLookup)
+                downloadCsv(`connections-${currentRack.name}.csv`, csv)
+              }}
+              style={{
+                background: '#1E293B',
+                border,
+                borderRadius: 6,
+                padding: '3px 8px',
+                fontSize: 11,
+                color: '#CBD5E1',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                whiteSpace: 'nowrap',
+              }}
+              title="Export connections CSV"
+            >
+              ⬇ Connections
+            </button>
+          )}
           {links.length > 0 && (
             <input
               type="text"
