@@ -196,25 +196,23 @@ export default function LoginPage() {
               ? (needsSetup ? 'Creating…' : 'Signing in…') 
               : (needsSetup ? 'Create Admin' : 'Sign in')}
           </button>
-        </form>
-      </div>
 
-      <div style={{ marginTop: 24 }}>
-        <a 
-          href="https://github.com/bijomaru78/eccm" 
-          target="_blank" 
-          rel="noreferrer" 
-          style={{
-            color: '#94A3B8',
-            fontSize: 13,
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6
-          }}
-        >
-          <span>ℹ️ What is RANT? Find out more.</span>
-        </a>
+          <a 
+            href="https://rant.fluffycheese.co.uk" 
+            target="_blank" 
+            rel="noreferrer" 
+            style={{
+              color: '#94A3B8',
+              fontSize: 13,
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}
+          >
+            <span>ℹ️ What is RANT? Find out more.</span>
+          </a>
+        </form>
       </div>
     </div>
   )
