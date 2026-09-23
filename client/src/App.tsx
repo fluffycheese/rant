@@ -11,7 +11,10 @@ import ProfileViewPage from './pages/ProfileViewPage.tsx'
 import SiteViewPage from './pages/SiteViewPage.tsx'
 import Dashboard from './components/Dashboard.tsx'
 import { DemoBanner } from './components/DemoBanner.tsx'
-
+import ScanDevicePage from './pages/ScanDevicePage.tsx'
+import ScanPortPage from './pages/ScanPortPage.tsx'
+import PrintRackLabelsPage from './pages/PrintRackLabelsPage.tsx'
+import PrintSiteLabelsPage from './pages/PrintSiteLabelsPage.tsx'
 export default function App() {
   return (
     <AuthProvider>
@@ -24,6 +27,11 @@ export default function App() {
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/scan/device/:id" element={<ScanDevicePage />} />
+            <Route path="/scan/port/:id" element={<ScanPortPage />} />
+            <Route path="/print/rack/:id" element={<PrintRackLabelsPage />} />
+            <Route path="/print/site/:id" element={<PrintSiteLabelsPage />} />
+            
             <Route element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="/racks/:rackId" element={<RackViewPage />} />

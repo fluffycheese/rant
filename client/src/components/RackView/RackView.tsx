@@ -525,17 +525,27 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
             ✎ Edit
           </button>
           {devices.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                const csv = devicesToCsv(devices, rack.name, site.name)
-                downloadCsv(`devices-${rack.name}.csv`, csv)
-              }}
-              style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8 }}
-              title="Export devices CSV"
-            >
-              ⬇ Devices
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  const csv = devicesToCsv(devices, rack.name, site.name)
+                  downloadCsv(`devices-${rack.name}.csv`, csv)
+                }}
+                style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8 }}
+                title="Export devices CSV"
+              >
+                ⬇ Devices
+              </button>
+              <button
+                type="button"
+                onClick={() => window.open(`/print/rack/${rack.id}`, '_blank')}
+                style={{ ...s.secondaryBtn, padding: '2px 8px', fontSize: 11, marginLeft: 8 }}
+                title="Print QR labels for this rack"
+              >
+                🖨️ Print Labels
+              </button>
+            </>
           )}
           {isSecondaryView && onMakePrimary && (
             <button

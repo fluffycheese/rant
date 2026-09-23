@@ -36,9 +36,10 @@ type Props = {
   links: LinkData[]
   siteId?: string
   isProtected?: boolean
+  headerAction?: React.ReactNode
 }
 
-export default function TopologyView({ title, mermaidData, links, siteId, isProtected }: Props) {
+export default function TopologyView({ title, mermaidData, links, siteId, isProtected, headerAction }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { setCrossSiteTargetRackId, setIsManualSplitView, setPinnedLinkId } = usePatching()
@@ -311,6 +312,7 @@ export default function TopologyView({ title, mermaidData, links, siteId, isProt
         <div>
           {title}
           <span style={s.countBadge}>{links.length} Links</span>
+          {headerAction}
         </div>
         {siteId && (
           <div title={isProtected ? 'This is a core demo site and cannot be deleted.' : 'Delete site'}>

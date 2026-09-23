@@ -39,5 +39,15 @@ export default function SiteViewPage() {
 
   const title = site ? `${site.name} - Topology` : 'Site Topology'
 
-  return <TopologyView title={title} mermaidData={mermaidData} links={links} siteId={site?.id} isProtected={site?.isProtected} />
+  const printAction = site ? (
+    <button 
+      onClick={() => window.open(`/print/site/${site.id}`, '_blank')}
+      style={{ padding: '2px 8px', fontSize: '11px', background: 'none', border: '1px solid #334155', color: '#F1F5F9', borderRadius: '4px', cursor: 'pointer', marginLeft: '12px' }}
+      title="Print port labels for endpoints at this site"
+    >
+      🖨️ Print Labels
+    </button>
+  ) : null;
+
+  return <TopologyView title={title} mermaidData={mermaidData} links={links} siteId={site?.id} isProtected={site?.isProtected} headerAction={printAction} />
 }

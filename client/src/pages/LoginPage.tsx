@@ -14,7 +14,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/'
+  const stateFrom = (location.state as any)?.from
+  const from = stateFrom ? `${stateFrom.pathname}${stateFrom.search || ''}` : '/'
 
   useEffect(() => {
     api.auth.setupStatus()
@@ -196,6 +197,24 @@ export default function LoginPage() {
               : (needsSetup ? 'Create Admin' : 'Sign in')}
           </button>
         </form>
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <a 
+          href="https://github.com/bijomaru78/eccm" 
+          target="_blank" 
+          rel="noreferrer" 
+          style={{
+            color: '#94A3B8',
+            fontSize: 13,
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
+          }}
+        >
+          <span>ℹ️ What is RANT? Find out more.</span>
+        </a>
       </div>
     </div>
   )
