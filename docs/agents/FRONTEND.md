@@ -40,7 +40,13 @@ client/src/
     └── LoginPage.tsx          ← Morphs into setup screen when zero users exist
 ```
 
----
+**Standalone / Overlay Routes:**
+Mobile-specific pages and Print layouts bypass the `Layout` shell entirely to avoid sidebars and wrappers. They are registered directly inside `ProtectedRoute` but outside `Layout`.
+- **Scan/Mobile Views (`/scan/device/:id`, `/scan/port/:id`):** Use `minHeight: '100vh'` and full viewport dimensions.
+- **Print Pages (`/print/rack/:id`, `/print/site/:id`):** Use inline `<style>` tags with `@media print` rules (since external CSS is forbidden). 
+  - Standard label layouts (like Avery L7651) use strictly measured CSS Grids with `mm` units: `gridTemplateColumns: repeat(5, 38.1mm)`, `gridAutoRows: 21.2mm`.
+  - Use `@page { margin: 10.7mm 0 0 7.2mm; }` to align the absolute print offset on physical A4 paper.
+  - Hide configuration panels using `.no-print { display: none !important; }`.
 
 ## PatchingContext — Global State
 

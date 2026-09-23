@@ -52,6 +52,10 @@ docker run -d --name rant -p 3001:3001 -v rant_data:/app/data rant:latest
 ```
 
 ### Cloudflare Pages + D1 Build & Deploy
+> [!WARNING]
+> **CRITICAL PITFALL:** NEVER run `npm --prefix client run build` on its own before a Cloudflare deployment. Vite's `emptyOutDir: true` config will wipe the `dist/public` folder, **deleting the backend `_worker.js` API bundle**. This will cause all API routes (including authentication) to fail silently on Cloudflare Pages.
+> Always use `npm run build:cf` which builds the frontend *and* re-bundles the backend worker.
+
 ```bash
 npm run build:cf       # builds client + bundles worker via esbuild
 npm run deploy:cf      # build:cf + migrate D1 + wrangler pages deploy
