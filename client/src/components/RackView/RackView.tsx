@@ -216,7 +216,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       const uH = movingDevice?.template?.uHeight || 1
       
       const collisions = devices.filter(d => {
-        if (d.id === deviceId || d.positionU == null) return false
+        if (d.id === deviceId || d.positionU == null || d.rackId !== rack.id) return false
         const dH = d.template?.uHeight || 1
         const dStart = d.positionU
         const dEnd = d.positionU + dH - 1
@@ -247,7 +247,7 @@ export default function RackView({ payload, templates, onReload, isSecondaryView
       const uH = template?.uHeight || 1
       
       const collisions = devices.filter(d => {
-        if (d.positionU == null) return false
+        if (d.positionU == null || d.rackId !== rack.id) return false
         const dH = d.template?.uHeight || 1
         const dStart = d.positionU
         const dEnd = d.positionU + dH - 1
