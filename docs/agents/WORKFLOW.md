@@ -63,7 +63,7 @@ npm run deploy:cf      # build:cf + migrate D1 + wrangler pages deploy
 
 Manual steps if needed:
 ```bash
-wrangler d1 migrations apply rant-db --remote -y
+wrangler d1 migrations apply DB --remote
 wrangler pages deploy dist/public
 ```
 
@@ -84,7 +84,7 @@ npm run db:generate    # generates new SQL in drizzle/ after schema changes
 ```
 
 - Migrations auto-apply on Node.js server start.
-- For D1: apply manually with `wrangler d1 migrations apply rant-db --remote`.
+- For D1: apply manually with `wrangler d1 migrations apply DB --remote`.
 - **Always review generated SQL before applying to D1.** See [`docs/agents/SCHEMA.md`](./SCHEMA.md) for the D1 DROP TABLE bug.
 
 ---
