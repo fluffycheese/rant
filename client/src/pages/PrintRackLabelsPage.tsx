@@ -39,46 +39,47 @@ export default function PrintRackLabelsPage() {
   const itemsToPrint = payload.devices.filter(d => selectedIds.has(d.id));
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ fontFamily: 'system-ui, sans-serif', backgroundColor: '#0F172A', color: '#F1F5F9', minHeight: '100vh' }}>
       <style>
         {`
           @media print {
-            body { margin: 0; padding: 0; }
-            @page { margin: 0; }
+            body { margin: 0; padding: 0; background-color: white !important; color: black !important; }
+            @page { margin: 10.7mm 0 0 7.2mm; }
             .no-print { display: none !important; }
-            .print-grid { padding: 0 !important; }
+            .print-grid { padding: 0 !important; background-color: white !important; }
+            .print-grid * { color: black !important; border-color: #ccc !important; }
           }
         `}
       </style>
       
-      <div className="no-print" style={{ padding: '20px', backgroundColor: '#f8f9fa', borderBottom: '1px solid #ccc', marginBottom: '20px' }}>
+      <div className="no-print" style={{ padding: '20px', backgroundColor: '#1E293B', borderBottom: '1px solid #334155', marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
           <div>
-            <h2 style={{ margin: '0 0 16px 0' }}>Pre-Print Options</h2>
+            <h2 style={{ margin: '0 0 16px 0', color: '#F1F5F9' }}>Pre-Print Options</h2>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ marginRight: '12px', fontWeight: 'bold' }}>Format:</label>
-              <select value={format} onChange={e => setFormat(e.target.value)} style={{ padding: '4px' }}>
+              <label style={{ marginRight: '12px', fontWeight: 'bold', color: '#CBD5E1' }}>Format:</label>
+              <select value={format} onChange={e => setFormat(e.target.value)} style={{ padding: '6px', backgroundColor: '#0F172A', color: '#F1F5F9', border: '1px solid #334155', borderRadius: '4px' }}>
                 <option value="L7651">Avery L7651 (65 per sheet)</option>
               </select>
             </div>
           </div>
           <button 
             onClick={() => window.print()}
-            style={{ padding: '8px 16px', cursor: 'pointer', border: '1px solid #ccc', borderRadius: '4px', background: '#fff', fontWeight: 'bold' }}
+            style={{ padding: '8px 16px', cursor: 'pointer', border: 'none', borderRadius: '4px', background: '#3BB2F6', color: '#fff', fontWeight: 'bold' }}
             disabled={itemsToPrint.length === 0}
           >
             🖨️ Print Labels ({itemsToPrint.length})
           </button>
         </div>
 
-        <div style={{ marginBottom: '8px' }}>
+        <div style={{ marginBottom: '8px', color: '#F1F5F9' }}>
           <strong>Select Devices:</strong>
-          <button onClick={() => handleSelectAll(true)} style={{ marginLeft: '12px', padding: '2px 8px', cursor: 'pointer' }}>All</button>
-          <button onClick={() => handleSelectAll(false)} style={{ marginLeft: '4px', padding: '2px 8px', cursor: 'pointer' }}>None</button>
+          <button onClick={() => handleSelectAll(true)} style={{ marginLeft: '12px', padding: '2px 8px', cursor: 'pointer', background: '#0F172A', color: '#F1F5F9', border: '1px solid #334155', borderRadius: '4px' }}>All</button>
+          <button onClick={() => handleSelectAll(false)} style={{ marginLeft: '4px', padding: '2px 8px', cursor: 'pointer', background: '#0F172A', color: '#F1F5F9', border: '1px solid #334155', borderRadius: '4px' }}>None</button>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', maxHeight: '200px', overflowY: 'auto', border: '1px solid #ddd', padding: '12px', background: '#fff' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', maxHeight: '200px', overflowY: 'auto', border: '1px solid #334155', padding: '12px', background: '#0F172A', borderRadius: '6px' }}>
           {payload.devices.map(device => (
-            <label key={device.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+            <label key={device.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: '#CBD5E1', fontSize: '14px' }}>
               <input type="checkbox" checked={selectedIds.has(device.id)} onChange={() => handleToggle(device.id)} />
               {device.name}
             </label>
