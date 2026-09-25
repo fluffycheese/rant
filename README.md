@@ -4,8 +4,8 @@
 </div>
 
 > [!WARNING]
-> **ALPHA BUILD - HEAVY DEVELOPMENT**
-> This repository is currently in an early Alpha state and is undergoing heavy, rapid development. Things *will* break, APIs will change without warning, and the database schema is not guaranteed to be stable. Use in production environments at your own risk!
+> **BETA BUILD**
+> This repository is currently in a Beta state. The core feature set is solidifying, but APIs may still shift slightly before 1.0. Ready for broader testing and discovery.
 
 #### **A lightweight source of truth for physical network infrastructure** — racks, devices, ports, and cables.
 

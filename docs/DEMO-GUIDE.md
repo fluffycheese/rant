@@ -59,11 +59,16 @@ Whenever you update `src/db/demo-seed.json` or update the database schema, you m
 Cloudflare Pages Functions do not natively support built-in Cron Triggers. However, you can trigger a reset from absolutely anywhere (GitHub Actions, uptime monitors, simple systemd timers, or cron-job.org) using a simple `curl` command.
 
 ### 1. Set Environment Variables
-In the Cloudflare Dashboard, go to your **Pages project -> Settings -> Environment Variables**. Add:
-- `DEMO_MODE` = `true`
-- `CRON_SECRET` = `your_secret_string`
+If you deployed via Git Integration, you can add environment variables in the Cloudflare Dashboard (**Pages project -> Settings -> Environment Variables**).
 
-**Important:** You must redeploy your project (or hit "Retry Deployment") for new environment variables to take effect!
+If you deployed via Direct Upload (e.g., using `npm run deploy:cf`), you must inject secrets into the production environment via the Wrangler CLI:
+```bash
+echo "true" | npx wrangler pages secret put DEMO_MODE
+echo "your_secret_string" | npx wrangler pages secret put CRON_SECRET
+```
+*Note: Do not define `DEMO_MODE` in `wrangler.toml` if you are managing it securely as a secret to avoid binding conflicts.*
+
+**Important:** You must redeploy your project (or hit "Retry Deployment") for new environment variables or secrets to take effect!
 
 ### 2. Zero-Config First Startup
 When you visit your freshly deployed site for the very first time (when the database is completely empty), RANT will detect `DEMO_MODE=true` and **automatically seed the environment** with the bundled topology. You can immediately log in with `demo / demo`.
@@ -75,6 +80,8 @@ To trigger a periodic reset of a populated database (e.g. via a Cron service), r
 curl -X POST https://your-demo.pages.dev/api/demo/reset \
      -H "Authorization: Bearer your_secret_string"
 ```
+
+*Note: Ensure you run this command against your **true production URL** (e.g. `yourproject.pages.dev`), not a branch alias URL (e.g. `main.yourproject.pages.dev`). Branch aliases act as preview environments and may lack production secrets unless explicitly configured.*
 
 ---
 
