@@ -52,6 +52,14 @@ Use the issue templates when opening a new issue, they'll show up automatically 
 
 - Bug report - something isn't working as expected
 - Feature request - you want to propose new functionality
+- Device template - submit a new JSON device template for the community `templates/` directory
+
+### Uploading device templates
+
+RANT stores device templates as JSON files in the community `templates/` directory. To share a template you've created:
+1. Export your template to JSON from the UI.
+2. Open an issue using the **Device template** option (this automatically applies the correct label).
+3. Attach the JSON file, or submit a Pull Request adding it directly to the `templates/` folder.
 
 Before opening one, check that:
 

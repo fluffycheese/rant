@@ -1,0 +1,50 @@
+name: Device Template
+description: Submit a new JSON device template for the community library
+title: "[DEVICE] "
+labels: ["device-template"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to the RANT community template library! RANT stores device templates as JSON files.
+  - type: input
+    id: manufacturer
+    attributes:
+      label: Manufacturer
+      description: e.g., Cisco, Juniper, Dell
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: e.g., Catalyst 3750G, SRX300
+    validations:
+      required: true
+  - type: input
+    id: u_height
+    attributes:
+      label: U Height
+      description: e.g., 1U, 2U
+    validations:
+      required: true
+  - type: input
+    id: ports
+    attributes:
+      label: Ports / Slots
+      description: e.g., 48x RJ45, 4x SFP
+    validations:
+      required: true
+  - type: textarea
+    id: json_template
+    attributes:
+      label: Template JSON
+      description: Please paste the raw exported `.json` file contents here, or drag and drop your file into this box.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Add any other context, such as a link to the manufacturer's datasheet, or an image of the physical device if helpful.
